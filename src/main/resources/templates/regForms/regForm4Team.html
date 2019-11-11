@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="DERFF">
+    <meta name="author" content="DERFF">
+    <meta name="keywords" content="DERFF">
+
+    <title th:utext="${titlePage}"></title>
+    <link href="../static/vendor/mdi-font/css/material-design-iconic-font.min.css" th:href="@{/vendor/mdi-font/css/material-design-iconic-font.min.css}" rel="stylesheet" media="all"/>
+    <link href="../static/vendor/font-awesome-4.7/css/font-awesome.min.css" th:href="@{/vendor/font-awesome-4.7/css/font-awesome.min.css}" rel="stylesheet" media="all"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="../static/vendor/select2/select2.min.css" th:href="@{/vendor/select2/select2.min.css}" rel="stylesheet" media="all"/>
+    <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet"  media="all"/>
+</head>
+<body>
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+    <div class="wrapper wrapper--w780">
+        <div class="card card-3">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <h2 class="title" th:utext="#{page.title.team.creating}">Регистрация команды</h2>
+                <form method="POST">
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" placeholder="Название" th:placeholder="#{placeholder.name}" name="teamName">
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3 js-datepicker" type="text" placeholder="Дата создания" th:placeholder="#{placeholder.date}" name="date">
+                        <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                    </div>
+                    <div class="input-group">
+                        <div class="rs-select2 js-select-simple select--no-search">
+                            <select name="region">
+                                <option disabled="disabled" selected="selected" th:text="#{placeholder.region}">Район</option>
+                                <option>Дергачевский</option>
+                                <option>Золочевский</option>
+                                <option>Харьковский</option>
+                            </select>
+                            <div class="select-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" placeholder="Руководитель" th:placeholder="#{placeholder.boss}" name="boss">
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" placeholder="Телефон" th:placeholder="#{placeholder.phone}" name="phone">
+                    </div>
+                    <div class="input-group" style="color:#ffff00">
+                        <p>Эмблема команды</p><br/>
+                        <input type="file" name="symbol">
+                    </div>
+                    <div class="p-t-10">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}" >Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script src="../static/vendor/select2/select2.min.js" th:src="@{/vendor/select2/select2.min.js}"></script>
+<script src="../static/vendor/datepicker/moment.min.js" th:src="@{/vendor/datepicker/moment.min.js}"></script>
+<script src="../static/vendor/datepicker/daterangepicker.js" th:src="@{/vendor/datepicker/daterangepicker.js}"></script>
+<script src="../static/js/global.js" th:src="@{/js/global.js}"></script>
+
+</body>
+</html>
