@@ -51,7 +51,7 @@ public class registrationController {
             model.addAttribute("preDate", messageSource.getMessage("placeholder.DefaultDate", null, Locale.getDefault()));
         }
         model.addAttribute("team", team);
-        return "/regForms/regForm4Team";
+        return "regForms/regForm4Team";
     }
 
     @PostMapping(value = "/newTeam")
