@@ -17,8 +17,6 @@ public class DERFF {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(DataSize.of(6, DataUnit.MEGABYTES));
-       // factory.setMaxRequestSize(DataSize.of(6, DataUnit.MEGABYTES));
         return factory.createMultipartConfig();
     }
 
