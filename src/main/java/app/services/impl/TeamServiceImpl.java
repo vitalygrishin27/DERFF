@@ -6,6 +6,8 @@ import app.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TeamServiceImpl implements TeamService {
     @Autowired
@@ -17,7 +19,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Team getTeamById(long id) {
+    public Team findTeamById(long id) {
         return repository.findById(id).get();
     }
 
@@ -26,5 +28,8 @@ public class TeamServiceImpl implements TeamService {
         return repository.findTeamByName(teamName);
     }
 
-
+    @Override
+    public List<Team> findAllTeams() {
+        return repository.findAll();
+    }
 }

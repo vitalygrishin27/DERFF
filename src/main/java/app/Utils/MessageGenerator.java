@@ -2,12 +2,15 @@ package app.Utils;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 
 @Data
 @NoArgsConstructor
 @Service
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MessageGenerator {
     private  String message;
     private  Object temporaryObjectForMessage;

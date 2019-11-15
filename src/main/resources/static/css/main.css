@@ -4,7 +4,7 @@ display: none;
 position: fixed;
 z-index: 99999;
     left: 50%;
-    top: 10%;
+    top: 30%;
     margin-left: -100px;
     margin-top: -75px;
 padding: 10px;
@@ -419,6 +419,13 @@ input {
 .input--style-3 {
   padding: 5px 0;
   font-size: 16px;
+  color: #ccc;
+  background: transparent;
+}
+
+.input--style-4 {
+  padding: 5px 0;
+  font-size: 26px;
   color: #ccc;
   background: transparent;
 }

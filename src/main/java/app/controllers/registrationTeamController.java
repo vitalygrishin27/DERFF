@@ -1,5 +1,7 @@
 package app.controllers;
 
+import app.Models.Competition;
+import app.Models.Context;
 import app.Models.Team;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
@@ -21,7 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 
 @Controller
-public class registrationController {
+public class registrationTeamController {
 
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
@@ -38,13 +40,21 @@ public class registrationController {
     @Value("${availableFileExtension}")
     private String availableFileExtension;
 
+    @Autowired
+    Context context;
+
     @GetMapping(value = "/newTeam")
-    public String getDefaultForm(Model model) {
+    public String getDefaultForm(Model model) throws DerffException {
+        if (context.getFromContext("competition") == null) {
+            throw new DerffException("notSelectedCompetition", null, null, "/competitions");
+        } else {
+            model.addAttribute("competition", context.getFromContext("competition"));
+        }
         model.addAttribute("titlePage", messageSource.getMessage("page.title.team.creating", null, Locale.getDefault()));
         Team team = new Team();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null)
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Team()))
                 team = (Team) messageGenerator.getTemporaryObjectForMessageWithSetNull();
             model.addAttribute("preDate", dateToString(team.getDate()));
         } else {
@@ -56,17 +66,28 @@ public class registrationController {
 
     @PostMapping(value = "/newTeam")
     public String postdefault(@ModelAttribute("team") Team team, @ModelAttribute("preDate") String preDate, @ModelAttribute("file") MultipartFile file) throws DerffException {
-        validateTeamInformation(team, preDate, file);
+              validateTeamInformation(team, preDate, file);
         try {
+            team.addCompetition((Competition)context.getFromContext("competition"));
             teamService.save(team);
             messageGenerator.setMessage((messageSource.getMessage("success.newTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", team, new Object[]{e.getMessage()});
         }
-        return "redirect:/newTeam";
+        return "redirect:/selectTeamForCompetition";
     }
 
     private void validateTeamInformation(Team team, String preDate, MultipartFile file) throws DerffException {
+             //Region validation
+        if (context.getFromContext("region") == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
+        }
+
+        // Competition validation
+        if (context.getFromContext("competition") == null) {
+            throw new DerffException("notSelectedCompetition", null, null, "/competitions");
+        }
+
         //Date parse
         try {
             team.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(preDate));
@@ -98,13 +119,8 @@ public class registrationController {
             }
         }
 
-        //Region validation
-        if(team.getRegion()==null || team.getRegion().isEmpty() || team.getRegion().equals( messageSource.getMessage("placeholder.region", null, Locale.getDefault())))
-            throw new DerffException("notAvailableRegion", team);
 
-        //Team name validation
-        if (teamService.findTeamByName(team.getTeamName()) != null)
-            throw new DerffException("notAvailableTeamName", team);
+
     }
 
     private String dateToString(Date date) {
