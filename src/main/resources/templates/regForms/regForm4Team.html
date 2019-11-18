@@ -29,7 +29,9 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h2 class="title" th:utext="#{page.title.team.creating}">Регистрация команды</h2>
+                <h2 class="title" th:utext="${region.name}">Region Name</h2><br/>
+                <h2 class="title" th:utext="${competition.name}">Competition Name</h2><br/>
+                <h3 class="title" th:utext="#{label.team.creating}">Регистрация команды</h3>
                 <form method="POST" enctype="multipart/form-data" th:object="${team}">
                     <div class="input-group">
                         <input class="input--style-3" type="text" placeholder="Название" th:placeholder="#{placeholder.name}" th:value="${team.teamName}" name="teamName" required>

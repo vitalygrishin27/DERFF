@@ -2,10 +2,12 @@ package app.controllers;
 
 import app.Models.Competition;
 import app.Models.Context;
+import app.Models.Region;
 import app.Models.Team;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.TeamServiceImpl;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -16,20 +18,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
-public class registrationTeamController {
-
+public class TeamController {
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
 
     @Autowired
     MessageGenerator messageGenerator;
+
+    @Autowired
+    Context context;
 
     @Autowired
     TeamServiceImpl teamService;
@@ -40,17 +48,46 @@ public class registrationTeamController {
     @Value("${availableFileExtension}")
     private String availableFileExtension;
 
-    @Autowired
-    Context context;
+    @GetMapping(value = "/teams")
+    public String getTeamsList(Model model) throws DerffException {
+        validateContext();
+        Competition competition = (Competition) context.getFromContext("competition");
+        List<Team> teams = teamService.findAllTeamsInCompetition(competition);
+        Collections.reverse(teams);
+        if (messageGenerator.isActive())
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+
+        model.addAttribute("teams", teams);
+        model.addAttribute("competition", context.getFromContext("competition"));
+        model.addAttribute("region", context.getFromContext("region"));
+
+        return "team/teams";
+    }
+
+    @PostMapping(value = "/selectTeam")
+    public void selectTeam(HttpServletRequest req, HttpServletResponse resp) throws IOException, DerffException {
+        validateContext();
+        long id = Long.valueOf(req.getParameter("teamId"));
+        Team team = teamService.findTeamById(id);
+        context.putToContext("team", team);
+        JSONObject jsonObjectResponse = new JSONObject();
+        jsonObjectResponse.put("url", "/players");
+        resp.getWriter().write(String.valueOf(jsonObjectResponse));
+        resp.flushBuffer();
+    }
+
+    private void validateContext() throws DerffException {
+        if (context.getFromContext("region") == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
+        } else if (context.getFromContext("competition") == null) {
+            throw new DerffException("notSelectedCompetition", null, null, "/competitions");
+        }
+    }
 
     @GetMapping(value = "/newTeam")
-    public String getDefaultForm(Model model) throws DerffException {
-        if (context.getFromContext("competition") == null) {
-            throw new DerffException("notSelectedCompetition", null, null, "/competitions");
-        } else {
-            model.addAttribute("competition", context.getFromContext("competition"));
-        }
-        model.addAttribute("titlePage", messageSource.getMessage("page.title.team.creating", null, Locale.getDefault()));
+    public String getTeamForm(Model model) throws DerffException {
+        validateContext();
+        model.addAttribute("pageTitle", messageSource.getMessage("page.title.team.creating", new Object[]{((Competition)context.getFromContext("competition")).getName(), ((Region)context.getFromContext("region")).getName()}, Locale.getDefault()));
         Team team = new Team();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
@@ -61,24 +98,28 @@ public class registrationTeamController {
             model.addAttribute("preDate", messageSource.getMessage("placeholder.DefaultDate", null, Locale.getDefault()));
         }
         model.addAttribute("team", team);
+        model.addAttribute("region", context.getFromContext("region"));
+        model.addAttribute("competition", context.getFromContext("competition"));
         return "regForms/regForm4Team";
     }
 
     @PostMapping(value = "/newTeam")
     public String postdefault(@ModelAttribute("team") Team team, @ModelAttribute("preDate") String preDate, @ModelAttribute("file") MultipartFile file) throws DerffException {
-              validateTeamInformation(team, preDate, file);
+        validateContext();
+        validateTeamInformation(team, preDate, file);
         try {
-            team.addCompetition((Competition)context.getFromContext("competition"));
+            team.setRegion((Region) context.getFromContext("region"));
+            team.setCompetition((Competition) context.getFromContext("competition"));
             teamService.save(team);
             messageGenerator.setMessage((messageSource.getMessage("success.newTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", team, new Object[]{e.getMessage()});
         }
-        return "redirect:/selectTeamForCompetition";
+        return "redirect:/teams";
     }
 
     private void validateTeamInformation(Team team, String preDate, MultipartFile file) throws DerffException {
-             //Region validation
+        //Region validation
         if (context.getFromContext("region") == null) {
             throw new DerffException("notSelectedRegion", null, null, "/regions");
         }
@@ -120,7 +161,6 @@ public class registrationTeamController {
         }
 
 
-
     }
 
     private String dateToString(Date date) {
@@ -128,7 +168,9 @@ public class registrationTeamController {
         return date == null ? null : formatter.format(date);
     }
 
-  /*  private void prepareFileToSaveIntoDB(Team team){
+
+}
+ /*  private void prepareFileToSaveIntoDB(Team team){
             try {
                 byte[] bytes = team.getSymbol().getBytes();
                 BufferedOutputStream stream =
@@ -144,5 +186,3 @@ public class registrationTeamController {
                 return "Вам не удалось загрузить " + name + " => " + e.getMessage();
             }
         }*/
-
-}

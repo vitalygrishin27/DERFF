@@ -1,10 +1,7 @@
 package app.services.impl;
 
-import app.Models.Competition;
 import app.Models.Region;
-import app.repository.CompetitionRepository;
 import app.repository.RegionRepository;
-import app.services.CompetitionService;
 import app.services.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

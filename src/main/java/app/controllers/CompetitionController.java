@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.Models.Competition;
 import app.Models.Context;
-import app.Models.Team;
+import app.Models.Region;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.CompetitionServiceImpl;
@@ -13,6 +13,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class CompetitionController {
@@ -39,79 +41,73 @@ public class CompetitionController {
     @Autowired
     Context context;
 
+
     @GetMapping(value = "/competitions")
-    public String getDefaultForm(Model model) {
-        List<Competition> competitions = competitionService.findAllCompetitions();
+    public String getCompetitions(Model model) throws DerffException {
+        Region region = (Region) context.getFromContext("region");
+        if (region == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
+        }
+        model.addAttribute("pageTitle", (messageSource.getMessage("page.title.competitions.list", new Object[]{region.getName()}, Locale.getDefault())));
+        List<Competition> competitions = competitionService.findAllCompetitionsInRegion(region);
         Collections.reverse(competitions);
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
 
         model.addAttribute("competitions", competitions);
-        return "competition/competitionsList";
+        return "competition/competitions";
     }
 
     @PostMapping(value = "/selectCompetition")
-    public void selectCompetition(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void selectCompetition(HttpServletRequest req, HttpServletResponse resp) throws IOException, DerffException {
+        JSONObject jsonObjectResponse = new JSONObject();
+        if (context.getFromContext("region") == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
+        }
         long id = Long.valueOf(req.getParameter("competitionId"));
         Competition competition = competitionService.findCompetitionById(id);
-        // TODO: 15.11.2019 Может нужно обнулять весь контекст
         context.putToContext("competition", competition);
-        JSONObject jsonObjectResponse = new JSONObject();
-        jsonObjectResponse.put("url", "/selectTeamForCompetition");
+        jsonObjectResponse.put("url", "/teams");
         resp.getWriter().write(String.valueOf(jsonObjectResponse));
         resp.flushBuffer();
     }
 
-    @GetMapping(value = "/selectTeamForCompetition")
-    public String getForm4SelectTeam(Model model) throws DerffException {
-        if (context.getFromContext("competition") == null) {
-            throw new DerffException("notSelectedCompetition", null, null, "/competitions");
-        } else {
-            model.addAttribute("competition", context.getFromContext("competition"));
+
+    @GetMapping(value = "/newCompetition")
+    public String getCompetitionForm(Model model) throws DerffException {
+        if (context.getFromContext("region") == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
         }
-        List<Team> teams = teamService.findAllTeams();
-        Collections.reverse(teams);
-        if (messageGenerator.isActive())
+        Competition competition = new Competition();
+        if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-
-        model.addAttribute("teams", teams);
-        return "competition/selectTeamForCompetition";
-    }
-
-    @PostMapping(value = "/selectTeamForCompetition")
-    public void selectTeam(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        long id = Long.valueOf(req.getParameter("teamId"));
-        Team team = teamService.findTeamById(id);
-        context.putToContext("team", team);
-        JSONObject jsonObjectResponse = new JSONObject();
-        jsonObjectResponse.put("url", "/players");
-        resp.getWriter().write(String.valueOf(jsonObjectResponse));
-        resp.flushBuffer();
-    }
-
-
-    @PostMapping(value = "/competitions")
-    public void postDefault(HttpServletRequest req, HttpServletResponse resp) throws DerffException {
-        long id = Long.valueOf(req.getParameter("competitionId"));
-        Competition competition = competitionService.findCompetitionById(id);
-        context.putToContext("competition", competition);
-        /*    long id= Long.valueOf(req.getParameter("seasonId"));
-        String command= req.getParameter("command");
-        try{
-            Competition competitionForDelete=competitionService.findSeasonById(id);
-            switch (command){
-                case "delete":
-                    competitionService.deleteById(id);
-                    messageGenerator.setMessage((messageSource.getMessage("success.deleteSeason", new Object[]{competitionForDelete.getName()}, Locale.getDefault())));
-                    break;
-            }
-        }catch (Exception e){
-            throw new DerffException("database", null,new Object[]{e.getMessage()});
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Competition()))
+                competition = (Competition) messageGenerator.getTemporaryObjectForMessageWithSetNull();
         }
-
-
-        System.out.println("req.get");*/
-        //   return "redirect:/competitions";
+        model.addAttribute("competition", competition);
+        return "regForms/regForm4Competition";
     }
 
+    @PostMapping(value = "/newCompetition")
+    public String postNewCompetition(@ModelAttribute("competition") Competition competition) throws DerffException {
+        if (context.getFromContext("region") == null) {
+            throw new DerffException("notSelectedRegion", null, null, "/regions");
+        }
+        validateCompetitionInformation(competition);
+        try {
+            competition.setRegion((Region) context.getFromContext("region"));
+            competitionService.save(competition);
+            messageGenerator.setMessage((messageSource.getMessage("success.newCompetition", new Object[]{competition.getName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", competition, new Object[]{e.getMessage()});
+        }
+        return "redirect:/competitions";
+    }
+
+    private void validateCompetitionInformation(Competition competition) throws DerffException {
+        //Competition name validation
+        if (competitionService.findCompetitionByName(competition.getName()) != null)
+            throw new DerffException("notAvailableCompetitionName", competition);
+
+    }
 }

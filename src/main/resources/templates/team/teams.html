@@ -8,7 +8,7 @@
     <meta name="author" content="DERFF">
     <meta name="keywords" content="DERFF">
 
-    <title th:utext="#{page.title.competitions.list}"></title>
+    <title th:utext="${pageTitle}"></title>
     <link href="../static/vendor/mdi-font/css/material-design-iconic-font.min.css"
           th:href="@{/vendor/mdi-font/css/material-design-iconic-font.min.css}" rel="stylesheet" media="all"/>
     <link href="../static/vendor/font-awesome-4.7/css/font-awesome.min.css"
@@ -35,15 +35,24 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h2 class="title" th:utext="#{page.title.competitions.list}">Сезоны</h2>
-                <p class="input-group" th:each="competition : ${competitions}">
-                    <label class="input--style-4" th:text="${competition.name}" th:value="${competition.name}" th:id="${competition.id}" th:onclick="|selectCompetition('${competition.id}',this.getAttribute('data'));|"/>
+                <h2 class="title" th:utext="${region.name}">Region Name</h2><br/>
+                <h2 class="title" th:utext="${competition.name}">Competition Name</h2><br/>
+                <h3 class="title" th:utext="#{page.title.selectTeamForCompetition}">Select team for competition</h3>
+                <p class="input-group" th:each="team : ${teams}">
+                    <label class="input--style-3" th:text="${team.teamName}" th:value="${team.teamName}" th:id="${team.id}" th:onclick="|selectTeam('${team.id}',this.getAttribute('data'));|"/>
 
 
                     <!--     <i class="zmdi zmdi-delete input-icon" th:data="${competition.name}" th:onclick="|deleteCompetition('${competition.id}',this.getAttribute('data'));|"></i>
 
                         ${@environment.getProperty('name.of.the.property')}
                         -->
+                </p>
+                <p class="input--style-3">
+                    <label th:text="#{label.createNewTeam}" onclick="return location.href = '/newTeam'">buttonForNewTeam</label></p>
+                <p class="input--style-3">
+                    <label th:text="#{label.selectFromTeamsInRegion}" onclick="return location.href = '/findTeamsByRegion'">buttonForFilterForRegion</label></p>
+                <p class="input--style-3">
+                    <label th:text="#{label.selectFromAllTeamsList}" onclick="return location.href = '/findAllTeams'">buttonForFilterForAllTeam</label></p>
                 </div>
             </div>
         </div>
@@ -74,17 +83,16 @@
     /*]]>*/
 
 
-    function selectCompetition(competitionId){
+    function selectTeam(teamId){
     $.ajax({
         type: 'POST',
-        url:'/selectCompetition',
-        data:({competitionId:competitionId}),
-         success: function(data){
-         var obj = jQuery.parseJSON(data);
-		 obj.needToLoadNewPerformance
-
-        if(obj.msg==null && obj.url!=null){
-        location.href = obj.url;
+        url:'/selectTeamForCompetition',
+        data:({teamId:teamId}),
+         success: function(msg,url){
+        if(msg==null && url!=null){
+        location.href = url;
+        }else{
+        location.href = "/selectTeamForCompetition";
         }
 
         }

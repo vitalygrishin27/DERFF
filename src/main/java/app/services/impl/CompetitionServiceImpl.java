@@ -1,6 +1,7 @@
 package app.services.impl;
 
 import app.Models.Competition;
+import app.Models.Region;
 import app.repository.CompetitionRepository;
 import app.services.CompetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,10 @@ public class CompetitionServiceImpl implements CompetitionService {
     @Override
     public void deleteById(long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<Competition> findAllCompetitionsInRegion(Region region) {
+        return repository.findAllCompetitionsInRegion(region);
     }
 }

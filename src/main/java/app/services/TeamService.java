@@ -1,6 +1,7 @@
 package app.services;
 
 
+import app.Models.Competition;
 import app.Models.Team;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface TeamService {
     Team findTeamByName(String teamName);
 
     List<Team> findAllTeams();
+
+    List<Team> findAllTeamsInCompetition(Competition competition);
 }

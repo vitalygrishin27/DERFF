@@ -35,13 +35,13 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h2 class="title" th:utext="#{page.title.regions.list}">Районы</h2>
+                <h2 class="title" th:utext="#{page.title.regions.list.select}">Районы</h2>
                 <p class="input-group" th:each="region : ${regions}">
                     <label class="input--style-4" th:text="${region.name}" th:value="${region.name}" th:id="${region.id}" th:onclick="|selectRegion('${region.id}',this.getAttribute('data'));|"/>
 
                 </p>
                 <p class="input--style-3">
-                    <label th:text="#{label.createNewRegion}" onclick="return location.href = '/newTeam'">buttonForNewCommand</label></p>
+                    <label style="cursor: pointer;" th:text="#{label.createNewRegion}" onclick="return location.href = '/newRegion'">buttonForNewRegion</label></p>
                     <!--     <i class="zmdi zmdi-delete input-icon" th:data="${competition.name}" th:onclick="|deleteCompetition('${competition.id}',this.getAttribute('data'));|"></i>
 
                         ${@environment.getProperty('name.of.the.property')}

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,4 +27,16 @@ public class Region {
     @OneToMany(mappedBy = "region", fetch = FetchType.LAZY)
     private List<Competition> competitions;
 
+
+    @Transactional
+    public List<Competition>getCompetitions(){
+        return this.competitions;
+    }
+
+    @Override
+    public String toString() {
+        return "Region{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

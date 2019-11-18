@@ -50,15 +50,24 @@ public class Team {
     @JoinColumn(name = "id_region")
     private Region region;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+ /*   @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_team",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "competition_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private List<Competition> competitions = new ArrayList<>();
+    private List<Competition> competitions = new ArrayList<>();*/
+
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_competition")
+    private Competition competition;
 
 
-    public void addCompetition(Competition competition) {
-        this.competitions.add(competition);
+    @Override
+    public String toString() {
+        return "Team{" +
+                "teamName='" + teamName + '\'' +
+                ", region=" + region +
+                ", competition=" + competition +
+                '}';
     }
 }
