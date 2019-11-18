@@ -169,6 +169,25 @@ public class TeamController {
     }
 
 
+    @GetMapping(value = "/findTeamsByRegion")
+    public String getTeamsFromRegion(Model model) throws DerffException {
+        validateContext();
+        model.addAttribute("pageTitle", messageSource.getMessage("page.title.selectTeamFromRegion", new Object[]{((Region)context.getFromContext("region")).getName()}, Locale.getDefault()));
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+        }
+        List<Team> teamList=teamService.findAllTeamsByRegion((Region)context.getFromContext("region"));
+
+        model.addAttribute("teams", teamList);
+        model.addAttribute("region", context.getFromContext("region"));
+        model.addAttribute("competition", context.getFromContext("competition"));
+        return "regForms/selectTeamByRegion";
+    }
+
+
+
+
+
 }
  /*  private void prepareFileToSaveIntoDB(Team team){
             try {

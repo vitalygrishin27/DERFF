@@ -1,6 +1,7 @@
 package app.services.impl;
 
 import app.Models.Competition;
+import app.Models.Region;
 import app.Models.Team;
 import app.repository.TeamRepository;
 import app.services.TeamService;
@@ -37,5 +38,10 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Team> findAllTeamsInCompetition(Competition competition) {
         return repository.findAllTeamsInCompetition(competition);
+    }
+
+    @Override
+    public List<Team> findAllTeamsByRegion(Region region) {
+        return repository.findAllTeamsByRegion(region);
     }
 }
