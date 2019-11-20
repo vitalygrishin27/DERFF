@@ -35,7 +35,12 @@ public class TeamServiceImpl implements TeamService {
         return repository.findAll();
     }
 
+
     @Override
+    public void delete(Team team){
+        repository.delete(team);
+    }
+/*    @Override
     public List<Team> findAllTeamsInCompetition(Competition competition) {
         return repository.findAllTeamsInCompetition(competition);
     }
@@ -43,5 +48,5 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Team> findAllTeamsByRegion(Region region) {
         return repository.findAllTeamsByRegion(region);
-    }
+    }*/
 }

@@ -1,0 +1,32 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:fragment="message">
+<div id="msg_pop" onclick="document.getElementById('msg_pop').style.display='none'; return false;">
+    <h4>Внимание! </h4><br/>
+    <div id="errorMessage">
+        Текст ошибки
+    </div>
+</div>
+
+<script th:inline="javascript">
+     /*<![CDATA[*/
+    $(document).ready(function () {
+    var errorMessage = /*[[${errorMessage}]]*/;
+    console.log(errorMessage);
+    if(errorMessage!=null){
+     var delay_popup = 500;
+    var msg_pop = document.getElementById('msg_pop');
+    var msg_pop_text = document.getElementById('errorMessage');
+    msg_pop_text.innerHTML=errorMessage;
+    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+    }
+
+    });
+    /*]]>*/
+
+
+</script>
+
+</div>
+
+</html>

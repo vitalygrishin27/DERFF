@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+
+    <!------ Include the above in your HEAD tag ---------->
+    <!--https://bootsnipp.com/snippets/BxA1B
+    Игроки в команде https://bootsnipp.com/snippets/nNoMz
+    Профиль каждого игрока https://bootsnipp.com/snippets/KGlz3
+    Таблица с фильтрами https://bootsnipp.com/snippets/KB2bD
+
+    -->
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+</head>
+
+<body>
+<div th:insert="/common/message :: message"></div>
+<div class="container">
+    <br>
+    <h4>Чемпионат Дергачевского района 2020</h4>
+    <br>
+    <div class="row" id="ads">
+        <!-- Category Card
+        <p class="input-group" th:each="region : ${regions}">
+                    <label class="input--style-4" th:text="${region.name}" th:value="${region.name}" th:id="${region.id}" th:onclick="|selectRegion('${region.id}',this.getAttribute('data'));|"/>
+
+                </p>
+        -->
+        <div class="col-md-4" th:each="team : ${teams}">
+            <div class="card rounded">
+                <div class="card-image">
+                    <!--    <span class="card-notify-badge">Авангард (Русская Лозовая)</span>   -->
+                    <span class="card-notify-year" th:data="${team.teamName}" th:onclick="|deleteTeam('${team.id}',this.getAttribute('data'));|">Х</span>
+                    <img class="img-fluid"  th:src="${team.symbolString}"
+                        />
+                </div>
+                <!--
+                  th:attr="src=@{${team.symbol}}"
+                 <div class="card-image-overlay m-auto">
+                         <span class="card-detail-badge">Used</span>
+                         <span class="card-detail-badge">$28,000.00</span>
+                         <span class="card-detail-badge">13000 Kms</span>
+                     </div>    -->
+                <div class="card-body text-center">
+                    <div class="ad-title m-auto">
+                        <h5 th:text="${team.teamName}">Name</h5>
+                    </div>
+                    <a class="ad-btn" href="#">Редактировать</a>
+                </div>
+            </div>
+            <br/>
+        </div>
+        <!-- Default to add new tag-->
+        <div class="col-md-4">
+            <div class="card rounded">
+                <div class="card-image">
+                    <!--    <span class="card-notify-badge">Авангард (Русская Лозовая)</span>
+                    <span class="card-notify-year">Х</span>-->
+                    <img class="img-fluid"
+                         th:src="@{/images/new-team.jpg}"
+                         alt="Alternate Text"/>
+                </div>
+                <!--     <div class="card-image-overlay m-auto">
+                         <span class="card-detail-badge">Used</span>
+                         <span class="card-detail-badge">$28,000.00</span>
+                         <span class="card-detail-badge">13000 Kms</span>
+                     </div>    -->
+                <div class="card-body text-center">
+                    <div class="ad-title m-auto">
+                        <h5>Новая команда</h5>
+                    </div>
+                   <a class="ad-btn" href="/newTeam">Добавить</a>
+                </div>
+            </div>
+            <br/>
+        </div>
+
+
+    </div>
+</div>
+<script th:inline="javascript">
+
+    function deleteTeam(teamId, teamName){
+        if(confirm("Вы уверены, что хотите удалить команду "+teamName+"?")){
+             $.ajax({
+                     type: 'DELETE',
+                    url:'/administration/teams',
+                    data:({teamId:teamId}),
+                     success: function(msg){
+                     location.href = "/administration/teams"
+                        }
+                });
+        }
+    }
+</script>
+
+
+</body>
+</html>
+

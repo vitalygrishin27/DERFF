@@ -16,7 +16,9 @@ public interface TeamService {
 
     List<Team> findAllTeams();
 
-    List<Team> findAllTeamsInCompetition(Competition competition);
+    void delete(Team team);
 
-    List<Team> findAllTeamsByRegion(Region region);
+/*    List<Team> findAllTeamsInCompetition(Competition competition);
+
+    List<Team> findAllTeamsByRegion(Region region);*/
 }

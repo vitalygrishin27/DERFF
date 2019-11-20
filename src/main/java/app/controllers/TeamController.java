@@ -52,7 +52,8 @@ public class TeamController {
     public String getTeamsList(Model model) throws DerffException {
         validateContext();
         Competition competition = (Competition) context.getFromContext("competition");
-        List<Team> teams = teamService.findAllTeamsInCompetition(competition);
+   //     List<Team> teams = teamService.findAllTeamsInCompetition(competition);
+        List<Team> teams = teamService.findAllTeams();
         Collections.reverse(teams);
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
@@ -84,7 +85,7 @@ public class TeamController {
         }
     }
 
-    @GetMapping(value = "/newTeam")
+    @GetMapping(value = "/newTeam1")
     public String getTeamForm(Model model) throws DerffException {
         validateContext();
         model.addAttribute("pageTitle", messageSource.getMessage("page.title.team.creating", new Object[]{((Competition)context.getFromContext("competition")).getName(), ((Region)context.getFromContext("region")).getName()}, Locale.getDefault()));
@@ -103,13 +104,13 @@ public class TeamController {
         return "regForms/regForm4Team";
     }
 
-    @PostMapping(value = "/newTeam")
+    @PostMapping(value = "/newTeam1")
     public String postdefault(@ModelAttribute("team") Team team, @ModelAttribute("preDate") String preDate, @ModelAttribute("file") MultipartFile file) throws DerffException {
         validateContext();
         validateTeamInformation(team, preDate, file);
         try {
-            team.setRegion((Region) context.getFromContext("region"));
-            team.setCompetition((Competition) context.getFromContext("competition"));
+        //    team.setRegion((Region) context.getFromContext("region"));
+        //    team.setCompetition((Competition) context.getFromContext("competition"));
             teamService.save(team);
             messageGenerator.setMessage((messageSource.getMessage("success.newTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
@@ -176,7 +177,7 @@ public class TeamController {
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
         }
-        List<Team> teamList=teamService.findAllTeamsByRegion((Region)context.getFromContext("region"));
+        List<Team> teamList=teamService.findAllTeams();
 
         model.addAttribute("teams", teamList);
         model.addAttribute("region", context.getFromContext("region"));

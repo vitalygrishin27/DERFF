@@ -27,12 +27,12 @@ public class Competition {
     @Column(name = "name",nullable = false,unique = true)
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+ /*   @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_team",
             joinColumns = @JoinColumn(name = "competition_id"),
             inverseJoinColumns = @JoinColumn(name = "team_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private List<Team> teams = new ArrayList<>();
+    private List<Team> teams = new ArrayList<>();*/
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_player",
