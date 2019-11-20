@@ -26,7 +26,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Competition findCompetitionById(Long id) {
-        return repository.findById(id).get();
+        return repository.getOne(id);
     }
 
     @Override

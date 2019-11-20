@@ -25,7 +25,7 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     public Region findRegionById(Long id) {
-        return repository.findById(id).get();
+        return repository.getOne(id);
     }
 
     @Override

@@ -48,9 +48,9 @@ public class Competition {
     @Fetch(FetchMode.SUBSELECT)
     private List<Referee>referees = new ArrayList<>();
 
-       @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
+  /*     @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
     private Collection<Game> games;
-
+*/
     @ManyToOne (optional = false)
     @JoinColumn(name = "id_region")
     private Region region;

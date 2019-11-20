@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="DERFF">
+    <meta name="author" content="DERFF">
+    <meta name="keywords" content="DERFF">
+
+    <title th:utext="${titlePage}"></title>
+    <link href="../static/vendor/mdi-font/css/material-design-iconic-font.min.css"
+          th:href="@{/vendor/mdi-font/css/material-design-iconic-font.min.css}" rel="stylesheet" media="all"/>
+    <link href="../static/vendor/font-awesome-4.7/css/font-awesome.min.css"
+          th:href="@{/vendor/font-awesome-4.7/css/font-awesome.min.css}" rel="stylesheet" media="all"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link href="../static/vendor/select2/select2.min.css" th:href="@{/vendor/select2/select2.min.css}" rel="stylesheet"
+          media="all"/>
+    <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
+          rel="stylesheet" media="all"/>
+    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+
+    <script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
+</head>
+<body>
+<div th:insert="/common/message :: message"></div>
+
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+    <div class="wrapper wrapper--w780">
+        <div class="card card-3">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <h3 class="title" th:utext="#{label.calendar}" style="text-align: center">Календарь игр</h3>
+                <form method="POST" enctype="multipart/form-data"> <!--  th:object="${game}" -->
+                    <table cols="3">
+                        <tr>
+                            <td colspan="3">
+                                <div class="input-group">
+                                    <input class="input--style-3 js-datepicker" type="text" placeholder="Дата создания"
+                                           th:value="${preDate}" th:placeholder="#{placeholder.date}" name="preDate"
+                                           required>
+                                    <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="color: #555555;">
+                                <div>Хозяева</div>
+                            </td>
+                            <td></td>
+                            <td style="color: #555555;">
+                                <div>Гости</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="input-group">
+                                    <select id="masterTeam" name="masterTeamName">
+                                        <option th:value="${team.teamName}" th:each="team : ${teams}"
+                                                th:utext="${team.teamName}">Team
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div> &nbsp; &nbsp; &nbsp;</div>
+                            </td>
+                            <td>
+                                <div class="input-group">
+
+                                    <select id="slaveTeam" name="slaveTeamName">
+                                        <option th:value="${team.teamName}" th:each="team : ${teams}"
+                                                th:utext="${team.teamName}">Team
+                                        </option>
+                                    </select>
+
+
+                                    <!-- <input class="input--style-3" type="text" placeholder="Хозяева"
+                                            th:placeholder="#{placeholder.master}" th:value="${game.masterTeam.teamName}" name="masterTeamName"
+                                            required>
+                                     <input class="input--style-3" type="text" placeholder="Гости"
+                                            th:placeholder="#{placeholder.slave}" th:value="${game.slaveTeam.teamName}" name="slaveTeamName"
+                                            required>  -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <div class="p-t-10" style="text-align: center">
+                                    <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">
+                                        Submit
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+
+                <table cols="3" style="color: #555555;">
+                    <tr>
+                        <td colspan="3">
+                            <div>Игры</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>Дата</div>
+                        </td>
+                        <td>
+                            <div>Хозяева</div>
+                        </td>
+                        <td>
+                            <div>Гости</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/vendor/select2/select2.min.js" th:src="@{/vendor/select2/select2.min.js}"></script>
+<script src="../static/vendor/datepicker/moment.min.js" th:src="@{/vendor/datepicker/moment.min.js}"></script>
+<script src="../static/vendor/datepicker/daterangepicker.js"
+        th:src="@{/vendor/datepicker/daterangepicker.js}"></script>
+<script src="../static/js/global.js" th:src="@{/js/global.js}"></script>
+
+</body>
+</html>

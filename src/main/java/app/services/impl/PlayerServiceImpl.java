@@ -22,7 +22,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player getPlayerById(long id) {
-        return repository.findById(id).get();
+        return repository.getOne(id);
     }
 
     @Override

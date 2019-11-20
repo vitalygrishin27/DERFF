@@ -22,7 +22,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team findTeamById(long id) {
-        return repository.findById(id).get();
+        return repository.getOne(id);
     }
 
     @Override

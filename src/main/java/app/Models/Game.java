@@ -32,15 +32,20 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Collection<Goal> goals;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+   /* @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_team",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "team_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private List<Team> teams = new ArrayList<>();
+    private List<Team> teams = new ArrayList<>();*/
 
-    @ManyToOne (optional = false)
-    @JoinColumn(name = "id_competition")
-    private Competition competition;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_team_master")
+    private Team masterTeam =new Team();
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_team_slave")
+    private Team slaveTeam = new Team();
+
 
 }

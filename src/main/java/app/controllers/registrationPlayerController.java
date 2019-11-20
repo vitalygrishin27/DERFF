@@ -49,9 +49,10 @@ public class registrationPlayerController {
         Player player = new Player();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Player()))
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
                 player = (Player) messageGenerator.getTemporaryObjectForMessageWithSetNull();
-            model.addAttribute("preDate", dateToString(player.getBirthday()));
+                model.addAttribute("preDate", dateToString(player.getBirthday()));
+            }
         } else {
             model.addAttribute("preDate", messageSource.getMessage("placeholder.DefaultDate", null, Locale.getDefault()));
         }
@@ -72,7 +73,7 @@ public class registrationPlayerController {
         validatePlayerInformation(player, preDate, teamName, file);
         try {
             playerService.save(player);
-            messageGenerator.setMessage((messageSource.getMessage("success.newPlayer", new Object[]{player.getFirstName()+" "+player.getLastName()}, Locale.getDefault())));
+            messageGenerator.setMessage((messageSource.getMessage("success.newPlayer", new Object[]{player.getFirstName() + " " + player.getLastName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }

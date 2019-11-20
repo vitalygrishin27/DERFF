@@ -1,8 +1,10 @@
 package app.controllers;
 
+import app.Models.Game;
 import app.Models.Team;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
+import app.services.impl.GameServiceImpl;
 import app.services.impl.TeamServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 @Controller
@@ -38,6 +43,9 @@ public class AdministrationController {
     @Autowired
     MessageGenerator messageGenerator;
 
+    @Autowired
+    GameServiceImpl gameService;
+
     @GetMapping(value = "/administration/teams")
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
@@ -52,7 +60,7 @@ public class AdministrationController {
             Team team = teamService.findTeamById(teamId);
             teamService.delete(team);
             messageGenerator.setMessage((messageSource.getMessage("success.deleteTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new DerffException("database", new Object[]{e.getMessage()});
         }
     }
@@ -117,6 +125,74 @@ public class AdministrationController {
         }
 
 
+    }
+
+
+    @GetMapping(value = "/administration/calendar")
+    public String getCalendar(Model model) throws DerffException {
+        Game game = new Game();
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+                game = (Game) messageGenerator.getTemporaryObjectForMessageWithSetNull();
+                model.addAttribute("preDate", dateToString(game.getDate()));
+            }
+        }
+
+        model.addAttribute("game", game);
+        model.addAttribute("games", gameService.findAllGames());
+        model.addAttribute("teams", teamService.findAllTeams());
+        return "administration/calendar";
+    }
+
+    @PostMapping(value = "/administration/calendar")
+    public String addGame(@ModelAttribute("preDate") String preDate, @ModelAttribute("masterTeamName") String masterTeamName, @ModelAttribute("slaveTeamName") String slaveTeamName) throws DerffException {
+        Game newGame = new Game();
+        validateTeamInformation(newGame, preDate, masterTeamName, slaveTeamName);
+        try {
+            gameService.save(newGame);
+            messageGenerator.setMessage((messageSource.getMessage("success.newGame", null, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", newGame, new Object[]{e.getMessage()});
+        }
+        return "redirect:/administration/calendar";
+    }
+
+
+    private void validateTeamInformation(Game newGame, String preDate, String masterTeamName, String slaveTeamName) throws DerffException {
+
+        Team master;
+        Team slave;
+
+        //Date parse
+        try {
+            newGame.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(preDate));
+        } catch (Exception e) {
+            throw new DerffException("date", newGame);
+        }
+
+
+        // validate teams
+        try {
+            master = teamService.findTeamByName(masterTeamName);
+            slave = teamService.findTeamByName(slaveTeamName);
+            newGame.setMasterTeam(master);
+            newGame.setSlaveTeam(slave);
+        } catch (Exception e) {
+            throw new DerffException("game");
+        }
+
+        // validate not same teams
+        if (master.getId() == slave.getId()) {
+            throw new DerffException("sameTeams", newGame);
+        }
+
+
+    }
+
+    private String dateToString(Date date) {
+        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return date == null ? null : formatter.format(date);
     }
 
 }
