@@ -58,10 +58,9 @@ public class AdministrationController {
     public void deleteTeam(@ModelAttribute("teamId") Long teamId) throws DerffException {
         Team team = teamService.findTeamById(teamId);
         if(!gameService.findGameWithTeam(team).isEmpty()){
-            // TODO: 20.11.2019 циклический вызов 
+            // TODO: 20.11.2019 циклический вызов
             throw new DerffException("notAvailableDeleteTeamWithGame",null,new Object[]{team.getTeamName()});
         }
-
         try {
 
             teamService.delete(team);
