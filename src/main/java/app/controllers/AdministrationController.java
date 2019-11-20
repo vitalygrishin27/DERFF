@@ -51,10 +51,10 @@ public class AdministrationController {
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
-        return "administration/teams";
+        return "/administration/teams";
     }
 
-    @DeleteMapping(value = "administration/teams")
+    @DeleteMapping(value = "/administration/teams")
     public void deleteTeam(@ModelAttribute("teamId") Long teamId) throws DerffException {
         try {
             Team team = teamService.findTeamById(teamId);
