@@ -54,7 +54,7 @@ public class AdministrationController {
         return "administration/teams";
     }
 
-    @DeleteMapping(value = "/administration/teams")
+    @DeleteMapping(value = "administration/teams")
     public void deleteTeam(@ModelAttribute("teamId") Long teamId) throws DerffException {
         try {
             Team team = teamService.findTeamById(teamId);
