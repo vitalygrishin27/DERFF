@@ -46,12 +46,12 @@ public class AdministrationController {
     @Autowired
     GameServiceImpl gameService;
 
-    @GetMapping(value = "/administration/teams")
+    @GetMapping(value = "/teams1")
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
-        return "/administration/teams";
+        return "administration/teams";
     }
 
     @DeleteMapping(value = "/administration/teams")
