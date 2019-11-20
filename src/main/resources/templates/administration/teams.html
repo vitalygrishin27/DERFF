@@ -86,16 +86,7 @@
 <script th:inline="javascript">
 
     function deleteTeam(teamId, teamName){
-        if(confirm("Вы уверены, что хотите удалить команду "+teamName+"?")){
-             $.ajax({
-                     type: 'DELETE',
-                    url:'/administration/teams',
-                    data:({teamId:teamId}),
-                     success: function(msg){
-                     location.href = "/administration/teams"
-                        }
-                });
-        }
+
     }
 </script>
 
