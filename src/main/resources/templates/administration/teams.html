@@ -33,10 +33,10 @@
         -->
         <div class="col-md-4" th:each="team : ${teams}">
             <div class="card rounded">
-                <div class="card-image">
+                <div class="card-image" style="text-align:center;">
                     <!--    <span class="card-notify-badge">Авангард (Русская Лозовая)</span>   -->
                     <span class="card-notify-year" th:data="${team.teamName}" th:onclick="|deleteTeam('${team.id}',this.getAttribute('data'));|">Х</span>
-                    <img class="img-fluid"  th:src="${team.symbolString}"
+                    <img  class="img-fluid"  th:src="${team.symbolString}"
                         />
                 </div>
                 <!--

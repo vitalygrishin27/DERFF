@@ -56,8 +56,14 @@ public class AdministrationController {
 
     @DeleteMapping(value = "/administration/teams")
     public void deleteTeam(@ModelAttribute("teamId") Long teamId) throws DerffException {
+        Team team = teamService.findTeamById(teamId);
+        if(!gameService.findGameWithTeam(team).isEmpty()){
+            // TODO: 20.11.2019 циклический вызов 
+            throw new DerffException("notAvailableDeleteTeamWithGame",null,new Object[]{team.getTeamName()});
+        }
+
         try {
-            Team team = teamService.findTeamById(teamId);
+
             teamService.delete(team);
             messageGenerator.setMessage((messageSource.getMessage("success.deleteTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
