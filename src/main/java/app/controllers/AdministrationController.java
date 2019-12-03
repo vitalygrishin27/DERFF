@@ -46,6 +46,14 @@ public class AdministrationController {
     @Autowired
     GameServiceImpl gameService;
 
+    @GetMapping(value = "/")
+    public String getMainPage(Model model) throws DerffException {
+        if (messageGenerator.isActive())
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+
+        return "administration/mainPage";
+    }
+
     @GetMapping(value = "/administration/teams")
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
@@ -57,9 +65,9 @@ public class AdministrationController {
     @DeleteMapping(value = "/administration/teams")
     public void deleteTeam(@ModelAttribute("teamId") Long teamId) throws DerffException {
         Team team = teamService.findTeamById(teamId);
-        if(!gameService.findGameWithTeam(team).isEmpty()){
+        if (!gameService.findGameWithTeam(team).isEmpty()) {
             // TODO: 20.11.2019 циклический вызов
-            throw new DerffException("notAvailableDeleteTeamWithGame",null,new Object[]{team.getTeamName()});
+            throw new DerffException("notAvailableDeleteTeamWithGame", null, new Object[]{team.getTeamName()});
         }
         try {
 
@@ -146,6 +154,8 @@ public class AdministrationController {
 
         model.addAttribute("game", game);
         model.addAttribute("games", gameService.findAllGames());
+        // TODO: 02.12.2019 needed sorting games 
+        
         model.addAttribute("teams", teamService.findAllTeams());
         return "administration/calendar";
     }

@@ -8,6 +8,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -29,6 +30,8 @@ public class Game {
     @Column(name = "date")
     private Date date;
 
+    private String StringDate;
+
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Collection<Goal> goals;
 
@@ -48,4 +51,8 @@ public class Game {
     private Team slaveTeam = new Team();
 
 
+    public String getStringDate() {
+        SimpleDateFormat dateFormat=new SimpleDateFormat("dd.MM");
+        return dateFormat.format(this.getDate());
+    }
 }

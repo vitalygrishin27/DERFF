@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css?family=Arimo');
+.top-menu {
+  position: relative;
+  background: rgba(34,34,34,.2);
+}
+.menu-main {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.menu-main:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.left-item {float: left;}
+.right-item {float: right;}
+.navbar-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+.menu-main a {
+  text-decoration: none;
+  display: block;
+  line-height: 80px;
+  padding: 0 20px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: bold;
+  color: white;
+  transition: .3s linear;
+}
+.menu-main a:hover {background: rgba(0,0,0,.3);}
+
+
+.new {
+  background-color: #1073c9;
+  box-shadow: 0 5px 0 darkblue;
+  color: white;
+  padding: 0.3em 0.7em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.new:hover {
+  background-color: #0a1769;
+  cursor: pointer;
+}
+
+.new:active {
+  box-shadow: none;
+  top: 5px;
+}
+
+
+.info, .success, .warning, .error, .validation {
+			border: 1px solid;
+			margin: 10px 0px;
+			padding: 15px 10px 15px 50px;
+			background-repeat: no-repeat;
+			background-position: 10px center;
+		}
+		.info {
+			color: #00529B;
+			background-color: #BDE5F8;
+			background-image: url('https://i.imgur.com/ilgqWuX.png');
+		}
+		.success {
+			color: #4F8A10;
+			background-color: #DFF2BF;
+			background-image: url('https://i.imgur.com/Q9BGTuy.png');
+		}
+		.warning {
+			color: #9F6000;
+			background-color: #FEEFB3;
+			background-image: url('https://i.imgur.com/Z8q7ww7.png');
+		}
+		.error{
+			color: #D8000C;
+			background-color: #FFBABA;
+			background-image: url('https://i.imgur.com/GnyDvKN.png');
+		}
+		.validation{
+			color: #D63301;
+			background-color: #FFCCBA;
+			background-image: url('https://i.imgur.com/GnyDvKN.png');
+		}
+
+
+
+
+
+
+
+
+@media (max-width: 800px) {
+.menu-main {
+  padding-top: 90px;
+  text-align: center;
+}
+.navbar-logo {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+}
+.menu-main li {
+  float: none;
+  display: inline-block;
+}
+.menu-main a {
+  line-height: normal;
+  padding: 20px 15px;
+  font-size: 16px;
+}
+}
+@media (max-width: 630px) {
+.menu-main li {display: block;}
+}

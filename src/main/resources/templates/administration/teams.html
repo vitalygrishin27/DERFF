@@ -16,13 +16,15 @@
     -->
     <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
     <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 
 <body>
+<th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
 <div class="container">
     <br>
-    <h4>Чемпионат Дергачевского района 2020</h4>
+    <h4 style="text-align:center; color: #ffffff;">Чемпионат Дергачевского района 2020</h4>
     <br>
     <div class="row" id="ads">
         <!-- Category Card
@@ -31,7 +33,7 @@
 
                 </p>
         -->
-        <div class="col-md-4" th:each="team : ${teams}">
+        <div class="col-md-4" th:each="team : ${teams}" style="opacity: 0.85;">
             <div class="card rounded">
                 <div class="card-image" style="text-align:center;">
                     <!--    <span class="card-notify-badge">Авангард (Русская Лозовая)</span>   -->

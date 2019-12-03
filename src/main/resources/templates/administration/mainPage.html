@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
+</head>
+
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+
+</body>
+</html>
+

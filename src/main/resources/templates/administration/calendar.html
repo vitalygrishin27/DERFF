@@ -97,7 +97,7 @@
                     </table>
                 </form>
 
-                <table cols="3" style="color: #555555;">
+                <table cols="3" style="color: #555555; border:1px">
                     <tr>
                         <td colspan="3">
                             <div>Игры</div>
@@ -114,11 +114,40 @@
                             <div>Гости</div>
                         </td>
                     </tr>
+
+                    <tr th:each="game : ${games}" th:id="${game.id}" style="cursor:pointer" th:onclick="|selectGame('${game.id}');|">
+                        <td th:text="${game.stringDate}"></td>
+                        <td th:text="${game.masterTeam.teamName}"></td>
+                        <td th:text="${game.slaveTeam.teamName}"></td>
+
+                    </tr>
+
                 </table>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+      function selectGame(gameId){
+    $.ajax({
+        type: 'POST',
+        url:'/selectTeamForCompetition',
+        data:({teamId:teamId}),
+         success: function(msg,url){
+        if(msg==null && url!=null){
+        location.href = url;
+        }else{
+        location.href = "/selectTeamForCompetition";
+        }
+
+        }
+    });
+
+    }
+</script>
+
 
 <script src="../static/vendor/select2/select2.min.js" th:src="@{/vendor/select2/select2.min.js}"></script>
 <script src="../static/vendor/datepicker/moment.min.js" th:src="@{/vendor/datepicker/moment.min.js}"></script>
