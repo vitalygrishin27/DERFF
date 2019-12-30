@@ -174,6 +174,19 @@ public class AdministrationController {
     }
 
 
+    @DeleteMapping(value = "/administration/calendar")
+    public void deleteGame(Integer gameId) throws DerffException {
+        Game game = gameService.findGameById(gameId);
+        try {
+            gameService.delete(game);
+            messageGenerator.setMessage((messageSource.getMessage("success.deleteGame", null, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+    }
+
+
     private void validateTeamInformation(Game newGame, String preDate, String masterTeamName, String slaveTeamName) throws DerffException {
 
         Team master;

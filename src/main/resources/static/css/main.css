@@ -585,6 +585,37 @@ input {
   display: table-cell;
 }
 
+#calendar {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 14px;
+  border-radius: 10px;
+  border-spacing: 0;
+  text-align: center;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: white;
+}
+
+.th1 {
+background: #BCEBDD;
+color: white;
+text-shadow: 0 1px 1px #2D2020;
+padding: 10px 20px;
+border-style: solid;
+border-width: 0 1px 1px 0;
+border-color: white;
+}
+
+.td1 {
+border-style: solid;
+border-width: 0 1px 1px 0;
+border-color: white;
+padding: 10px 20px;
+background: #F8E391;
+}
+
+
+
 @media (max-width: 767px) {
   .card-3 {
     display: block;

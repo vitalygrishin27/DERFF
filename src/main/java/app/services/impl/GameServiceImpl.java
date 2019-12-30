@@ -32,7 +32,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void delete(Game game) {
-
+    repository.delete(game);
     }
     @Override
     public List<Game> findGameWithTeam(Team team){

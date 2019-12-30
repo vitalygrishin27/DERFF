@@ -33,12 +33,12 @@
             <div class="card-body">
                 <h3 class="title" th:utext="#{label.calendar}" style="text-align: center">Календарь игр</h3>
                 <form method="POST" enctype="multipart/form-data"> <!--  th:object="${game}" -->
-                    <table cols="3">
+                    <table cols="5">
                         <tr>
-                            <td colspan="3">
+                            <td colspan="5">
                                 <div class="input-group">
                                     <input class="input--style-3 js-datepicker" type="text" placeholder="Дата создания"
-                                           th:value="${preDate}" th:placeholder="#{placeholder.date}" name="preDate"
+                                           th:value="${preDate}" th:placeholder="#{placeholder.shortDate}" name="preDate"
                                            required>
                                     <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                 </div>
@@ -48,6 +48,8 @@
                             <td style="color: #555555;">
                                 <div>Хозяева</div>
                             </td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td style="color: #555555;">
                                 <div>Гости</div>
@@ -86,40 +88,51 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">
+                            <td>
                                 <div class="p-t-10" style="text-align: center">
-                                    <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">
+                                    <button style="visibility: hidden;" class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">
                                         Submit
                                     </button>
                                 </div>
                             </td>
                         </tr>
                     </table>
+                    <div style="text-align: center">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">
+                            Submit
+                        </button>
+                    </div>
+
                 </form>
 
-                <table cols="3" style="color: #555555; border:1px">
+            </br>
+                <table id="calendar" cols="5" style="color: #555555; border:1px">
                     <tr>
-                        <td colspan="3">
+                        <td th:class="td1" colspan="5">
                             <div>Игры</div>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td th:class="td1">
                             <div>Дата</div>
                         </td>
-                        <td>
+                        <td th:class="td1">
                             <div>Хозяева</div>
                         </td>
-                        <td>
+                        <td th:class="td1">
                             <div>Гости</div>
                         </td>
+                        <td th:class="td1"></td>
+                        <td th:class="td1"></td>
+
                     </tr>
 
                     <tr th:each="game : ${games}" th:id="${game.id}" style="cursor:pointer" th:onclick="|selectGame('${game.id}');|">
-                        <td th:text="${game.stringDate}"></td>
-                        <td th:text="${game.masterTeam.teamName}"></td>
-                        <td th:text="${game.slaveTeam.teamName}"></td>
-
+                        <td th:class="td1" th:text="${game.stringDate}"></td>
+                        <td th:class="td1" th:text="${game.masterTeam.teamName}"></td>
+                        <td th:class="td1" th:text="${game.slaveTeam.teamName}"></td>
+                        <td th:class="td1">Результаты</td>
+                        <td th:class="td1" th:onclick="|deleteGame('${game.id}',this.getAttribute('data'));|">Удалить</td>
                     </tr>
 
                 </table>
@@ -129,7 +142,7 @@
 </div>
 
 
-<script>
+<script th:inline="javascript">
       function selectGame(gameId){
     $.ajax({
         type: 'POST',
@@ -146,6 +159,20 @@
     });
 
     }
+
+    function deleteGame(gameId){
+        if(confirm("Вы уверены, что хотите удалить игру?")){
+             $.ajax({
+                    type: 'DELETE',
+                    url:'/administration/calendar',
+                    data:({gameId:gameId}),
+                     success: function(msg){
+                     location.href = "/administration/calendar"
+                        }
+                });
+        }
+    }
+
 </script>
 
 
