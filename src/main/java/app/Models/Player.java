@@ -36,7 +36,7 @@ public class Player {
     private Date birthday;
 
     @Column(name = "id_card", unique = true)
-    private int idCard;
+    private Integer idCard;
 
     @Column(name = "is_legionary")
     private Boolean isLegionary;

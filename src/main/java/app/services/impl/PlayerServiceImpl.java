@@ -26,6 +26,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public Player getPlayerByIdCard(int id) {
+        return repository.findByIdCard(id);
+    }
+
+    @Override
     public List<Player> findAllPlayers() {
         return repository.findAll();
     }

@@ -1,10 +1,12 @@
 package app.controllers;
 
 import app.Models.Game;
+import app.Models.Player;
 import app.Models.Team;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.GameServiceImpl;
+import app.services.impl.PlayerServiceImpl;
 import app.services.impl.TeamServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +15,12 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -30,6 +30,9 @@ public class AdministrationController {
 
     @Value("${maxUploadFileSizeTeamSymbol}")
     private Long maxUploadFileSizeTeamSymbol;
+
+    @Value("${maxUploadFileSizePlayerPhoto}")
+    private Long maxUploadFileSizePlayerPhoto;
 
     @Value("${availableFileExtension}")
     private String availableFileExtension;
@@ -41,10 +44,14 @@ public class AdministrationController {
     TeamServiceImpl teamService;
 
     @Autowired
+    PlayerServiceImpl playerService;
+
+    @Autowired
     MessageGenerator messageGenerator;
 
     @Autowired
     GameServiceImpl gameService;
+
 
     @GetMapping(value = "/")
     public String getMainPage(Model model) throws DerffException {
@@ -155,7 +162,7 @@ public class AdministrationController {
         model.addAttribute("game", game);
         model.addAttribute("games", gameService.findAllGames());
         // TODO: 02.12.2019 needed sorting games 
-        
+
         model.addAttribute("teams", teamService.findAllTeams());
         return "administration/calendar";
     }
@@ -186,6 +193,105 @@ public class AdministrationController {
 
     }
 
+    @GetMapping(value = "/administration/players")
+    public String getListOfPlayers(Model model) throws DerffException {
+        if (messageGenerator.isActive())
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+        model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("players", playerService.findAllPlayers());
+        // model.addAttribute("players", players);
+        return "administration/players";
+    }
+
+    @GetMapping(value = "/administration/newPlayer")
+    public String getFormforNewPlayer(Model model) throws DerffException {
+        if (messageGenerator.isActive()) {
+                        model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            Object obj=messageGenerator.getTemporaryObjectForMessage();
+            ((Player)obj).setBirthday(null);
+            model.addAttribute("player", obj);
+           // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
+
+        } else {
+            model.addAttribute("player", new Player());
+        }
+        model.addAttribute("teams", teamService.findAllTeams());
+
+        // model.addAttribute("players", playerService.findAllPlayers());
+        // model.addAttribute("players", players);
+        return "administration/newPlayer";
+    }
+
+
+    @PostMapping(value = "/administration/newPlayer")
+    public String saveNewPlayer(@ModelAttribute("player") Player player,
+                                // @ModelAttribute("team") Team team,
+                                // @ModelAttribute("preDate") String preDate,
+                                @ModelAttribute("teamName") String teamName,
+                                // @ModelAttribute("isLegionary") String isLegionary,
+                                @ModelAttribute("file") MultipartFile file) throws DerffException {
+
+        validatePlayerInformation(player, teamName, file);
+        try {
+            playerService.save(player);
+            messageGenerator.setMessage((messageSource.getMessage("success.newPlayer", new Object[]{player.getFirstName() + " " + player.getLastName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", player, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/newPlayer";
+    }
+
+
+    private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
+
+        //Date validate
+        if (player.getBirthday() == null) {
+            throw new DerffException("date", player);
+        }
+
+        //Team validation
+        if (teamName == null || teamName.isEmpty() || teamName.equals(messageSource.getMessage("placeholder.team", null, Locale.getDefault()))) {
+            throw new DerffException("notSelectedTeam", player);
+        } else {
+            try {
+                player.setTeam(teamService.findTeamByName(teamName));
+            } catch (Exception e) {
+                throw new DerffException("database", player, new Object[]{e.getMessage()});
+            }
+        }
+
+        // Id card validation
+        if (player.getIdCard()!=null && playerService.getPlayerByIdCard(player.getIdCard()) != null) {
+            throw new DerffException("IdCardNotCorrect", player);
+        }
+
+        // File size validation
+        if (file.getSize() > maxUploadFileSizePlayerPhoto)
+            throw new DerffException("maxUploadFileSizePlayerPhoto", player, new Object[]{maxUploadFileSizePlayerPhoto, file.getSize()});
+
+        // File extension validation
+        if (file.getSize() > 0) {
+            boolean isCorrectFileExtention = false;
+            for (String regex : availableFileExtension.split(";")
+            ) {
+                if (file.getOriginalFilename().endsWith(regex)) {
+                    isCorrectFileExtention = true;
+                    break;
+                }
+            }
+            if (!isCorrectFileExtention)
+                throw new DerffException("notAvailableFileExtension", player, new Object[]{availableFileExtension});
+
+            //Set byte[] to Player photo
+            try {
+                player.setPhoto(file.getBytes());
+            } catch (IOException e) {
+                throw new DerffException("fileGetBytes", player, new Object[]{e.getMessage()});
+            }
+        }
+
+    }
 
     private void validateTeamInformation(Game newGame, String preDate, String masterTeamName, String slaveTeamName) throws DerffException {
 

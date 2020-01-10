@@ -11,6 +11,8 @@ public interface PlayerService {
 
     Player getPlayerById(long id);
 
+    Player getPlayerByIdCard(int id);
+
     List<Player> findAllPlayers();
 
     List<Player> findAllPlayersInTeamForCurrentCompetition(Competition competition, Team team);

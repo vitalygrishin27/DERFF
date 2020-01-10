@@ -13,4 +13,7 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
 
     @Query("Select p from Player p, IN (p.competitions) comp where comp in(:competition) and p.team =:team")
     List<Player> findAllPlayersInTeamForCurrentCompetition(@Param("competition")Competition competition, @Param("team") Team team);
+
+    @Query("Select p from Player p where p.idCard =:idCard")
+    Player findByIdCard(@Param("idCard") int idCard);
 }
