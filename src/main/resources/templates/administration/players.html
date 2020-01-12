@@ -50,6 +50,14 @@
                 <label class="input--style-3" th:text="${player.lastName}" th:value="${player.lastName}" th:id="${player.id}" th:onclick="|selectPlayer('${player.id}',this.getAttribute('data'));|"/>
             </div>
         </td>
+        <td>
+            <a th:href="|/administration/editPlayer?id=${player.id}|">Редактировать</a>
+
+        </td>
+        <td> </td>
+        <td>
+            <a th:href="|/administration/deletePlayer?id=${player.id}|">Удалить</a>
+        </td>
     </tr>
 </table>
 

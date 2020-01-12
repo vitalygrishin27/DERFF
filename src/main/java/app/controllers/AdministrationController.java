@@ -205,16 +205,18 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/newPlayer")
     public String getFormforNewPlayer(Model model) throws DerffException {
+        Player player=new Player();
         if (messageGenerator.isActive()) {
                         model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            Object obj=messageGenerator.getTemporaryObjectForMessage();
-            ((Player)obj).setBirthday(null);
-            model.addAttribute("player", obj);
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Player())){
+               player=(Player)messageGenerator.getTemporaryObjectForMessage();
+                player.setBirthday(null);
+            }
+
            // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
 
-        } else {
-            model.addAttribute("player", new Player());
         }
+        model.addAttribute("player", player);
         model.addAttribute("teams", teamService.findAllTeams());
 
         // model.addAttribute("players", playerService.findAllPlayers());
