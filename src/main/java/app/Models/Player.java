@@ -35,6 +35,9 @@ public class Player {
     @Column(name = "birthday")
     private Date birthday;
 
+    @Column(name = "stringBirthday")
+    private String stringBirthday;
+
     @Column(name = "id_card", unique = true)
     private Integer idCard;
 

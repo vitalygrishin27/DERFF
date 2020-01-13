@@ -79,7 +79,8 @@ public class AdministrationController {
         try {
 
             teamService.delete(team);
-            messageGenerator.setMessage((messageSource.getMessage("success.deleteTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.deleteTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", new Object[]{e.getMessage()});
         }
@@ -90,7 +91,8 @@ public class AdministrationController {
         Team team = new Team();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Team()))
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Team()))
                 team = (Team) messageGenerator.getTemporaryObjectForMessageWithSetNull();
         }
         model.addAttribute("team", team);
@@ -102,7 +104,8 @@ public class AdministrationController {
         validateTeamInformation(team, file);
         try {
             teamService.save(team);
-            messageGenerator.setMessage((messageSource.getMessage("success.newTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.newTeam", new Object[]{team.getTeamName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", team, new Object[]{e.getMessage()});
         }
@@ -153,7 +156,8 @@ public class AdministrationController {
         Game game = new Game();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
                 game = (Game) messageGenerator.getTemporaryObjectForMessageWithSetNull();
                 model.addAttribute("preDate", dateToString(game.getDate()));
             }
@@ -205,15 +209,16 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/newPlayer")
     public String getFormforNewPlayer(Model model) throws DerffException {
-        Player player=new Player();
+        Player player = new Player();
         if (messageGenerator.isActive()) {
-                        model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator.getTemporaryObjectForMessage().getClass().isInstance(new Player())){
-               player=(Player)messageGenerator.getTemporaryObjectForMessage();
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
+                player = (Player) messageGenerator.getTemporaryObjectForMessage();
                 player.setBirthday(null);
             }
 
-           // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
+            // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
 
         }
         model.addAttribute("player", player);
@@ -236,7 +241,9 @@ public class AdministrationController {
         validatePlayerInformation(player, teamName, file);
         try {
             playerService.save(player);
-            messageGenerator.setMessage((messageSource.getMessage("success.newPlayer", new Object[]{player.getFirstName() + " " + player.getLastName()}, Locale.getDefault())));
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.newPlayer", new Object[]{player.getFirstName() + " " + player
+                            .getLastName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
@@ -244,16 +251,67 @@ public class AdministrationController {
         return "redirect:/administration/newPlayer";
     }
 
+    @GetMapping(value = "/administration/editPlayer/{id}")
+    public String getFormforEditPlayer(Model model, @PathVariable("id") long id) throws DerffException {
+        Player player = new Player();
+        try {
+            player = playerService.getPlayerById(id);
+        } catch (Exception e) {
+            throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
+        }
+
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
+                player = (Player) messageGenerator.getTemporaryObjectForMessage();
+                player.setBirthday(null);
+            }
+        }
+        model.addAttribute("player", player);
+        model.addAttribute("teams", teamService.findAllTeams());
+
+        return "administration/newPlayer";
+    }
+
+    @PostMapping(value = "/administration/editPlayer/{id}")
+    public String savePlayerAfterEdit(@ModelAttribute("player") Player player,
+                                // @ModelAttribute("team") Team team,
+                                // @ModelAttribute("preDate") String preDate,
+                                @ModelAttribute("teamName") String teamName,
+                                // @ModelAttribute("isLegionary") String isLegionary,
+                                @ModelAttribute("file") MultipartFile file) throws DerffException {
+
+        validatePlayerInformation(player, teamName, file);
+        try {
+            playerService.update(player);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.updatePlayer", new Object[]{player.getFirstName() + " " + player
+                            .getLastName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", player, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/players";
+    }
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
 
         //Date validate
-        if (player.getBirthday() == null) {
+        if (player.getStringBirthday() == null) {
             throw new DerffException("date", player);
         }
 
+        try {
+            player.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(player.getStringBirthday()));
+        } catch (ParseException e) {
+            throw new DerffException("date", player);
+        }
+
+
         //Team validation
-        if (teamName == null || teamName.isEmpty() || teamName.equals(messageSource.getMessage("placeholder.team", null, Locale.getDefault()))) {
+        if (teamName == null || teamName.isEmpty() || teamName
+                .equals(messageSource.getMessage("placeholder.team", null, Locale.getDefault()))) {
             throw new DerffException("notSelectedTeam", player);
         } else {
             try {
@@ -264,7 +322,7 @@ public class AdministrationController {
         }
 
         // Id card validation
-        if (player.getIdCard()!=null && playerService.getPlayerByIdCard(player.getIdCard()) != null) {
+        if (player.getIdCard() != null && playerService.getPlayerByIdCard(player.getIdCard()) != null) {
             throw new DerffException("IdCardNotCorrect", player);
         }
 

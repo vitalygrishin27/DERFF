@@ -39,4 +39,14 @@ public class PlayerServiceImpl implements PlayerService {
     public List<Player> findAllPlayersInTeamForCurrentCompetition(Competition competition, Team team) {
         return repository.findAllPlayersInTeamForCurrentCompetition(competition,team);
     }
+
+    @Override
+    public void update(Player player) {
+        repository.update(player.getId(),player.getLastName(),player.getFirstName(),player.getSecondName(),player.getBirthday(),player.getStringBirthday(),player.getIdCard(),player.getIsLegionary(),player.getRegistration(),player.getPhoto(),player.getTeam());
+    }
+
+  //  @Transactional
+  //  @Modifying
+  //  @Query("update User set login = :login, password = :password, role = :role where id = :id")
+  //  void update(@Param("login") String login, @Param("password") String password, @Param("role") String role, @Param("id") long id);
 }
