@@ -295,6 +295,25 @@ public class AdministrationController {
         return "redirect:/administration/players";
     }
 
+    @GetMapping(value = "/administration/deletePlayer/{id}")
+    public String deletePlayer(Model model, @PathVariable("id") long id) throws DerffException {
+        Player player = new Player();
+        try {
+            player = playerService.getPlayerById(id);
+        } catch (Exception e) {
+            throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
+        }
+        try {
+        playerService.delete(player);
+        } catch (Exception e) {
+            throw new DerffException("database", player, new Object[]{e.getMessage()});
+        }
+
+
+        return "redirect:/administration/players";
+    }
+
+
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
 
         //Date validate

@@ -25,4 +25,6 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     @Query("UPDATE Player p SET p.lastName = ?2, p.firstName = ?3, p.secondName = ?4, p.birthday = ?5, p.stringBirthday = ?6, p.idCard = ?7, p.isLegionary = ?8, p.registration = ?9,  p.photo = ?10,  p.team = ?11 WHERE p.id = ?1")
     void update(Long id, String lastName, String firstName, String secondName, Date birthday, String stringBirthday, Integer idCard,Boolean isLegionary,String registration,  byte[] photo,Team team);
    // void update(@Param("player") Player player);
+
+
 }

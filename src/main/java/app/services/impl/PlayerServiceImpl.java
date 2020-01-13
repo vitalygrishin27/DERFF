@@ -45,7 +45,12 @@ public class PlayerServiceImpl implements PlayerService {
         repository.update(player.getId(),player.getLastName(),player.getFirstName(),player.getSecondName(),player.getBirthday(),player.getStringBirthday(),player.getIdCard(),player.getIsLegionary(),player.getRegistration(),player.getPhoto(),player.getTeam());
     }
 
-  //  @Transactional
+    @Override
+    public void delete(Player player) {
+        repository.delete(player);
+    }
+
+    //  @Transactional
   //  @Modifying
   //  @Query("update User set login = :login, password = :password, role = :role where id = :id")
   //  void update(@Param("login") String login, @Param("password") String password, @Param("role") String role, @Param("id") long id);
