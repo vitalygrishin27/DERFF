@@ -20,6 +20,7 @@
     <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
           rel="stylesheet" media="all"/>
     <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+    <script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
 </head>
 <body>
 
@@ -36,30 +37,36 @@
     <table>
         <tr>
             <td>
-                <select id="team" name="teamName">
+                <select id="team" name="teamName" th:onchange="show()">
                     <option th:value="${team.teamName}" th:each="team : ${teams}"
-                            th:utext="${team.teamName}">Team
+                            th:utext="${team.teamName}" >Team
                     </option>
                 </select></td>
         </tr>
     </table>
-<table>
-    <tr th:each="player : ${players}">
-        <td>
-            <div>
-                <label class="input--style-3" th:text="${player.lastName}" th:value="${player.lastName}" th:id="${player.id}" th:onclick="|selectPlayer('${player.id}',this.getAttribute('data'));|"/>
-            </div>
-        </td>
-        <td>
-            <a th:href="|/administration/editPlayer/${player.id}|">Редактировать</a>
+    <div id="block">
+        <table>
+            <tr th:each="player : ${players}">
+                <td>
+                    <div>
+                        <label class="input--style-3" th:text="${player.lastName}" th:value="${player.lastName}"
+                               th:id="${player.id}"
+                               th:onclick="|selectPlayer('${player.id}',this.getAttribute('data'));|"/>
+                    </div>
+                </td>
+                <td>
+                    <a th:href="|/administration/editPlayer/${player.id}|">Редактировать</a>
 
-        </td>
-        <td> </td>
-        <td>
-            <a th:href="|/administration/deletePlayer/${player.id}|" onclick="return confirm('Вы уверены, что хотите удалить игрока?')" th:onclick="return confirm('Вы уверены, что хотите удалить игрока?')">Удалить</a>
-        </td>
-    </tr>
-</table>
+                </td>
+                <td></td>
+                <td>
+                    <a th:href="|/administration/deletePlayer/${player.id}|"
+                       onclick="return confirm('Вы уверены, что хотите удалить игрока?')"
+                       th:onclick="return confirm('Вы уверены, что хотите удалить игрока?')">Удалить</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </div>
 
@@ -133,5 +140,19 @@ if(confirm("Вы уверены, что хотите удалить сезон "
 }
 }
 </script> -->
+
+
+<script>
+        function show()
+        {
+          $.ajax({
+                url: "/administration/test", // загружает вот это страницу каждую минуту
+                cache: false,
+                success: function(html){
+                    $("#content").html(html);
+                }
+            });
+        }
+</script>
 </body>
 </html>
