@@ -23,6 +23,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -202,31 +203,22 @@ public class AdministrationController {
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
-        model.addAttribute("players", playerService.findAllPlayers());
+       // model.addAttribute("players", playerService.findAllPlayers());
         // model.addAttribute("players", players);
         return "administration/players";
     }
 
-    @GetMapping(value = "/administration/test")
-    public String getTest(Model model) throws DerffException {
-        Player player = new Player();
-        if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
-                    .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
-                player = (Player) messageGenerator.getTemporaryObjectForMessage();
-                player.setBirthday(null);
-            }
+    @PostMapping(value = "/administration/playerListByTeam")
+    public String getPlayersByTeam(Model model, @ModelAttribute("teamName") String teamName) throws DerffException {
+        List players=playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
 
-            // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
-
-        }
-        model.addAttribute("player", player);
-        model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("players", players);
+       // model.addAttribute("teams", teamService.findAllTeams());
 
         // model.addAttribute("players", playerService.findAllPlayers());
-        // model.addAttribute("players", players);
-        return "administration/newPlayer";
+         //model.addAttribute("player", new Player());
+        return "administration/playersByTeam";
+       // return "efewfewfewf";
     }
 
     @GetMapping(value = "/administration/newPlayer")

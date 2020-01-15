@@ -3,156 +3,79 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="DERFF">
-    <meta name="author" content="DERFF">
-    <meta name="keywords" content="DERFF">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-    <title th:utext="#{page.title.players.list}"></title>
-    <link href="../static/vendor/mdi-font/css/material-design-iconic-font.min.css"
-          th:href="@{/vendor/mdi-font/css/material-design-iconic-font.min.css}" rel="stylesheet" media="all"/>
-    <link href="../static/vendor/font-awesome-4.7/css/font-awesome.min.css"
-          th:href="@{/vendor/font-awesome-4.7/css/font-awesome.min.css}" rel="stylesheet" media="all"/>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
-          rel="stylesheet">
-    <link href="../static/vendor/select2/select2.min.css" th:href="@{/vendor/select2/select2.min.css}" rel="stylesheet"
-          media="all"/>
-    <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
-          rel="stylesheet" media="all"/>
-    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
-    <script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
+
+    <!------ Include the above in your HEAD tag ---------->
+    <!--https://bootsnipp.com/snippets/BxA1B
+    Игроки в команде https://bootsnipp.com/snippets/nNoMz
+    Профиль каждого игрока https://bootsnipp.com/snippets/KGlz3
+    Таблица с фильтрами https://bootsnipp.com/snippets/KB2bD
+
+    -->
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 <body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
 
-<div id="msg_pop" onclick="document.getElementById('msg_pop').style.display='none'; return false;">
-    <h4>Внимание!</h4><br/>
-    <div id="errorMessage">
-        Текст ошибки
-    </div>
-</div>
 <div>
-    <a href="/administration/newPlayer">Добавить нового игрока</a>
-</div>
-<div>
-    <table>
+    <table class="table_dark">
         <tr>
             <td>
-                <select id="team" name="teamName" th:onchange="show()">
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" href="/administration/newPlayer">Добавить нового игрока</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select id="team" name="teamName" th:onchange="show()" style="width:100%">
                     <option th:value="${team.teamName}" th:each="team : ${teams}"
-                            th:utext="${team.teamName}" >Team
+                            th:utext="${team.teamName}">Team
                     </option>
                 </select></td>
         </tr>
     </table>
-    <div id="block">
-        <table>
-            <tr th:each="player : ${players}">
-                <td>
-                    <div>
-                        <label class="input--style-3" th:text="${player.lastName}" th:value="${player.lastName}"
-                               th:id="${player.id}"
-                               th:onclick="|selectPlayer('${player.id}',this.getAttribute('data'));|"/>
-                    </div>
-                </td>
-                <td>
-                    <a th:href="|/administration/editPlayer/${player.id}|">Редактировать</a>
-
-                </td>
-                <td></td>
-                <td>
-                    <a th:href="|/administration/deletePlayer/${player.id}|"
-                       onclick="return confirm('Вы уверены, что хотите удалить игрока?')"
-                       th:onclick="return confirm('Вы уверены, что хотите удалить игрока?')">Удалить</a>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <div id="block"/>
 
 </div>
-
-<!--
-<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
-    <div class="wrapper wrapper--w780">
-        <div class="card card-3">
-            <div class="card-heading"></div>
-            <div class="card-body">
-                <h2 class="title" th:utext="#{page.title.competitions.list}">Сезоны</h2>
-                <p class="input-group" th:each="competition : ${competitions}">
-                    <label class="input--style-4" th:text="${competition.name}" th:value="${competition.name}" th:id="${competition.id}" th:onclick="|selectCompetition('${competition.id}',this.getAttribute('data'));|"/>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script src="../static/vendor/select2/select2.min.js" th:src="@{/vendor/select2/select2.min.js}"></script>
-<script src="../static/vendor/datepicker/moment.min.js" th:src="@{/vendor/datepicker/moment.min.js}"></script>
-<script src="../static/vendor/datepicker/daterangepicker.js" th:src="@{/vendor/datepicker/daterangepicker.js}"></script>
-<script src="../static/js/global.js" th:src="@{/js/global.js}"></script>
-<script th:inline="javascript">
-
-
-     /*<![CDATA[*/
-    $(document).ready(function () {
-    var errorMessage = /*[[${errorMessage}]]*/;
-    console.log(errorMessage);
-    if(errorMessage!=null){
-     var delay_popup = 500;
-    var msg_pop = document.getElementById('msg_pop');
-    var msg_pop_text = document.getElementById('errorMessage');
-    msg_pop_text.innerHTML=errorMessage;
-    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
-    }
-
-    });
-    /*]]>*/
-
-
-    function selectCompetition(competitionId){
-    $.ajax({
-        type: 'POST',
-        url:'/selectCompetition',
-        data:({competitionId:competitionId}),
-         success: function(data){
-         var obj = jQuery.parseJSON(data);
-
-        if(obj.msg==null && obj.url!=null){
-        location.href = obj.url;
-        }
-
-        }
-    });
-
-    }
-
-function deleteCompetition(competitionId, competitionName){
-if(confirm("Вы уверены, что хотите удалить сезон "+competitionName+" и всю информацию связанную с ним?")){
-    $.ajax({
-        type: 'POST',
-        url:'/competitions',
-        data:({competitionId:competitionId, command:'delete'}),
-         success: function(msg){
-        location.href = "/competitions"
-        }
-    });
-}
-}
-</script> -->
-
 
 <script>
-        function show()
-        {
-          $.ajax({
-                url: "/administration/test", // загружает вот это страницу каждую минуту
-                cache: false,
-                success: function(html){
-                    $("#content").html(html);
-                }
-            });
+function show(teamName) {
+    var t = $("#team").val();
+    $.ajax({
+        type: 'POST',
+        url: "/administration/playerListByTeam", // загружает вот это страницу каждую минуту
+        data: ({
+            teamName: t
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
         }
+    });
+}
+
+$(document).ready(function() {
+
+    var t = $("#team").val();
+    $.ajax({
+        type: 'POST',
+        url: "/administration/playerListByTeam", // загружает вот это страницу каждую минуту
+        data: ({
+            teamName: t
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+})
 </script>
 </body>
 </html>

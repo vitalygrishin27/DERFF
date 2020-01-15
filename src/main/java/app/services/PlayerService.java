@@ -17,6 +17,8 @@ public interface PlayerService {
 
     List<Player> findAllPlayersInTeamForCurrentCompetition(Competition competition, Team team);
 
+    List<Player> findAllPlayersInTeam(Team team);
+
     void update(Player player);
 
     void delete(Player player);
