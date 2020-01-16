@@ -7,6 +7,7 @@ import app.services.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -37,5 +38,10 @@ public class GameServiceImpl implements GameService {
     @Override
     public List<Game> findGameWithTeam(Team team){
         return repository.findGameWithTeam(team);
+    }
+
+    @Override
+    public List<Game> findGamesByDate(Date date) {
+        return repository.findGamesByDate(date);
     }
 }

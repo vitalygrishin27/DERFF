@@ -33,24 +33,19 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h3 class="title" th:utext="#{label.player.editing}">Редактировать данные</h3>
-                <form method="POST" enctype="multipart/form-data" th:object="${player}">
+                <h3 class="title" th:utext="#{label.game.creating}">Новая игра</h3>
+                <form method="POST" enctype="multipart/form-data" th:object="${game}">
                     <div class="input-group">
-                        <input class="input--style-3" type="text" placeholder="Фамилия"
-                               th:placeholder="#{placeholder.lastName}" th:value="${player.lastName}" name="lastName"
+                        <input class="input--style-3" type="text" placeholder="Хозяева"
+                               th:placeholder="#{placeholder.master}" th:value="${game.masterTeam.teamName}" name="masterTeam"
                                required>
                     </div>
                     <div class="input-group">
-                        <input class="input--style-3" type="text" placeholder="Имя"
-                               th:placeholder="#{placeholder.firstName}" th:value="${player.firstName}" name="firstName"
+                        <input class="input--style-3" type="text" placeholder="Гости"
+                               th:placeholder="#{placeholder.slave}" th:value="${game.slaveTeam.teamName}" name="slaveTeam"
                                required>
                     </div>
-                    <div class="input-group">
-                        <input class="input--style-3" type="text" placeholder="Отчество"
-                               th:placeholder="#{placeholder.secondName}" th:value="${player.secondName}"
-                               name="secondName"
-                               required>
-                    </div>
+
                     <div class="input-group">
                         <select id="team" name="teamName">
                             <option th:value="${team.teamName}" th:each="team : ${teams}"
@@ -84,7 +79,7 @@
                         <input type="file" name="file">
                     </div>
                     <div class="p-t-10">
-                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.save}">Submit
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
                         </button>
                     </div>
                 </form>

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<table class="table_dark">
+    <tr th:each="player : ${players}">
+        <td>
+            <div>
+                <label class="input--style-3" th:text="${player.lastName}+' '+${player.firstName}+' '+${player.secondName}"
+                       th:id="${player.id}"/>
+                    <!--   th:onclick="|selectPlayer('${player.id}',this.getAttribute('data'));|"/>
+                    https://bootsnipp.com/snippets/90m8m интересное решение для кнопок
+                    https://bootsnipp.com/snippets/1eQb9
+                    -->
+            </div>
+        </td>
+        <td>
+            <label th:onclick="|window.location='/administration/editPlayer/${player.id}'|" style="cursor:pointer;">Редактировать</label>
+
+        </td>
+        <td>
+            <label th:href="|/administration/deletePlayer/${player.id}|"
+               onclick="return confirm('Вы уверены, что хотите удалить игрока?')"
+               th:onclick="return confirm('Вы уверены, что хотите удалить игрока?')" style="cursor:pointer;">Удалить</label>
+        </td>
+    </tr>
+</table>
+</html>

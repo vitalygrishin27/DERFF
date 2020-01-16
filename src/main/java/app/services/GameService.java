@@ -4,6 +4,7 @@ package app.services;
 import app.Models.Game;
 import app.Models.Team;
 
+import java.util.Date;
 import java.util.List;
 
 public interface GameService {
@@ -17,4 +18,6 @@ public interface GameService {
 
     List<Game> findGameWithTeam(Team team);
 
+    List <Game> findGamesByDate(Date date);
 }
+

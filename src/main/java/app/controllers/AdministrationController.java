@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -284,8 +285,9 @@ public class AdministrationController {
         }
         model.addAttribute("player", player);
         model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("titlePage", messageSource.getMessage("page.title.player.editing", null, Locale.getDefault()));
 
-        return "administration/newPlayer";
+        return "administration/editPlayer";
     }
 
     @PostMapping(value = "/administration/editPlayer/{id}")
@@ -325,6 +327,54 @@ public class AdministrationController {
 
 
         return "redirect:/administration/players";
+    }
+
+
+
+    @PostMapping(value = "/administration/gameListByDate")
+    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate) throws DerffException {
+      //  List players=playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
+        Date date= null;
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+        } catch (ParseException e) {
+            throw new DerffException("date");
+        }
+        List<Game> games=new ArrayList<>();
+        try {
+            games = gameService.findGamesByDate(date);
+        } catch (Exception e) {
+            throw new DerffException("database");
+        }
+
+     //   model.addAttribute("players", players);
+        // model.addAttribute("teams", teamService.findAllTeams());
+
+         model.addAttribute("games", games);
+        //model.addAttribute("player", new Player());
+        return "administration/playersByTeam";
+        // return "efewfewfewf";
+    }
+
+    @GetMapping(value = "/administration/newGame")
+    public String getFormforNewGame(Model model) throws DerffException {
+        Game game = new Game();
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+                game = (Game) messageGenerator.getTemporaryObjectForMessage();
+            }
+
+            // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
+
+        }
+        model.addAttribute("game", game);
+        model.addAttribute("teams", teamService.findAllTeams());
+
+        // model.addAttribute("players", playerService.findAllPlayers());
+        // model.addAttribute("players", players);
+        return "administration/newGame";
     }
 
 

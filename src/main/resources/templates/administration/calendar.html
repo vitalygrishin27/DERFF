@@ -3,28 +3,46 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="DERFF">
-    <meta name="author" content="DERFF">
-    <meta name="keywords" content="DERFF">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-    <title th:utext="${titlePage}"></title>
-    <link href="../static/vendor/mdi-font/css/material-design-iconic-font.min.css"
-          th:href="@{/vendor/mdi-font/css/material-design-iconic-font.min.css}" rel="stylesheet" media="all"/>
-    <link href="../static/vendor/font-awesome-4.7/css/font-awesome.min.css"
-          th:href="@{/vendor/font-awesome-4.7/css/font-awesome.min.css}" rel="stylesheet" media="all"/>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
-          rel="stylesheet">
-    <link href="../static/vendor/select2/select2.min.css" th:href="@{/vendor/select2/select2.min.css}" rel="stylesheet"
-          media="all"/>
-    <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
-          rel="stylesheet" media="all"/>
-    <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
-
-    <script src="../static/vendor/jquery/jquery.min.js" th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 <body>
+<th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
+
+
+<div>
+    <table class="table_dark">
+        <tr>
+            <td>
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" href="/administration/newGame">Добавить новую игру</a>
+                </div>
+            </td>
+        </tr>
+      <!--  <tr>
+            <td>
+                <select id="team" name="teamName" th:onchange="show()" style="width:100%">
+                    <option th:value="${team.teamName}" th:each="team : ${teams}"
+                            th:utext="${team.teamName}">Team
+                    </option>
+                </select></td>
+        </tr>  -->
+    </table>
+    <div id="block"/>
+
+</div>
+
+
+
+
+
+<!--
 
 <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
     <div class="wrapper wrapper--w780">
@@ -32,7 +50,7 @@
             <div class="card-heading"></div>
             <div class="card-body">
                 <h3 class="title" th:utext="#{label.calendar}" style="text-align: center">Календарь игр</h3>
-                <form method="POST" enctype="multipart/form-data"> <!--  th:object="${game}" -->
+                <form method="POST" enctype="multipart/form-data">
                     <table cols="5">
                         <tr>
                             <td colspan="5">
@@ -77,13 +95,6 @@
                                         </option>
                                     </select>
 
-
-                                    <!-- <input class="input--style-3" type="text" placeholder="Хозяева"
-                                            th:placeholder="#{placeholder.master}" th:value="${game.masterTeam.teamName}" name="masterTeamName"
-                                            required>
-                                     <input class="input--style-3" type="text" placeholder="Гости"
-                                            th:placeholder="#{placeholder.slave}" th:value="${game.slaveTeam.teamName}" name="slaveTeamName"
-                                            required>  -->
                                 </div>
                             </td>
                         </tr>
@@ -140,7 +151,7 @@
         </div>
     </div>
 </div>
-
+-->
 
 <script th:inline="javascript">
       function selectGame(gameId){
@@ -172,6 +183,29 @@
                 });
         }
     }
+
+
+$(document).ready(function() {
+
+    var now = new Date();
+    var curr_date = now.getDate();
+    var curr_month = now.getMonth() + 1;
+    var curr_year = now.getFullYear();
+
+var d= (curr_year + "-" + curr_month + "-" + curr_date);
+    alert(d);
+    $.ajax({
+        type: 'POST',
+        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        data: ({
+            date: d
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+})
 
 </script>
 

@@ -20,15 +20,13 @@
     <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
           rel="stylesheet" media="all"/>
     <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 <body>
-
-<div id="msg_pop" onclick="document.getElementById('msg_pop').style.display='none'; return false;">
-    <h4>Внимание! </h4><br/>
-    <div id="errorMessage">
-        Текст ошибки
-    </div>
-</div>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
 
 <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
     <div class="wrapper wrapper--w780">
