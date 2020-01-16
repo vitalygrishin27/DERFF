@@ -30,7 +30,7 @@ public class Game {
     @Column(name = "date")
     private Date date;
 
-    private String StringDate;
+    private String stringDate;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Collection<Goal> goals;
@@ -44,11 +44,11 @@ public class Game {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_team_master")
-    private Team masterTeam =new Team();
+    private Team masterTeam;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_team_slave")
-    private Team slaveTeam = new Team();
+    private Team slaveTeam;
 
 
     public String getStringDate() {

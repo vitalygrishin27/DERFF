@@ -35,7 +35,7 @@
             <div class="card-body">
                 <h3 class="title" th:utext="#{label.game.creating}">Новая игра</h3>
                 <form method="POST" enctype="multipart/form-data" th:object="${game}">
-                    <div class="input-group">
+      <!--              <div class="input-group">
                         <input class="input--style-3" type="text" placeholder="Хозяева"
                                th:placeholder="#{placeholder.master}" th:value="${game.masterTeam.teamName}" name="masterTeam"
                                required>
@@ -45,39 +45,30 @@
                                th:placeholder="#{placeholder.slave}" th:value="${game.slaveTeam.teamName}" name="slaveTeam"
                                required>
                     </div>
-
+-->
                     <div class="input-group">
-                        <select id="team" name="teamName">
-                            <option th:value="${team.teamName}" th:each="team : ${teams}"
-                                    th:utext="${team.teamName}">Team
+                        <select id="masterTeam" name="masterTeam">
+                            <option th:value="${game.masterTeam.teamName}" th:each="team : ${teams}"
+                                    th:utext="${team.teamName}"> Master Team
                             </option>
                         </select>
                     </div>
+
                     <div class="input-group">
-                        <input  type="date"
-                               th:value="${player.stringBirthday}"  th:field="${player.stringBirthday}" th:name="stringBirthday"
+                        <select id="slaveTeam" name="slaveTeam">
+                            <option th:value="${game.slaveTeam.teamName}" th:each="team : ${teams}"
+                                    th:utext="${team.teamName}"> Slave Team
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <input  type="text"
+                               th:value="${game.stringDate}"  th:field="${game.stringDate}" th:name="stringDate"
                                required>
                       <!--  <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i> -->
                     </div>
-                    <div class="input-group">
-                        <input class="input--style-3" type="number" min="0" max="100000" step="1" placeholder="Id-card"
-                               th:placeholder="#{placeholder.idCard}" th:value="${player.idCard}"
-                               name="IdCard"
-                               >
-                    </div>
-                    <div class="input-group">
-                        <input class="input--style-3" type="text" placeholder="Registration"
-                               th:placeholder="#{placeholder.registration}" th:value="${player.registration}"
-                               name="registration"
-                               required>
-                    </div>
-                    <div class="input-group" style="color:#ffff00">
-                        <input type="checkbox" th:utext="#{placeholder.isLegionary}" th:field="${player.isLegionary}" th:value="${player.isLegionary}"  name="isLegionary">
-                    </div>
-                    <div class="input-group" style="color:#ffff00">
-                        <p>Фото</p><br/>
-                        <input type="file" name="file">
-                    </div>
+
                     <div class="p-t-10">
                         <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
                         </button>

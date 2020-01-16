@@ -193,7 +193,6 @@ $(document).ready(function() {
     var curr_year = now.getFullYear();
 
 var d= (curr_year + "-" + curr_month + "-" + curr_date);
-    alert(d);
     $.ajax({
         type: 'POST',
         url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту

@@ -359,6 +359,10 @@ public class AdministrationController {
     @GetMapping(value = "/administration/newGame")
     public String getFormforNewGame(Model model) throws DerffException {
         Game game = new Game();
+        Team team=new Team();
+        game.setMasterTeam(team);
+        game.setSlaveTeam(team);
+        game.setStringDate("54");
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
