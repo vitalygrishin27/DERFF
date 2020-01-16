@@ -155,7 +155,7 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) throws DerffException {
-        Game game = new Game();
+      /*  Game game = new Game();
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
@@ -164,9 +164,9 @@ public class AdministrationController {
                 model.addAttribute("preDate", dateToString(game.getDate()));
             }
         }
-
-        model.addAttribute("game", game);
-        model.addAttribute("games", gameService.findAllGames());
+*/
+     //   model.addAttribute("game", game);
+    //    model.addAttribute("games", gameService.findAllGames());
         // TODO: 02.12.2019 needed sorting games 
 
         model.addAttribute("teams", teamService.findAllTeams());
@@ -352,7 +352,7 @@ public class AdministrationController {
 
          model.addAttribute("games", games);
         //model.addAttribute("player", new Player());
-        return "administration/playersByTeam";
+        return "administration/gamesByDate";
         // return "efewfewfewf";
     }
 
@@ -362,7 +362,7 @@ public class AdministrationController {
         Team team=new Team();
         game.setMasterTeam(team);
         game.setSlaveTeam(team);
-        game.setStringDate("54");
+        game.setDate(new Date());
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
@@ -374,11 +374,37 @@ public class AdministrationController {
 
         }
         model.addAttribute("game", game);
+        model.addAttribute("stringDate", "");
         model.addAttribute("teams", teamService.findAllTeams());
 
         // model.addAttribute("players", playerService.findAllPlayers());
         // model.addAttribute("players", players);
         return "administration/newGame";
+    }
+
+
+    @PostMapping(value = "/administration/newGame")
+    public String saveNewGame(@ModelAttribute("game") Game game,
+                                // @ModelAttribute("team") Team team,
+                                // @ModelAttribute("preDate") String preDate,
+                                @ModelAttribute("masterTeamName") String masterTeamName,
+                                @ModelAttribute("slaveTeamName") String slaveTeamName,
+                                @ModelAttribute("stringDate") String stringDate) throws DerffException
+                                 // @ModelAttribute("isLegionary") String isLegionary,
+                               // @ModelAttribute("file") MultipartFile file)
+                              {
+
+        validateGameInformation(game, masterTeamName,slaveTeamName,stringDate);
+        try {
+            gameService.save(game);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.newGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
+                            game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/newGame";
     }
 
 
@@ -469,6 +495,25 @@ public class AdministrationController {
         }
 
 
+    }
+
+    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName,String stringDate) throws DerffException {
+        //validate Teams
+        if(masterTeamName.equals(slaveTeamName)){
+            throw new DerffException("sameTeam", game);
+        }
+
+
+        game.setMasterTeam(teamService.findTeamByName(masterTeamName));
+        game.setSlaveTeam(teamService.findTeamByName(slaveTeamName));
+        game.setStringDate(stringDate);
+
+
+        try {
+            game.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(stringDate));
+        } catch (ParseException e) {
+            throw new DerffException("date", game);
+        }
     }
 
     private String dateToString(Date date) {

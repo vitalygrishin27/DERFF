@@ -47,24 +47,27 @@
                     </div>
 -->
                     <div class="input-group">
-                        <select id="masterTeam" name="masterTeam">
-                            <option th:value="${game.masterTeam.teamName}" th:each="team : ${teams}"
+                        <p  th:text="#{placeholder.master}" style="color:#ffff00">Хозяева</p>
+                        <select id="masterTeam" name="masterTeamName" style="width:100%">
+                            <option  th:each="team : ${teams}"
                                     th:utext="${team.teamName}"> Master Team
                             </option>
                         </select>
                     </div>
 
                     <div class="input-group">
-                        <select id="slaveTeam" name="slaveTeam">
-                            <option th:value="${game.slaveTeam.teamName}" th:each="team : ${teams}"
-                                    th:utext="${team.teamName}"> Slave Team
+                        <p  th:text="#{placeholder.slave}" style="color:#ffff00">Гости</p>
+                        <select id="slaveTeam" name="slaveTeamName" style="width:100%">
+                            <option  th:each="team : ${teams}"
+                                    th:utext="${team.teamName}" > Slave Team
                             </option>
                         </select>
                     </div>
 
                     <div class="input-group">
-                        <input  type="text"
-                               th:value="${game.stringDate}"  th:field="${game.stringDate}" th:name="stringDate"
+                        <p  th:text="#{placeholder.shortDate}" style="color:#ffff00">Дата</p>
+                        <input  type="date"
+                                  th:name="stringDate"
                                required>
                       <!--  <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i> -->
                     </div>
