@@ -1,10 +1,13 @@
 package app.controllers;
 
+import app.Models.Configuration;
 import app.Models.Game;
 import app.Models.Player;
 import app.Models.Team;
+import app.Utils.ConfigurationKey;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
+import app.services.impl.ConfigurationImpl;
 import app.services.impl.GameServiceImpl;
 import app.services.impl.PlayerServiceImpl;
 import app.services.impl.TeamServiceImpl;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import static app.Utils.ConfigurationKey.*;
 
 @Controller
 public class AdministrationController {
@@ -53,6 +58,9 @@ public class AdministrationController {
 
     @Autowired
     GameServiceImpl gameService;
+
+    @Autowired
+    ConfigurationImpl configurationService;
 
 
     @GetMapping(value = "/")
@@ -155,21 +163,7 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) throws DerffException {
-      /*  Game game = new Game();
-        if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
-                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
-                game = (Game) messageGenerator.getTemporaryObjectForMessageWithSetNull();
-                model.addAttribute("preDate", dateToString(game.getDate()));
-            }
-        }
-*/
-     //   model.addAttribute("game", game);
-    //    model.addAttribute("games", gameService.findAllGames());
-        // TODO: 02.12.2019 needed sorting games 
-
-        model.addAttribute("teams", teamService.findAllTeams());
+       // model.addAttribute("teams", teamService.findAllTeams());
         return "administration/calendar";
     }
 
@@ -204,22 +198,22 @@ public class AdministrationController {
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
-       // model.addAttribute("players", playerService.findAllPlayers());
+        // model.addAttribute("players", playerService.findAllPlayers());
         // model.addAttribute("players", players);
         return "administration/players";
     }
 
     @PostMapping(value = "/administration/playerListByTeam")
     public String getPlayersByTeam(Model model, @ModelAttribute("teamName") String teamName) throws DerffException {
-        List players=playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
+        List players = playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
 
         model.addAttribute("players", players);
-       // model.addAttribute("teams", teamService.findAllTeams());
+        // model.addAttribute("teams", teamService.findAllTeams());
 
         // model.addAttribute("players", playerService.findAllPlayers());
-         //model.addAttribute("player", new Player());
+        //model.addAttribute("player", new Player());
         return "administration/playersByTeam";
-       // return "efewfewfewf";
+        // return "efewfewfewf";
     }
 
     @GetMapping(value = "/administration/newPlayer")
@@ -292,11 +286,11 @@ public class AdministrationController {
 
     @PostMapping(value = "/administration/editPlayer/{id}")
     public String savePlayerAfterEdit(@ModelAttribute("player") Player player,
-                                // @ModelAttribute("team") Team team,
-                                // @ModelAttribute("preDate") String preDate,
-                                @ModelAttribute("teamName") String teamName,
-                                // @ModelAttribute("isLegionary") String isLegionary,
-                                @ModelAttribute("file") MultipartFile file) throws DerffException {
+                                      // @ModelAttribute("team") Team team,
+                                      // @ModelAttribute("preDate") String preDate,
+                                      @ModelAttribute("teamName") String teamName,
+                                      // @ModelAttribute("isLegionary") String isLegionary,
+                                      @ModelAttribute("file") MultipartFile file) throws DerffException {
 
         validatePlayerInformation(player, teamName, file);
         try {
@@ -320,7 +314,7 @@ public class AdministrationController {
             throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
         }
         try {
-        playerService.delete(player);
+            playerService.delete(player);
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
@@ -330,36 +324,39 @@ public class AdministrationController {
     }
 
 
-
     @PostMapping(value = "/administration/gameListByDate")
-    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate) throws DerffException {
-      //  List players=playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
-        Date date= null;
+    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate, @ModelAttribute("round") String round) throws DerffException {
+
+        List<Game> games = new ArrayList<>();
         try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
-        } catch (ParseException e) {
-            throw new DerffException("date");
-        }
-        List<Game> games=new ArrayList<>();
-        try {
-            games = gameService.findGamesByDate(date);
+            switch (round) {
+                case "none":
+                    Date date = null;
+                    try {
+                        date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+                    } catch (ParseException e) {
+                        throw new DerffException("date");
+                    }
+                    games = gameService.findGamesByDate(date);
+                    break;
+                case "first":
+                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(FIRST_ROUND_END)));
+                    break;
+                case "second":
+                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(SECOND_ROUND_END)));
+                    break;
+            }
         } catch (Exception e) {
             throw new DerffException("database");
         }
-
-     //   model.addAttribute("players", players);
-        // model.addAttribute("teams", teamService.findAllTeams());
-
-         model.addAttribute("games", games);
-        //model.addAttribute("player", new Player());
+        model.addAttribute("games", games);
         return "administration/gamesByDate";
-        // return "efewfewfewf";
     }
 
     @GetMapping(value = "/administration/newGame")
     public String getFormforNewGame(Model model) throws DerffException {
         Game game = new Game();
-        Team team=new Team();
+        Team team = new Team();
         game.setMasterTeam(team);
         game.setSlaveTeam(team);
         game.setDate(new Date());
@@ -385,16 +382,16 @@ public class AdministrationController {
 
     @PostMapping(value = "/administration/newGame")
     public String saveNewGame(@ModelAttribute("game") Game game,
-                                // @ModelAttribute("team") Team team,
-                                // @ModelAttribute("preDate") String preDate,
-                                @ModelAttribute("masterTeamName") String masterTeamName,
-                                @ModelAttribute("slaveTeamName") String slaveTeamName,
-                                @ModelAttribute("stringDate") String stringDate) throws DerffException
-                                 // @ModelAttribute("isLegionary") String isLegionary,
-                               // @ModelAttribute("file") MultipartFile file)
-                              {
+                              // @ModelAttribute("team") Team team,
+                              // @ModelAttribute("preDate") String preDate,
+                              @ModelAttribute("masterTeamName") String masterTeamName,
+                              @ModelAttribute("slaveTeamName") String slaveTeamName,
+                              @ModelAttribute("stringDate") String stringDate) throws DerffException
+    // @ModelAttribute("isLegionary") String isLegionary,
+    // @ModelAttribute("file") MultipartFile file)
+    {
 
-        validateGameInformation(game, masterTeamName,slaveTeamName,stringDate);
+        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
         try {
             gameService.save(game);
             messageGenerator.setMessage((messageSource
@@ -405,6 +402,48 @@ public class AdministrationController {
         }
 
         return "redirect:/administration/newGame";
+    }
+
+    @GetMapping(value = "/administration/editGame/{id}")
+    public String getFormforEditGame(Model model, @PathVariable("id") long id) throws DerffException {
+        Game game = new Game();
+        try {
+            game = gameService.findGameById(id);
+        } catch (Exception e) {
+            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
+        }
+
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+                game = (Game) messageGenerator.getTemporaryObjectForMessage();
+            }
+        }
+        model.addAttribute("game", game);
+        model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("titlePage", messageSource.getMessage("page.title.game.editing", null, Locale.getDefault()));
+
+        return "administration/editGame";
+    }
+
+
+    @GetMapping(value = "/administration/deleteGame/{id}")
+    public String deleteGame(Model model, @PathVariable("id") long id) throws DerffException {
+        Game game = new Game();
+        try {
+            game = gameService.findGameById(id);
+        } catch (Exception e) {
+            throw new DerffException("playerNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
+        }
+        try {
+            gameService.delete(game);
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+
+        return "redirect:/administration/calendar";
     }
 
 
@@ -497,9 +536,9 @@ public class AdministrationController {
 
     }
 
-    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName,String stringDate) throws DerffException {
+    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName, String stringDate) throws DerffException {
         //validate Teams
-        if(masterTeamName.equals(slaveTeamName)){
+        if (masterTeamName.equals(slaveTeamName)) {
             throw new DerffException("sameTeam", game);
         }
 

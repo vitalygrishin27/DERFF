@@ -26,9 +26,9 @@
 
         </td>
         <td>
-            <label th:href="|/administration/deleteGame/${game.id}|"
+            <a th:href="|/administration/deleteGame/${game.id}|"
                onclick="return confirm('Вы уверены, что хотите удалить игру?')"
-               th:onclick="return confirm('Вы уверены, что хотите удалить игру?')" style="cursor:pointer;">Удалить</label>
+               th:onclick="return confirm('Вы уверены, что хотите удалить игру?')" style="cursor:pointer;">Удалить</a>
         </td>
     </tr>
 </table>

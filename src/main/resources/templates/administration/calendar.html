@@ -25,21 +25,31 @@
                 </div>
             </td>
         </tr>
-      <!--  <tr>
+        <tr>
             <td>
-                <select id="team" name="teamName" th:onchange="show()" style="width:100%">
-                    <option th:value="${team.teamName}" th:each="team : ${teams}"
-                            th:utext="${team.teamName}">Team
-                    </option>
-                </select></td>
-        </tr>  -->
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                   <p style="display: inline-block; color:#ffff00; vertical-align:  middle; ">Показать игры по дате &nbsp;&nbsp;&nbsp;</p>
+                    <input type="date"
+                           id="date"  th:onChange="getGamesByDate('none')">
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('first')">1 круг &nbsp;&nbsp;&nbsp;</p>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('second')">2 круг &nbsp;&nbsp;&nbsp;</p>
+                    <!--  <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i> -->
+                </div>
+            </td>
+        </tr>
+
+        <!--  <tr>
+              <td>
+                  <select id="team" name="teamName" th:onchange="show()" style="width:100%">
+                      <option th:value="${team.teamName}" th:each="team : ${teams}"
+                              th:utext="${team.teamName}">Team
+                      </option>
+                  </select></td>
+          </tr>  -->
     </table>
     <div id="block"/>
 
 </div>
-
-
-
 
 
 <!--
@@ -184,7 +194,34 @@
         }
     }
 
+function getGamesByDate(round) {
 
+ //   var now = new Date();
+ //   var curr_date = now.getDate();
+//    var curr_month = now.getMonth() + 1;
+//    var curr_year = now.getFullYear();
+
+//alert(document.getElementById("date").value);
+//var d= (curr_year + "-" + curr_month + "-" + curr_date);
+var d= document.getElementById("date").value;
+    $.ajax({
+        type: 'POST',
+        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        data: ({
+            date: d,
+            round:round
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+}
+
+
+
+
+/*
 $(document).ready(function() {
 
     var now = new Date();
@@ -205,6 +242,7 @@ var d= (curr_year + "-" + curr_month + "-" + curr_date);
         }
     });
 })
+*/
 
 </script>
 

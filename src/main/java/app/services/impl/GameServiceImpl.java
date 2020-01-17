@@ -44,4 +44,9 @@ public class GameServiceImpl implements GameService {
     public List<Game> findGamesByDate(Date date) {
         return repository.findGamesByDate(date);
     }
+
+    @Override
+    public List<Game> findGamesBetweenDates(Date from, Date to) {
+        return repository.findGamesBetweenDates(from,to);
+    }
 }

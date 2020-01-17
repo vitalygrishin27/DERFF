@@ -18,6 +18,10 @@ public interface GameService {
 
     List<Game> findGameWithTeam(Team team);
 
-    List <Game> findGamesByDate(Date date);
+    List<Game> findGamesByDate(Date date);
+
+    List<Game> findGamesBetweenDates(Date from, Date to);
+
+
 }
 
