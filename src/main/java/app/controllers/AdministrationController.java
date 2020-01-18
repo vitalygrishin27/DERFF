@@ -427,6 +427,29 @@ public class AdministrationController {
         return "administration/editGame";
     }
 
+    @PostMapping(value = "/administration/editGame/{id}")
+    public String savePlayerAfterEdit(@ModelAttribute("game") Game game,
+                                      @ModelAttribute("masterTeamName") String masterTeamName,
+                                      @ModelAttribute("slaveTeamName") String slaveTeamName,
+                                      @ModelAttribute("stringDate") String stringDate
+                                      // @ModelAttribute("isLegionary") String isLegionary,
+                                    //  @ModelAttribute("file") MultipartFile file
+                                        ) throws DerffException {
+
+        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
+        try {
+            gameService.update(game);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.editGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
+                            game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/calendar";
+    }
+
+
 
     @GetMapping(value = "/administration/deleteGame/{id}")
     public String deleteGame(Model model, @PathVariable("id") long id) throws DerffException {

@@ -30,6 +30,7 @@ public class Game {
     @Column(name = "date")
     private Date date;
 
+    @Column(name="string_date")
     private String stringDate;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
@@ -51,8 +52,8 @@ public class Game {
     private Team slaveTeam;
 
 
-    public String getStringDate() {
+  /*  public String getStringDate() {
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd.MM");
         return dateFormat.format(this.getDate());
-    }
+    }*/
 }

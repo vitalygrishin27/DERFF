@@ -20,10 +20,11 @@
                 <label class="input--style-3" th:text="${game.slaveTeam.teamName}"/>
             </div>
         </td>
-
+        <td>
+            <label th:onclick="|window.location='/administration/resultGame/${game.id}'|" style="cursor:pointer;">Результаты</label>
+        </td>
         <td>
             <label th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;">Редактировать</label>
-
         </td>
         <td>
             <a th:href="|/administration/deleteGame/${game.id}|"

@@ -38,9 +38,9 @@
 
                     <div class="input-group">
                         <p  th:text="#{placeholder.master}" style="color:#ffff00">Хозяева</p>
-                        <select id="masterTeam" name="masterTeamName" style="width:100%">
+                        <select id="masterTeam" name="masterTeamName"  style="width:100%">
                             <option  th:each="team : ${teams}"
-                                    th:utext="${team.teamName}"> Master Team
+                                    th:utext="${team.teamName}" th:selected="${game.masterTeam.teamName==team.teamName}"> Master Team
                             </option>
                         </select>
                     </div>
@@ -49,21 +49,21 @@
                         <p  th:text="#{placeholder.slave}" style="color:#ffff00">Гости</p>
                         <select id="slaveTeam" name="slaveTeamName" style="width:100%">
                             <option  th:each="team : ${teams}"
-                                    th:utext="${team.teamName}" > Slave Team
+                                    th:utext="${team.teamName}" th:selected="${game.slaveTeam.teamName==team.teamName}"> Slave Team
                             </option>
                         </select>
                     </div>
 
                     <div class="input-group">
                         <p  th:text="#{placeholder.shortDate}" style="color:#ffff00">Дата</p>
-                        <input  type="date"
+                        <input  type="date" th:value="${game.stringDate}"
                                   th:name="stringDate"
                                required>
                       <!--  <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i> -->
                     </div>
 
                     <div class="p-t-10">
-                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.save}">Submit
                         </button>
                     </div>
                 </form>

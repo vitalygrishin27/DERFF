@@ -20,14 +20,17 @@ public class Goal {
     @Column(name = "id",nullable = false,unique = true)
     private long id;
 
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_team")
+    private Team team;
 
     @ManyToOne (optional = false)
     @JoinColumn(name = "id_player")
     private Player player;
 
-    @ManyToOne (optional = false)
+  /*  @ManyToOne (optional = false)
     @JoinColumn(name = "id_game")
     private Game game;
-
+*/
 
 }

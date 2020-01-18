@@ -22,6 +22,7 @@ public interface GameService {
 
     List<Game> findGamesBetweenDates(Date from, Date to);
 
+    void update(Game game);
 
 }
 
