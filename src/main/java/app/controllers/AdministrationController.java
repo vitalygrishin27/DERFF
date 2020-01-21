@@ -1,9 +1,6 @@
 package app.controllers;
 
-import app.Models.Configuration;
-import app.Models.Game;
-import app.Models.Player;
-import app.Models.Team;
+import app.Models.*;
 import app.Utils.ConfigurationKey;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
@@ -62,6 +59,8 @@ public class AdministrationController {
     @Autowired
     ConfigurationImpl configurationService;
 
+    @Autowired
+    Context context;
 
     @GetMapping(value = "/")
     public String getMainPage(Model model) throws DerffException {
@@ -467,6 +466,32 @@ public class AdministrationController {
 
 
         return "redirect:/administration/calendar";
+    }
+
+
+    @GetMapping(value="/administration/resultGame/{id}")
+    public String firstStepResultsGoalsCount(Model model,@PathVariable("id") long id){
+        context.clear();
+        context.putToContext("countGoalsMasterTeam",0);
+        context.putToContext("countGoalsSlaveTeam",0);
+        model.addAttribute("game",gameService.findGameById(id));
+        model.addAttribute("countGoalsMasterTeam",0);
+        model.addAttribute("countGoalsSlaveTeam",0);
+        return "administration/resultGame";
+    }
+
+    @PostMapping(value = "/administration/resultGame/{id}")
+    public String saveCountOfGoals(Model model, @ModelAttribute("game") Game game) throws DerffException {
+
+        System.out.println(game);
+        return "administration/secondStep";
+    }
+
+    @GetMapping(value="/administration/secondStep")
+    public String secondStepResultsGoalsCount(Model model){
+        System.out.println("fewfewf");
+        System.out.println(model);
+        return "administration/resultGame";
     }
 
 

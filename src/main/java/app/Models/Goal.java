@@ -28,9 +28,9 @@ public class Goal {
     @JoinColumn(name = "id_player")
     private Player player;
 
-  /*  @ManyToOne (optional = false)
+   @ManyToOne (optional = false)
     @JoinColumn(name = "id_game")
     private Game game;
-*/
+
 
 }

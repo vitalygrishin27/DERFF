@@ -51,6 +51,9 @@ public class Game {
     @JoinColumn(name = "id_team_slave")
     private Team slaveTeam;
 
+    private int masterGoalsCount;
+
+    private int slaveGoalsCount;
 
   /*  public String getStringDate() {
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd.MM");

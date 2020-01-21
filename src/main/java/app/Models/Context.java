@@ -31,4 +31,8 @@ public class Context {
     public void deleteFromContext(String key){
         this.context.remove(key);
     }
+
+    public void clear(){
+        context.clear();
+    }
 }
