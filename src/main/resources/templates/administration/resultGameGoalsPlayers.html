@@ -21,39 +21,41 @@
         <tr>
             <td>
                 <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active">Результаты игры</a>
+                    <a class="btn btn-lg btn-success active">Забитые мячи</a>
                 </div>
             </td>
         </tr>
 
         <tr>
             <form method="POST" enctype="multipart/form-data" th:object="${game}">
-            <td>
-                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${game.masterTeam.teamName}">Команды</p>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" th:value="${masterGoalsCount}"
-                           name="masterGoalsCount" id="masterGoalsCount">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; ">&nbsp; - &nbsp;</p>
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${game.slaveTeam.teamName}">Команды</p>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" th:value="${slaveGoalsCount}"
-                           name="slaveGoalsCount" id="slaveGoalsCount">
-                </div>
-            </td>
-            <td>
-                <div class="p-t-10">
-                    <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
-                    </button>
-                </div>
-            </td>
+                <td>
+                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                           th:utext="${game.masterTeam.teamName}">Команды</p>
+                        <input class="input--style-3" type="number" min="0" max="20" step="1"
+                               placeholder="defaultGoalsCount"
+                               th:placeholder="#{placeholder.defaultGoalsCount}" th:field="*{masterGoalsCount}">
+                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; ">&nbsp; + &nbsp;</p>
+                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                           th:utext="${game.slaveTeam.teamName}">Команды</p>
+                        <input class="input--style-3" type="number" min="0" max="20" step="1"
+                               placeholder="defaultGoalsCount"
+                               th:placeholder="#{placeholder.defaultGoalsCount}" th:field="*{slaveGoalsCount}">
+                    </div>
+                </td>
+                <td>
+                    <div class="p-t-10">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
+                        </button>
+                    </div>
+                </td>
             </form>
         </tr>
+        <tr>
+            <td>
 
+            </td>
+        </tr>
     </table>
     <div id="secondStep"/>
 
@@ -77,6 +79,7 @@ var d= document.getElementById("date").value;
         }
     });
 }
+
 
 </script>
 

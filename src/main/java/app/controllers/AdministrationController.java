@@ -469,30 +469,26 @@ public class AdministrationController {
     }
 
 
-    @GetMapping(value="/administration/resultGame/{id}")
+    @GetMapping(value="/administration/resultGameGoals/{id}")
     public String firstStepResultsGoalsCount(Model model,@PathVariable("id") long id){
-        context.clear();
-        context.putToContext("countGoalsMasterTeam",0);
-        context.putToContext("countGoalsSlaveTeam",0);
+   //     context.clear();
+     //   context.putToContext("countGoalsMasterTeam",0);
+   //     context.putToContext("countGoalsSlaveTeam",0);
         model.addAttribute("game",gameService.findGameById(id));
-        model.addAttribute("countGoalsMasterTeam",0);
-        model.addAttribute("countGoalsSlaveTeam",0);
-        return "administration/resultGame";
+     //   model.addAttribute("countGoalsMasterTeam",0);
+    //    model.addAttribute("countGoalsSlaveTeam",0);
+        return "administration/resultGameGoals";
     }
 
-    @PostMapping(value = "/administration/resultGame/{id}")
-    public String saveCountOfGoals(Model model, @ModelAttribute("game") Game game) throws DerffException {
-
-        System.out.println(game);
-        return "administration/secondStep";
+    @PostMapping(value = "/administration/resultGameGoals/{id}")
+    public String saveCountOfGoals(Model model, @PathVariable("id") long id, @ModelAttribute("game") Game game) throws DerffException {
+        Game gameNew=gameService.findGameById(id);
+        gameNew.setMasterGoalsCount(game.getMasterGoalsCount());
+        gameNew.setSlaveGoalsCount(game.getSlaveGoalsCount());
+        model.addAttribute("game",gameNew);
+        return "administration/resultGameGoalsPlayers";
     }
 
-    @GetMapping(value="/administration/secondStep")
-    public String secondStepResultsGoalsCount(Model model){
-        System.out.println("fewfewf");
-        System.out.println(model);
-        return "administration/resultGame";
-    }
 
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
