@@ -34,7 +34,7 @@ public class Game {
     private String stringDate;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
-    private Collection<Goal> goals;
+    private ArrayList<Goal> goals;
 
    /* @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_team",
@@ -55,6 +55,9 @@ public class Game {
 
     private String slaveGoalsCount;
 
+    public void addGoal(Goal goal){
+        goals.add(goal);
+    }
   /*  public String getStringDate() {
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd.MM");
         return dateFormat.format(this.getDate());
