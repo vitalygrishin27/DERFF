@@ -485,13 +485,13 @@ public class AdministrationController {
         Game gameNew=gameService.findGameById(id);
         gameNew.setMasterGoalsCount(game.getMasterGoalsCount());
         gameNew.setSlaveGoalsCount(game.getSlaveGoalsCount());
-        for (int i = 0; i <Integer.valueOf(game.getMasterGoalsCount()); i++) {
+        for (int i = 0; i <Integer.valueOf(gameNew.getMasterGoalsCount()); i++) {
             Goal goal=new Goal();
             goal.setGame(gameNew);
             goal.setTeam(gameNew.getMasterTeam());
             gameNew.addGoal(goal);
         }
-        for (int i = 0; i <Integer.valueOf(game.getSlaveGoalsCount()); i++) {
+        for (int i = 0; i <Integer.valueOf(gameNew.getSlaveGoalsCount()); i++) {
             Goal goal=new Goal();
             goal.setGame(gameNew);
             goal.setTeam(gameNew.getSlaveTeam());
@@ -499,12 +499,12 @@ public class AdministrationController {
         }
         model.addAttribute("game",gameNew);
         if(Integer.valueOf(game.getMasterGoalsCount())>0){
-            model.addAttribute("masterGoals",gameNew.getGoals().subList(0,Integer.valueOf(gameNew.getMasterGoalsCount())-1));
+            model.addAttribute("masterGoals",((ArrayList)gameNew.getGoals()).subList(0,Integer.valueOf(gameNew.getMasterGoalsCount())-1));
         }else{
             model.addAttribute("masterGoals",new ArrayList<Goal>());
         }
         if(Integer.valueOf(game.getSlaveGoalsCount())>0){
-            model.addAttribute("slaveGoals",gameNew.getGoals().subList(Integer.valueOf(gameNew.getMasterGoalsCount()),gameNew.getGoals().size()-1));
+            model.addAttribute("slaveGoals",((ArrayList)gameNew.getGoals()).subList(Integer.valueOf(gameNew.getMasterGoalsCount()),gameNew.getGoals().size()-1));
         }else{
             model.addAttribute("slaveGoals",new ArrayList<Goal>());
         }
