@@ -471,43 +471,34 @@ public class AdministrationController {
 
     @GetMapping(value="/administration/resultGameGoals/{id}")
     public String firstStepResultsGoalsCount(Model model,@PathVariable("id") long id){
-   //     context.clear();
-     //   context.putToContext("countGoalsMasterTeam",0);
+        context.clear();
+    //    context.putToContext("countGoalsMasterTeam",0);
    //     context.putToContext("countGoalsSlaveTeam",0);
-        model.addAttribute("game",gameService.findGameById(id));
-     //   model.addAttribute("countGoalsMasterTeam",0);
-    //    model.addAttribute("countGoalsSlaveTeam",0);
+        Game game=gameService.findGameById(id);
+        context.putToContext("game",game);
+    //    model.addAttribute("game",game);
+        model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
+        model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
+        model.addAttribute("countGoalsMasterTeam",0);
+        model.addAttribute("countGoalsSlaveTeam",0);
         return "administration/resultGameGoals";
     }
 
     @PostMapping(value = "/administration/resultGameGoals/{id}")
-    public String saveCountOfGoals(Model model, @PathVariable("id") long id, @ModelAttribute("game") Game game) throws DerffException {
-        Game gameNew=gameService.findGameById(id);
-        gameNew.setMasterGoalsCount(game.getMasterGoalsCount());
-        gameNew.setSlaveGoalsCount(game.getSlaveGoalsCount());
-        for (int i = 0; i <Integer.valueOf(gameNew.getMasterGoalsCount()); i++) {
-            Goal goal=new Goal();
-            goal.setGame(gameNew);
-            goal.setTeam(gameNew.getMasterTeam());
-            gameNew.addGoal(goal);
-        }
-        for (int i = 0; i <Integer.valueOf(gameNew.getSlaveGoalsCount()); i++) {
-            Goal goal=new Goal();
-            goal.setGame(gameNew);
-            goal.setTeam(gameNew.getSlaveTeam());
-            gameNew.addGoal(goal);
-        }
-        model.addAttribute("game",gameNew);
-        if(Integer.valueOf(game.getMasterGoalsCount())>0){
-            model.addAttribute("masterGoals",((ArrayList)gameNew.getGoals()).subList(0,Integer.valueOf(gameNew.getMasterGoalsCount())-1));
-        }else{
-            model.addAttribute("masterGoals",new ArrayList<Goal>());
-        }
-        if(Integer.valueOf(game.getSlaveGoalsCount())>0){
-            model.addAttribute("slaveGoals",((ArrayList)gameNew.getGoals()).subList(Integer.valueOf(gameNew.getMasterGoalsCount()),gameNew.getGoals().size()-1));
-        }else{
-            model.addAttribute("slaveGoals",new ArrayList<Goal>());
-        }
+    public String saveCountOfGoals(Model model, @PathVariable("id") long id,
+                                   @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
+                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam) throws DerffException {
+    Game game=(Game)context.getFromContext("game");
+    game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
+    game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
+
+    model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
+    model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
+    model.addAttribute("countMasterGoals",countGoalsMasterTeam);
+    model.addAttribute("countSlaveGoals",countGoalsSlaveTeam);
+    model.addAttribute("masterTeamPlayers", playerService.findAllPlayersInTeam(game.getMasterTeam()));
+    model.addAttribute("slaveTeamPlayers", playerService.findAllPlayersInTeam(game.getSlaveTeam()));
+
         return "administration/resultGameGoalsPlayers";
     }
 

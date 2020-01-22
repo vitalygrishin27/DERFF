@@ -19,37 +19,52 @@
 <div>
     <table class="table_dark">
         <tr>
-            <td>
+            <td colspan="2">
                 <div style="text-align:center;">
                     <a class="btn btn-lg btn-success active">Результаты игры</a>
                 </div>
             </td>
         </tr>
 
-        <tr>
-            <form method="POST" enctype="multipart/form-data" th:object="${game}">
-            <td>
-                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${game.masterTeam.teamName}">Команды</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <tr>
+                <td>
+                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                           th:utext="${masterTeamName}">Команды</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                           th:utext="${slaveTeamName}">Команды</p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <input class="input--style-3" type="number" min="0" max="20" step="1"
                            placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" th:field="*{masterGoalsCount}">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; ">&nbsp; - &nbsp;</p>
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${game.slaveTeam.teamName}">Команды</p>
+                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam">
+                </td>
+                <td>
                     <input class="input--style-3" type="number" min="0" max="20" step="1"
                            placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" th:field="*{slaveGoalsCount}">
-                </div>
-            </td>
-            <td>
-                <div class="p-t-10">
-                    <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
-                    </button>
-                </div>
-            </td>
-            </form>
+                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam">
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="p-t-10" style="text-align:center;">
+                        <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit
+                        </button>
+                    </div>
+                </td>
+            </tr>
+
+        </form>
         </tr>
 
     </table>
@@ -75,6 +90,8 @@ var d= document.getElementById("date").value;
         }
     });
 }
+
+
 
 </script>
 

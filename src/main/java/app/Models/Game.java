@@ -51,9 +51,9 @@ public class Game {
     @JoinColumn(name = "id_team_slave")
     private Team slaveTeam;
 
-    private String masterGoalsCount;
+    private Integer masterGoalsCount;
 
-    private String slaveGoalsCount;
+    private Integer slaveGoalsCount;
 
     public void addGoal(Goal goal){
         goals.add(goal);
