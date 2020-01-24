@@ -469,7 +469,7 @@ public class AdministrationController {
     }
 
 
-    @GetMapping(value="/administration/resultGameGoals/{id}")
+    @GetMapping(value="/administration/resultGame/{id}")
     public String firstStepResultsGoalsCount(Model model,@PathVariable("id") long id){
         context.clear();
     //    context.putToContext("countGoalsMasterTeam",0);
@@ -481,23 +481,29 @@ public class AdministrationController {
         model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
         model.addAttribute("countGoalsMasterTeam",0);
         model.addAttribute("countGoalsSlaveTeam",0);
-        return "administration/resultGameGoals";
+        return "administration/resultGame";
     }
 
-    @PostMapping(value = "/administration/resultGameGoals/{id}")
-    public String saveCountOfGoals(Model model, @PathVariable("id") long id,
+    @PostMapping(value = "/administration/resultGame")
+    public String saveCountOfGoals(Model model,
+                                   @ModelAttribute("step") String step,
                                    @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
                                    @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam) throws DerffException {
-    Game game=(Game)context.getFromContext("game");
-    game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
-    game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
+    switch (step){
+        case "goalsCount":
+            if(countGoalsMasterTeam.equals("")) countGoalsMasterTeam="0";
+            if(countGoalsSlaveTeam.equals("")) countGoalsSlaveTeam="0";
+            Game game=(Game)context.getFromContext("game");
+            game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
+            game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
 
-    model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
-    model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
-    model.addAttribute("countMasterGoals",countGoalsMasterTeam);
-    model.addAttribute("countSlaveGoals",countGoalsSlaveTeam);
-    model.addAttribute("masterTeamPlayers", playerService.findAllPlayersInTeam(game.getMasterTeam()));
-    model.addAttribute("slaveTeamPlayers", playerService.findAllPlayersInTeam(game.getSlaveTeam()));
+            model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
+            model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
+            model.addAttribute("countMasterGoals",countGoalsMasterTeam);
+            model.addAttribute("countSlaveGoals",countGoalsSlaveTeam);
+            model.addAttribute("masterTeamPlayers", playerService.findAllPlayersInTeam(game.getMasterTeam()));
+            model.addAttribute("slaveTeamPlayers", playerService.findAllPlayersInTeam(game.getSlaveTeam()));
+    }
 
         return "administration/resultGameGoalsPlayers";
     }

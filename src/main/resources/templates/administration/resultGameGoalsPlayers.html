@@ -12,7 +12,6 @@
     <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 <body>
-<th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
 
 
@@ -26,55 +25,57 @@
             </td>
         </tr>
 
+        <tr>
+            <td id="masterListGoals"></td>
+            <td id="slaveListGoals"></td>
 
-        <form method="POST" enctype="multipart/form-data">
-            <tr>
-                <td>
-                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                           th:utext="${masterTeamName}">Команда</p>
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                           th:utext="${slaveTeamName}">Команда</p>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam">
-                </td>
-                <td>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam">
-                </td>
-
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="p-t-10" style="text-align:center;">
-                        <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-        </form>
         </tr>
+    <!--    <tr>
+            <td>
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${masterTeamName}">Команда</p>
+                </div>
+            </td>
+            <td>
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${slaveTeamName}">Команда</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input class="input--style-3" type="number" min="0" max="20" step="1"
+                       placeholder="defaultGoalsCount"
+                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam">
+            </td>
+            <td>
+                <input class="input--style-3" type="number" min="0" max="20" step="1"
+                       placeholder="defaultGoalsCount"
+                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam">
+            </td>
 
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="p-t-10" style="text-align:center;">
+                    <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit
+                    </button>
+                </div>
+            </td>
+        </tr>
+-->
     </table>
-    <div id="secondStep"/>
+    <div id="thirdStep"/>
 
 </div>
 
 
 <script th:inline="javascript">
-function getSecondStep(round) {
+
+
+function getThirdStep() {
 
 var d= document.getElementById("date").value;
     $.ajax({
@@ -91,6 +92,46 @@ var d= document.getElementById("date").value;
     });
 }
 
+
+ /*<![CDATA[*/
+    $(document).ready(function () {
+    var errorMessage = /*[[${errorMessage}]]*/;
+    console.log(errorMessage);
+    if(errorMessage!=null){
+     var delay_popup = 500;
+    var msg_pop = document.getElementById('msg_pop');
+    var msg_pop_text = document.getElementById('errorMessage');
+    msg_pop_text.innerHTML=errorMessage;
+    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+    }
+
+    var masterListGoals = document.getElementById('masterListGoals');
+    var slaveListGoals = document.getElementById('slaveListGoals');
+
+
+    for (var i=0; i</*[[${countMasterGoals}]]*/; i++){
+     var s = document.createElement("select");
+     var o = document.createElement("option");
+     o.value="123";
+     o.text="12";
+     s.appendChild(o);
+    /*  <select id="team" name="teamName" th:onchange="show()" style="width:100%">
+                    <option th:value="${team.teamName}" th:each="team : ${teams}"
+                            th:utext="${team.teamName}">Team
+                    </option>
+                </select>
+*/
+
+
+     masterListGoals.appendChild(s);
+    }
+
+        for (var i=0; i</*[[${countSlaveGoals}]]*/; i++){
+     slaveListGoals.innerHTML+="<p>fewfewfewfe</p></br>";
+    }
+
+    });
+    /*]]>*/
 
 
 </script>

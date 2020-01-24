@@ -26,8 +26,6 @@
             </td>
         </tr>
 
-
-        <form method="POST" enctype="multipart/form-data">
             <tr>
                 <td>
                     <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
@@ -46,25 +44,27 @@
                 <td>
                     <input class="input--style-3" type="number" min="0" max="20" step="1"
                            placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam">
+                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
+                    id="countGoalsMasterTeam">
                 </td>
                 <td>
                     <input class="input--style-3" type="number" min="0" max="20" step="1"
                            placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam">
+                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam"
+                           id="countGoalsSlaveTeam">
                 </td>
 
             </tr>
             <tr>
                 <td colspan="2">
                     <div class="p-t-10" style="text-align:center;">
-                        <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit
+                      <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
+                            <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSecondStep()">Продолжить</a>
                         </button>
                     </div>
                 </td>
             </tr>
 
-        </form>
         </tr>
 
     </table>
@@ -74,19 +74,21 @@
 
 
 <script th:inline="javascript">
-function getSecondStep(round) {
+function getSecondStep() {
 
-var d= document.getElementById("date").value;
+var countGoalsMasterTeam= document.getElementById("countGoalsMasterTeam").value;
+var countGoalsSlaveTeam= document.getElementById("countGoalsSlaveTeam").value;
     $.ajax({
         type: 'POST',
-        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        url: "/administration/resultGame",
         data: ({
-            date: d,
-            round:round
+            step: 'goalsCount',
+            countGoalsMasterTeam:countGoalsMasterTeam,
+            countGoalsSlaveTeam:countGoalsSlaveTeam
         }),
         cache: false,
         success: function(html) {
-            $("#block").html(html);
+            $("#secondStep").html(html);
         }
     });
 }
