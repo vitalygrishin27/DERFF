@@ -501,13 +501,22 @@ public class AdministrationController {
             model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
             model.addAttribute("countMasterGoals",countGoalsMasterTeam);
             model.addAttribute("countSlaveGoals",countGoalsSlaveTeam);
-            model.addAttribute("masterTeamPlayers", playerService.findAllPlayersInTeam(game.getMasterTeam()));
-            model.addAttribute("slaveTeamPlayers", playerService.findAllPlayersInTeam(game.getSlaveTeam()));
+            model.addAttribute("masterTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getMasterTeam())));
+            model.addAttribute("slaveTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
     }
 
         return "administration/resultGameGoalsPlayers";
     }
 
+    private List<String> getFullNamePlayersList(List<Player> players){
+        List<String> result=new ArrayList<>();
+        StringBuilder stringBuilder=new StringBuilder();
+        for (Player player:players
+             ) {
+            result.add(stringBuilder.append(player.getLastName()).append(" ").append(player.getFirstName()).append(" ").append(player.getSecondName()).toString());
+        }
+        return result;
+    }
 
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
