@@ -510,10 +510,9 @@ public class AdministrationController {
 
     private List<String> getFullNamePlayersList(List<Player> players){
         List<String> result=new ArrayList<>();
-        StringBuilder stringBuilder=new StringBuilder();
         for (Player player:players
              ) {
-            result.add(stringBuilder.append(player.getLastName()).append(" ").append(player.getFirstName()).append(" ").append(player.getSecondName()).toString());
+            result.add(player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
         }
         return result;
     }
