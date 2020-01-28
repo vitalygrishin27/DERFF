@@ -12,20 +12,19 @@ import app.services.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static app.Utils.ConfigurationKey.*;
 
@@ -162,7 +161,7 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) throws DerffException {
-       // model.addAttribute("teams", teamService.findAllTeams());
+        // model.addAttribute("teams", teamService.findAllTeams());
         return "administration/calendar";
     }
 
@@ -432,8 +431,8 @@ public class AdministrationController {
                                       @ModelAttribute("slaveTeamName") String slaveTeamName,
                                       @ModelAttribute("stringDate") String stringDate
                                       // @ModelAttribute("isLegionary") String isLegionary,
-                                    //  @ModelAttribute("file") MultipartFile file
-                                        ) throws DerffException {
+                                      //  @ModelAttribute("file") MultipartFile file
+    ) throws DerffException {
 
         validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
         try {
@@ -447,7 +446,6 @@ public class AdministrationController {
 
         return "redirect:/administration/calendar";
     }
-
 
 
     @GetMapping(value = "/administration/deleteGame/{id}")
@@ -469,49 +467,57 @@ public class AdministrationController {
     }
 
 
-    @GetMapping(value="/administration/resultGame/{id}")
-    public String firstStepResultsGoalsCount(Model model,@PathVariable("id") long id){
+    @GetMapping(value = "/administration/resultGame/{id}")
+    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) {
         context.clear();
-    //    context.putToContext("countGoalsMasterTeam",0);
-   //     context.putToContext("countGoalsSlaveTeam",0);
-        Game game=gameService.findGameById(id);
-        context.putToContext("game",game);
-    //    model.addAttribute("game",game);
-        model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
-        model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
-        model.addAttribute("countGoalsMasterTeam",0);
-        model.addAttribute("countGoalsSlaveTeam",0);
+        //    context.putToContext("countGoalsMasterTeam",0);
+        //     context.putToContext("countGoalsSlaveTeam",0);
+        Game game = gameService.findGameById(id);
+        context.putToContext("game", game);
+        //    model.addAttribute("game",game);
+        model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
+        model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
+        model.addAttribute("countGoalsMasterTeam", 0);
+        model.addAttribute("countGoalsSlaveTeam", 0);
         return "administration/resultGame";
     }
 
     @PostMapping(value = "/administration/resultGame")
-    public String saveCountOfGoals(Model model,
+    public String saveCountOfGoals(HttpServletRequest request, Model model,
                                    @ModelAttribute("step") String step,
                                    @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
-                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam) throws DerffException {
-    switch (step){
-        case "goalsCount":
-            if(countGoalsMasterTeam.equals("")) countGoalsMasterTeam="0";
-            if(countGoalsSlaveTeam.equals("")) countGoalsSlaveTeam="0";
-            Game game=(Game)context.getFromContext("game");
-            game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
-            game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
+                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam
+                                   ) throws DerffException {
+        switch (step) {
+            case "goalsCount":
+                if (countGoalsMasterTeam.equals("")) countGoalsMasterTeam = "0";
+                if (countGoalsSlaveTeam.equals("")) countGoalsSlaveTeam = "0";
+                Game game = (Game) context.getFromContext("game");
+                game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
+                game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
 
-            model.addAttribute("masterTeamName",game.getMasterTeam().getTeamName());
-            model.addAttribute("slaveTeamName",game.getSlaveTeam().getTeamName());
-            model.addAttribute("countMasterGoals",countGoalsMasterTeam);
-            model.addAttribute("countSlaveGoals",countGoalsSlaveTeam);
-            model.addAttribute("masterTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getMasterTeam())));
-            model.addAttribute("slaveTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
-    }
+                model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
+                model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
+                model.addAttribute("countMasterGoals", countGoalsMasterTeam);
+                model.addAttribute("countSlaveGoals", countGoalsSlaveTeam);
+                model.addAttribute("masterTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                break;
+            case "goalsPlayers":
+                ArrayList<String> masterPlayerFullNameListGoals = new ArrayList<>();
+                        Collections.addAll(masterPlayerFullNameListGoals, request.getParameterValues("masterPlayerNameList[]"));
+                ArrayList<String> slavePlayerFullNameListGoals = new ArrayList<>();
+                Collections.addAll(slavePlayerFullNameListGoals, request.getParameterValues("slavePlayerNameList[]"));
+                break;
+        }
 
         return "administration/resultGameGoalsPlayers";
     }
 
-    private List<String> getFullNamePlayersList(List<Player> players){
-        List<String> result=new ArrayList<>();
-        for (Player player:players
-             ) {
+    private List<String> getFullNamePlayersList(List<Player> players) {
+        List<String> result = new ArrayList<>();
+        for (Player player : players
+        ) {
             result.add(player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
         }
         return result;

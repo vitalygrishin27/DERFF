@@ -30,6 +30,15 @@
             <td id="slaveListGoals"></td>
 
         </tr>
+        <tr>
+            <td colspan="2">
+                <div class="p-t-10" style="text-align:center;">
+                    <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
+                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getThirdStep()">Продолжить</a>
+                    </button>
+                </div>
+            </td>
+        </tr>
     <!--    <tr>
             <td>
                 <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
@@ -76,20 +85,39 @@
 
 function getThirdStep() {
 
-	var d = document.getElementById("date").value;
-	$.ajax({
-		type: 'POST',
-		url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
-		data: ({
-			date: d,
-			round: round
-		}),
-		cache: false,
-		success: function (html) {
-			$("#block").html(html);
-		}
-	});
+var masterPlayers = document.getElementsByClassName('masterListGoals');
+var slavePlayers = document.getElementsByClassName('slaveListGoals');
+var masterPlayerNameList = [];
+var slavePlayerNameList = new Array();
+
+$(masterPlayers).each(function(s){
+if (s.selected==true){
+alert(masterPlayerNameList);
+masterPlayerNameList.push($(this).text());
 }
+});
+$(slavePlayers).each(function(s){
+slavePlayerNameList.push($(this).text());
+});
+    $.ajax({
+        type: 'POST',
+        url: "/administration/resultGame",
+        data: ({
+            step: 'goalsPlayers',
+            masterPlayerNameList:masterPlayerNameList,
+            slavePlayerNameList:slavePlayerNameList
+        }),
+        cache: false,
+        success: function(html) {
+            $("#thirdStep").html(html);
+        }
+    });
+
+
+
+
+}
+
 
 
 /*<![CDATA[*/
@@ -111,10 +139,12 @@ $(document).ready(function () {
 
 	for (var i = 0; i < /*[[${countMasterGoals}]]*/ ; i++) {
 		var s = document.createElement("select");
+		s.className="masterListGoals";
 		$.each(masterTeamPlayers, function (key, value) {
 			var o = document.createElement("option");
 			o.value = key;
 			o.text = value;
+			alert(o.text);
 			s.appendChild(o);
 		});
 		masterListGoals.appendChild(s);
@@ -123,6 +153,7 @@ $(document).ready(function () {
 
     for (var i = 0; i < /*[[${countSlaveGoals}]]*/ ; i++) {
 		var s = document.createElement("select");
+		s.className="slaveListGoals";
 		$.each(slaveTeamPlayers, function (key, value) {
 			var o = document.createElement("option");
 			o.value = key;
@@ -133,7 +164,11 @@ $(document).ready(function () {
 		slaveListGoals.innerHTML += "<br/><br/>";
 	}
 
+
+
 });
+
+
 /*]]>*/
 
 </script>
