@@ -91,35 +91,35 @@ $(document).ready(function () {
 		setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
 	}
 
-	var masterListYellowCards = document.getElementById('masterListYellowCards');
-	var slaveListYellowCards = document.getElementById('slaveListYellowCards');
+	var masterListRedCards = document.getElementById('masterListRedCards');
+	var slaveListRedCards = document.getElementById('slaveListRedCards');
 	var masterTeamPlayers = /*[[${masterTeamPlayersMap}]]*/ ;
 	var slaveTeamPlayers = /*[[${slaveTeamPlayersMap}]]*/ ;
 
-	for (var i = 0; i < /*[[${countYellowCardsMasterTeam}]]*/ ; i++) {
+	for (var i = 0; i < /*[[${countRedCardsMasterTeam}]]*/ ; i++) {
 		var s = document.createElement("select");
-		s.className="masterListYellowCards";
+		s.className="masterListRedCards";
 		$.each(masterTeamPlayers, function (key, value) {
 			var o = document.createElement("option");
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
 		});
-		masterListYellowCards.appendChild(s);
-		masterListYellowCards.innerHTML += "<br/><br/>";
+		masterListRedCards.appendChild(s);
+		masterListRedCards.innerHTML += "<br/><br/>";
 	}
 
-    for (var i = 0; i < /*[[${countYellowCardsSlaveTeam}]]*/ ; i++) {
+    for (var i = 0; i < /*[[${countRedCardsSlaveTeam}]]*/ ; i++) {
 		var s = document.createElement("select");
-		s.className="slaveListYellowCards";
+		s.className="slaveListRedCards";
 		$.each(slaveTeamPlayers, function (key, value) {
 			var o = document.createElement("option");
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
 		});
-		slaveListYellowCards.appendChild(s);
-		slaveListYellowCards.innerHTML += "<br/><br/>";
+		slaveListRedCards.appendChild(s);
+		slaveListRedCards.innerHTML += "<br/><br/>";
 	}
 
 

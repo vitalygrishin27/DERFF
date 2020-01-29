@@ -4,10 +4,7 @@ import app.Models.*;
 import app.Utils.ConfigurationKey;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
-import app.services.impl.ConfigurationImpl;
-import app.services.impl.GameServiceImpl;
-import app.services.impl.PlayerServiceImpl;
-import app.services.impl.TeamServiceImpl;
+import app.services.impl.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +51,12 @@ public class AdministrationController {
 
     @Autowired
     GameServiceImpl gameService;
+
+    @Autowired
+    GoalServiceImpl goalService;
+
+    @Autowired
+    OffenseServiceImpl offenseService;
 
     @Autowired
     ConfigurationImpl configurationService;
@@ -608,7 +611,7 @@ public class AdministrationController {
                     }
                 }
                 game.getOffenses().addAll(offensesRed);
-                saveGameResult();
+                saveGameResult(game);
                 break;
         }
 
@@ -626,8 +629,16 @@ public class AdministrationController {
     }
 
 
-    private void saveGameResult(){
-        System.out.println("ewfwefewfe");
+    private void saveGameResult(Game game){
+        for (Goal goal: game.getGoals()
+             ) {
+            goalService.save(goal);
+        }
+        for (Offense offense:game.getOffenses()
+             ) {
+            offenseService.save(offense);
+        }
+        gameService.save((Game)context.getFromContext("game"));
     }
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
