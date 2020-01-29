@@ -486,8 +486,12 @@ public class AdministrationController {
     public String saveCountOfGoals(HttpServletRequest request, Model model,
                                    @ModelAttribute("step") String step,
                                    @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
-                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam
-                                   ) throws DerffException {
+                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam,
+                                   @ModelAttribute("countYellowCardsMasterTeam") String countYellowCardsMasterTeam,
+                                   @ModelAttribute("countYellowCardsSlaveTeam") String countYellowCardsSlaveTeam,
+                                   @ModelAttribute("countRedCardsMasterTeam") String countRedCardsMasterTeam,
+                                   @ModelAttribute("countRedCardsSlaveTeam") String countRedCardsSlaveTeam
+    ) throws DerffException {
         Game game = (Game) context.getFromContext("game");
         switch (step) {
             case "goalsCount":
@@ -505,43 +509,126 @@ public class AdministrationController {
                 return "administration/resultGameGoalsPlayers";
             case "goalsPlayers":
                 ArrayList<String> masterPlayerIdListGoals = new ArrayList<>();
-                        Collections.addAll(masterPlayerIdListGoals, request.getParameterValues("masterPlayerIdListGoals[]"));
-                ArrayList<String> slavePlayerIdListGoals = new ArrayList<>();
-                Collections.addAll(slavePlayerIdListGoals, request.getParameterValues("slavePlayerIdListGoals[]"));
-                List<Goal> goals =new ArrayList<>();
-                for (String id: masterPlayerIdListGoals
-                     ) {
-                    Goal goal=new Goal();
-                    goal.setTeam(game.getMasterTeam());
-                    goal.setGame(game);
-                    goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
-                    goals.add(goal);
+                List<Goal> goals = new ArrayList<>();
+                if (request.getParameterValues("masterPlayerIdListGoals[]") != null) {
+                    Collections.addAll(masterPlayerIdListGoals, request.getParameterValues("masterPlayerIdListGoals[]"));
+                    for (String id : masterPlayerIdListGoals
+                    ) {
+                        Goal goal = new Goal();
+                        goal.setTeam(game.getMasterTeam());
+                        goal.setGame(game);
+                        goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        goals.add(goal);
+                    }
                 }
-
-                for (String id: slavePlayerIdListGoals
-                ) {
-                    Goal goal=new Goal();
-                    goal.setTeam(game.getSlaveTeam());
-                    goal.setGame(game);
-                    goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
-                    goals.add(goal);
+                ArrayList<String> slavePlayerIdListGoals = new ArrayList<>();
+                if (request.getParameterValues("slavePlayerIdListGoals[]") != null) {
+                    Collections.addAll(slavePlayerIdListGoals, request.getParameterValues("slavePlayerIdListGoals[]"));
+                    for (String id : slavePlayerIdListGoals
+                    ) {
+                        Goal goal = new Goal();
+                        goal.setTeam(game.getSlaveTeam());
+                        goal.setGame(game);
+                        goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        goals.add(goal);
+                    }
                 }
                 game.setGoals(goals);
+             //   context.putToContext("game",game);
                 return "administration/resultGameYellowCardsCount";
+            case "yellowCardsCount":
+                if (countYellowCardsMasterTeam.equals("")) countYellowCardsMasterTeam = "0";
+                if (countYellowCardsSlaveTeam.equals("")) countYellowCardsSlaveTeam = "0";
+                model.addAttribute("countYellowCardsMasterTeam", countYellowCardsMasterTeam);
+                model.addAttribute("countYellowCardsSlaveTeam", countYellowCardsSlaveTeam);
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                return "administration/resultGameYellowCardsPlayer";
+            case "yellowCardsPlayers":
+                ArrayList<String> masterPlayerIdListYellowCards = new ArrayList<>();
+                List<Offense> offenses = new ArrayList<>();
+                if (request.getParameterValues("masterPlayerIdListYellowCards[]") != null) {
+                    Collections.addAll(masterPlayerIdListYellowCards, request.getParameterValues("masterPlayerIdListYellowCards[]"));
+                    for (String id : masterPlayerIdListYellowCards
+                    ) {
+                        Offense offense = new Offense();
+                        offense.setGame(game);
+                        offense.setType("YELLOW");
+                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offenses.add(offense);
+                    }
+                }
+                ArrayList<String> slavePlayerIdListYellowCards = new ArrayList<>();
+                if (request.getParameterValues("slavePlayerIdListYellowCards[]") != null) {
+                    Collections.addAll(slavePlayerIdListYellowCards, request.getParameterValues("slavePlayerIdListYellowCards[]"));
+                    for (String id : slavePlayerIdListYellowCards
+                    ) {
+                        Offense offense = new Offense();
+                        offense.setGame(game);
+                        offense.setType("YELLOW");
+                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offenses.add(offense);
+                    }
+                }
+                game.setOffenses(offenses);
+                //context.putToContext("offenses", offenses);
+                return "administration/resultGameRedCardsCount";
+            case "redCardsCount":
+                if (countRedCardsMasterTeam.equals("")) countRedCardsMasterTeam = "0";
+                if (countRedCardsSlaveTeam.equals("")) countRedCardsSlaveTeam = "0";
+                model.addAttribute("countRedCardsMasterTeam", countRedCardsMasterTeam);
+                model.addAttribute("countRedCardsSlaveTeam", countRedCardsSlaveTeam);
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                return "administration/resultGameRedCardsPlayer";
+            case "saveResult":
+                ArrayList<String> masterPlayerIdListRedCards = new ArrayList<>();
+                List<Offense> offensesRed = new ArrayList<>();
+                if (request.getParameterValues("masterPlayerIdListRedCards[]") != null) {
+                    Collections.addAll(masterPlayerIdListRedCards, request.getParameterValues("masterPlayerIdListRedCards[]"));
+                    for (String id : masterPlayerIdListRedCards
+                    ) {
+                        Offense offense = new Offense();
+                        offense.setGame(game);
+                        offense.setType("RED");
+                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offensesRed.add(offense);
+                    }
+                }
+                ArrayList<String> slavePlayerIdListRedCards = new ArrayList<>();
+                if (request.getParameterValues("slavePlayerIdListRedCards[]") != null) {
+                    Collections.addAll(slavePlayerIdListRedCards, request.getParameterValues("slavePlayerIdListRedCards[]"));
+                    for (String id : slavePlayerIdListRedCards
+                    ) {
+                        Offense offense = new Offense();
+                        offense.setGame(game);
+                        offense.setType("RED");
+                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offensesRed.add(offense);
+                    }
+                }
+                game.getOffenses().addAll(offensesRed);
+                saveGameResult();
+                break;
         }
+
 
         return "administration/resultGameGoalsPlayers";
     }
 
-    private Map<Long,String> getFullNamePlayersMap(List<Player> players) {
-        Map<Long,String> result = new HashMap<>();
+    private Map<Long, String> getFullNamePlayersMap(List<Player> players) {
+        Map<Long, String> result = new HashMap<>();
         for (Player player : players
         ) {
-            result.put(player.getId(),player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
+            result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
         }
         return result;
     }
 
+
+    private void saveGameResult(){
+        System.out.println("ewfwefewfe");
+    }
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {
 

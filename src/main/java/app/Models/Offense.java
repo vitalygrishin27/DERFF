@@ -28,4 +28,7 @@ public class Offense {
     @JoinColumn(name = "id_game")
     private Game game;
 
+    @JoinColumn(name = "type")
+    private String type;
+
 }

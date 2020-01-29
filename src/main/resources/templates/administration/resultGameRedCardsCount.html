@@ -20,7 +20,7 @@
         <tr>
             <td colspan="2">
                 <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active">Желтые карточки</a>
+                    <a class="btn btn-lg btn-success active">Красные карточки</a>
                 </div>
             </td>
         </tr>
@@ -29,15 +29,15 @@
         <tr>
             <td>
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultYellowCardCount"
-                       th:placeholder="#{placeholder.defaultYellowCardCount}" name="countYellowCardsMasterTeam"
-                       id="countYellowCardsMasterTeam">
+                       placeholder="defaultRedCardCount"
+                       th:placeholder="#{placeholder.defaultRedCardCount}" name="countRedCardsMasterTeam"
+                       id="countRedCardsMasterTeam">
             </td>
             <td>
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultYellowCardCount"
-                       th:placeholder="#{placeholder.defaultYellowCardCount}" name="countYellowCardsSlaveTeam"
-                       id="countYellowCardsSlaveTeam">
+                       placeholder="defaultRedCardCount"
+                       th:placeholder="#{placeholder.defaultRedCardCount}" name="countRedCardsSlaveTeam"
+                       id="countRedCardsSlaveTeam">
             </td>
 
         </tr>
@@ -45,7 +45,7 @@
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
                     <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
-                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getFourthStep()">Продолжить</a>
+                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSixthStep()">Продолжить</a>
                     </button>
                 </div>
             </td>
@@ -53,27 +53,27 @@
 
 
     </table>
-    <div id="fourthStep"/>
+    <div id="sixthStep"/>
 
 </div>
 
 
 <script th:inline="javascript">
-function getFourthStep() {
+function getSixthStep() {
 
-var countYellowCardsMasterTeam= document.getElementById("countYellowCardsMasterTeam").value;
-var countYellowCardsSlaveTeam= document.getElementById("countYellowCardsSlaveTeam").value;
+var countRedCardsMasterTeam= document.getElementById("countRedCardsMasterTeam").value;
+var countRedCardsSlaveTeam= document.getElementById("countRedCardsSlaveTeam").value;
     $.ajax({
         type: 'POST',
         url: "/administration/resultGame",
         data: ({
-            step: 'yellowCardsCount',
-            countYellowCardsMasterTeam:countYellowCardsMasterTeam,
-            countYellowCardsSlaveTeam:countYellowCardsSlaveTeam
+            step: 'redCardsCount',
+            countRedCardsMasterTeam:countRedCardsMasterTeam,
+            countRedCardsSlaveTeam:countRedCardsSlaveTeam
         }),
         cache: false,
         success: function(html) {
-            $("#fourthStep").html(html);
+            $("#sixthStep").html(html);
         }
     });
 }

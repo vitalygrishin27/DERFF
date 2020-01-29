@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
+</head>
+<body>
+<div th:insert="common/message :: message"></div>
+
+
+<div>
+    <table class="table_dark">
+        <tr>
+            <td colspan="2">
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active">Желтые карточки (Игроки)</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td id="masterListYellowCards"></td>
+            <td id="slaveListYellowCards"></td>
+
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="p-t-10" style="text-align:center;">
+                    <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
+                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getFifthStep()">Продолжить</a>
+                    </button>
+                </div>
+            </td>
+        </tr>
+
+
+    </table>
+    <div id="fifthStep"/>
+
+</div>
+
+
+<script th:inline="javascript">
+
+
+function getFifthStep() {
+
+var masterPlayers = document.getElementsByClassName('masterListYellowCards');
+var slavePlayers = document.getElementsByClassName('slaveListYellowCards');
+var masterPlayerIdListYellowCards = [];
+var slavePlayerIdListYellowCards = new Array();
+
+$(masterPlayers).each(function(s){
+masterPlayerIdListYellowCards.push($(this).val());
+});
+
+$(slavePlayers).each(function(s){
+slavePlayerIdListYellowCards.push($(this).val());
+});
+    $.ajax({
+        type: 'POST',
+        url: "/administration/resultGame",
+        data: ({
+            step: 'yellowCardsPlayers',
+            masterPlayerIdListYellowCards:masterPlayerIdListYellowCards,
+            slavePlayerIdListYellowCards:slavePlayerIdListYellowCards
+        }),
+        cache: false,
+        success: function(html) {
+            $("#fifthStep").html(html);
+        }
+    });
+
+}
+
+
+
+
+/*<![CDATA[*/
+$(document).ready(function () {
+	var errorMessage = /*[[${errorMessage}]]*/ ;
+	console.log(errorMessage);
+	if (errorMessage != null) {
+		var delay_popup = 500;
+		var msg_pop = document.getElementById('msg_pop');
+		var msg_pop_text = document.getElementById('errorMessage');
+		msg_pop_text.innerHTML = errorMessage;
+		setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+	}
+
+	var masterListYellowCards = document.getElementById('masterListYellowCards');
+	var slaveListYellowCards = document.getElementById('slaveListYellowCards');
+	var masterTeamPlayers = /*[[${masterTeamPlayersMap}]]*/ ;
+	var slaveTeamPlayers = /*[[${slaveTeamPlayersMap}]]*/ ;
+
+	for (var i = 0; i < /*[[${countYellowCardsMasterTeam}]]*/ ; i++) {
+		var s = document.createElement("select");
+		s.className="masterListYellowCards";
+		$.each(masterTeamPlayers, function (key, value) {
+			var o = document.createElement("option");
+			o.value = key;
+			o.text = value;
+			s.appendChild(o);
+		});
+		masterListYellowCards.appendChild(s);
+		masterListYellowCards.innerHTML += "<br/><br/>";
+	}
+
+    for (var i = 0; i < /*[[${countYellowCardsSlaveTeam}]]*/ ; i++) {
+		var s = document.createElement("select");
+		s.className="slaveListYellowCards";
+		$.each(slaveTeamPlayers, function (key, value) {
+			var o = document.createElement("option");
+			o.value = key;
+			o.text = value;
+			s.appendChild(o);
+		});
+		slaveListYellowCards.appendChild(s);
+		slaveListYellowCards.innerHTML += "<br/><br/>";
+	}
+
+
+
+});
+
+
+/*]]>*/
+
+
+</script>
+
+</body>
+</html>
