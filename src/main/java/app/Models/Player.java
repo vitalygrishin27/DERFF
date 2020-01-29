@@ -68,4 +68,13 @@ public class Player {
     @Fetch(FetchMode.SUBSELECT)
     private List<Competition> competitions = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
 }

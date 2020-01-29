@@ -62,4 +62,12 @@ public class Game {
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd.MM");
         return dateFormat.format(this.getDate());
     }*/
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", date=" + date +
+                '}';
+    }
 }

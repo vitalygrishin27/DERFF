@@ -488,11 +488,11 @@ public class AdministrationController {
                                    @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
                                    @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam
                                    ) throws DerffException {
+        Game game = (Game) context.getFromContext("game");
         switch (step) {
             case "goalsCount":
                 if (countGoalsMasterTeam.equals("")) countGoalsMasterTeam = "0";
                 if (countGoalsSlaveTeam.equals("")) countGoalsSlaveTeam = "0";
-                Game game = (Game) context.getFromContext("game");
                 game.setMasterGoalsCount(Integer.valueOf(countGoalsMasterTeam));
                 game.setSlaveGoalsCount(Integer.valueOf(countGoalsSlaveTeam));
 
@@ -500,25 +500,44 @@ public class AdministrationController {
                 model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
                 model.addAttribute("countMasterGoals", countGoalsMasterTeam);
                 model.addAttribute("countSlaveGoals", countGoalsSlaveTeam);
-                model.addAttribute("masterTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getMasterTeam())));
-                model.addAttribute("slaveTeamPlayers", getFullNamePlayersList(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
-                break;
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                return "administration/resultGameGoalsPlayers";
             case "goalsPlayers":
-                ArrayList<String> masterPlayerFullNameListGoals = new ArrayList<>();
-                        Collections.addAll(masterPlayerFullNameListGoals, request.getParameterValues("masterPlayerNameList[]"));
-                ArrayList<String> slavePlayerFullNameListGoals = new ArrayList<>();
-                Collections.addAll(slavePlayerFullNameListGoals, request.getParameterValues("slavePlayerNameList[]"));
-                break;
+                ArrayList<String> masterPlayerIdListGoals = new ArrayList<>();
+                        Collections.addAll(masterPlayerIdListGoals, request.getParameterValues("masterPlayerIdListGoals[]"));
+                ArrayList<String> slavePlayerIdListGoals = new ArrayList<>();
+                Collections.addAll(slavePlayerIdListGoals, request.getParameterValues("slavePlayerIdListGoals[]"));
+                List<Goal> goals =new ArrayList<>();
+                for (String id: masterPlayerIdListGoals
+                     ) {
+                    Goal goal=new Goal();
+                    goal.setTeam(game.getMasterTeam());
+                    goal.setGame(game);
+                    goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                    goals.add(goal);
+                }
+
+                for (String id: slavePlayerIdListGoals
+                ) {
+                    Goal goal=new Goal();
+                    goal.setTeam(game.getSlaveTeam());
+                    goal.setGame(game);
+                    goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                    goals.add(goal);
+                }
+                game.setGoals(goals);
+                return "administration/resultGameYellowCardsCount";
         }
 
         return "administration/resultGameGoalsPlayers";
     }
 
-    private List<String> getFullNamePlayersList(List<Player> players) {
-        List<String> result = new ArrayList<>();
+    private Map<Long,String> getFullNamePlayersMap(List<Player> players) {
+        Map<Long,String> result = new HashMap<>();
         for (Player player : players
         ) {
-            result.add(player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
+            result.put(player.getId(),player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
         }
         return result;
     }

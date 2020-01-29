@@ -32,5 +32,10 @@ public class Goal {
     @JoinColumn(name = "id_game")
     private Game game;
 
-
+    @Override
+    public String toString() {
+        return "Goal{" +
+                "id=" + id +
+                '}';
+    }
 }

@@ -87,25 +87,23 @@ function getThirdStep() {
 
 var masterPlayers = document.getElementsByClassName('masterListGoals');
 var slavePlayers = document.getElementsByClassName('slaveListGoals');
-var masterPlayerNameList = [];
-var slavePlayerNameList = new Array();
+var masterPlayerIdListGoals = [];
+var slavePlayerIdListGoals = new Array();
 
 $(masterPlayers).each(function(s){
-if (s.selected==true){
-alert(masterPlayerNameList);
-masterPlayerNameList.push($(this).text());
-}
+masterPlayerIdListGoals.push($(this).val());
 });
+
 $(slavePlayers).each(function(s){
-slavePlayerNameList.push($(this).text());
+slavePlayerIdListGoals.push($(this).val());
 });
     $.ajax({
         type: 'POST',
         url: "/administration/resultGame",
         data: ({
             step: 'goalsPlayers',
-            masterPlayerNameList:masterPlayerNameList,
-            slavePlayerNameList:slavePlayerNameList
+            masterPlayerIdListGoals:masterPlayerIdListGoals,
+            slavePlayerIdListGoals:slavePlayerIdListGoals
         }),
         cache: false,
         success: function(html) {
@@ -134,8 +132,8 @@ $(document).ready(function () {
 
 	var masterListGoals = document.getElementById('masterListGoals');
 	var slaveListGoals = document.getElementById('slaveListGoals');
-	var masterTeamPlayers = /*[[${masterTeamPlayers}]]*/ ;
-	var slaveTeamPlayers = /*[[${slaveTeamPlayers}]]*/ ;
+	var masterTeamPlayers = /*[[${masterTeamPlayersMap}]]*/ ;
+	var slaveTeamPlayers = /*[[${slaveTeamPlayersMap}]]*/ ;
 
 	for (var i = 0; i < /*[[${countMasterGoals}]]*/ ; i++) {
 		var s = document.createElement("select");
@@ -144,7 +142,6 @@ $(document).ready(function () {
 			var o = document.createElement("option");
 			o.value = key;
 			o.text = value;
-			alert(o.text);
 			s.appendChild(o);
 		});
 		masterListGoals.appendChild(s);
