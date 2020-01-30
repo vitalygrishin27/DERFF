@@ -54,4 +54,8 @@ public class GameServiceImpl implements GameService {
     public void update(Game game) {
         repository.update(game.getId(),game.getMasterTeam(),game.getSlaveTeam(),game.getDate(),game.getStringDate());
     }
+    @Override
+    public List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave){
+       return repository.findGamesWithResultByTeam(team, isResultSave);
+    }
 }

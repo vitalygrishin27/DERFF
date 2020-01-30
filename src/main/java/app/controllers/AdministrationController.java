@@ -282,7 +282,8 @@ public class AdministrationController {
         }
         model.addAttribute("player", player);
         model.addAttribute("teams", teamService.findAllTeams());
-        model.addAttribute("titlePage", messageSource.getMessage("page.title.player.editing", null, Locale.getDefault()));
+        model.addAttribute("titlePage", messageSource
+                .getMessage("page.title.player.editing", null, Locale.getDefault()));
 
         return "administration/editPlayer";
     }
@@ -343,10 +344,15 @@ public class AdministrationController {
                     games = gameService.findGamesByDate(date);
                     break;
                 case "first":
-                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(FIRST_ROUND_END)));
+                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
+                            .parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
+                            .parse(configurationService.getValue(FIRST_ROUND_END)));
                     break;
                 case "second":
-                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd").parse(configurationService.getValue(SECOND_ROUND_END)));
+                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
+                            .parse(configurationService
+                                    .getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
+                            .parse(configurationService.getValue(SECOND_ROUND_END)));
                     break;
             }
         } catch (Exception e) {
@@ -476,7 +482,7 @@ public class AdministrationController {
     public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
         context.clear();
         Game game = gameService.findGameById(id);
-        if (game.getIsResultSave() == null || !game.getIsResultSave()) {
+        if (!game.isResultSave()) {
             context.putToContext("game", game);
             model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
             model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
@@ -511,14 +517,17 @@ public class AdministrationController {
                 model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
                 model.addAttribute("countMasterGoals", countGoalsMasterTeam);
                 model.addAttribute("countSlaveGoals", countGoalsSlaveTeam);
-                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
-                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getSlaveTeam())));
                 return "administration/resultGameGoalsPlayers";
             case "goalsPlayers":
                 ArrayList<String> masterPlayerIdListGoals = new ArrayList<>();
                 List<Goal> goals = new ArrayList<>();
                 if (request.getParameterValues("masterPlayerIdListGoals[]") != null) {
-                    Collections.addAll(masterPlayerIdListGoals, request.getParameterValues("masterPlayerIdListGoals[]"));
+                    Collections
+                            .addAll(masterPlayerIdListGoals, request.getParameterValues("masterPlayerIdListGoals[]"));
                     for (String id : masterPlayerIdListGoals
                     ) {
                         Goal goal = new Goal();
@@ -548,14 +557,17 @@ public class AdministrationController {
                 if (countYellowCardsSlaveTeam.equals("")) countYellowCardsSlaveTeam = "0";
                 model.addAttribute("countYellowCardsMasterTeam", countYellowCardsMasterTeam);
                 model.addAttribute("countYellowCardsSlaveTeam", countYellowCardsSlaveTeam);
-                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
-                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getSlaveTeam())));
                 return "administration/resultGameYellowCardsPlayer";
             case "yellowCardsPlayers":
                 ArrayList<String> masterPlayerIdListYellowCards = new ArrayList<>();
                 List<Offense> offenses = new ArrayList<>();
                 if (request.getParameterValues("masterPlayerIdListYellowCards[]") != null) {
-                    Collections.addAll(masterPlayerIdListYellowCards, request.getParameterValues("masterPlayerIdListYellowCards[]"));
+                    Collections.addAll(masterPlayerIdListYellowCards, request
+                            .getParameterValues("masterPlayerIdListYellowCards[]"));
                     for (String id : masterPlayerIdListYellowCards
                     ) {
                         Offense offense = new Offense();
@@ -567,7 +579,8 @@ public class AdministrationController {
                 }
                 ArrayList<String> slavePlayerIdListYellowCards = new ArrayList<>();
                 if (request.getParameterValues("slavePlayerIdListYellowCards[]") != null) {
-                    Collections.addAll(slavePlayerIdListYellowCards, request.getParameterValues("slavePlayerIdListYellowCards[]"));
+                    Collections.addAll(slavePlayerIdListYellowCards, request
+                            .getParameterValues("slavePlayerIdListYellowCards[]"));
                     for (String id : slavePlayerIdListYellowCards
                     ) {
                         Offense offense = new Offense();
@@ -585,14 +598,17 @@ public class AdministrationController {
                 if (countRedCardsSlaveTeam.equals("")) countRedCardsSlaveTeam = "0";
                 model.addAttribute("countRedCardsMasterTeam", countRedCardsMasterTeam);
                 model.addAttribute("countRedCardsSlaveTeam", countRedCardsSlaveTeam);
-                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getMasterTeam())));
-                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService.findAllPlayersInTeam(game.getSlaveTeam())));
+                model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getMasterTeam())));
+                model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
+                        .findAllPlayersInTeam(game.getSlaveTeam())));
                 return "administration/resultGameRedCardsPlayer";
             case "saveResult":
                 ArrayList<String> masterPlayerIdListRedCards = new ArrayList<>();
                 List<Offense> offensesRed = new ArrayList<>();
                 if (request.getParameterValues("masterPlayerIdListRedCards[]") != null) {
-                    Collections.addAll(masterPlayerIdListRedCards, request.getParameterValues("masterPlayerIdListRedCards[]"));
+                    Collections.addAll(masterPlayerIdListRedCards, request
+                            .getParameterValues("masterPlayerIdListRedCards[]"));
                     for (String id : masterPlayerIdListRedCards
                     ) {
                         Offense offense = new Offense();
@@ -604,7 +620,8 @@ public class AdministrationController {
                 }
                 ArrayList<String> slavePlayerIdListRedCards = new ArrayList<>();
                 if (request.getParameterValues("slavePlayerIdListRedCards[]") != null) {
-                    Collections.addAll(slavePlayerIdListRedCards, request.getParameterValues("slavePlayerIdListRedCards[]"));
+                    Collections.addAll(slavePlayerIdListRedCards, request
+                            .getParameterValues("slavePlayerIdListRedCards[]"));
                     for (String id : slavePlayerIdListRedCards
                     ) {
                         Offense offense = new Offense();
@@ -637,8 +654,38 @@ public class AdministrationController {
     public String getStandings(Model model) throws DerffException {
         List<StandingsRow> standingsRows = new ArrayList<>();
         for (Team team : teamService.findAllTeams()
-             ){
+        ) {
+            StandingsRow standingsRow = new StandingsRow();
+            standingsRow.setTeamName(team.getTeamName());
 
+            for (Game game : gameService.findGamesWithResultByTeam(team, true)
+            ) {
+                standingsRow.setGames(standingsRow.getGames() + 1);
+                if (team.equals(game.getMasterTeam())) {
+                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
+                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getSlaveGoalsCount());
+                    if (game.getMasterGoalsCount().equals(game.getSlaveGoalsCount())) {
+                        standingsRow.setDraws(standingsRow.getDraws() + 1);
+                    } else if (game.getMasterGoalsCount() > game.getSlaveGoalsCount()) {
+                        standingsRow.setWins(standingsRow.getWins() + 1);
+                    } else {
+                        standingsRow.setLosses(standingsRow.getLosses() + 1);
+                    }
+                } else {
+                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getSlaveGoalsCount());
+                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getMasterGoalsCount());
+                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())) {
+                        standingsRow.setDraws(standingsRow.getDraws() + 1);
+                    } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount()) {
+                        standingsRow.setWins(standingsRow.getWins() + 1);
+                    } else {
+                        standingsRow.setLosses(standingsRow.getLosses() + 1);
+                    }
+                }
+            }
+            standingsRow.setRatioGoals(standingsRow.getScoredGoals() - standingsRow.getConcededGoals());
+            standingsRow.setPoints(standingsRow.getWins() * 3 + standingsRow.getDraws());
+            standingsRows.add(standingsRow);
         }
 
         model.addAttribute("standings", standingsRows);
@@ -649,14 +696,15 @@ public class AdministrationController {
         Map<Long, String> result = new HashMap<>();
         for (Player player : players
         ) {
-            result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
+            result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player
+                    .getSecondName());
         }
         return result;
     }
 
 
     private void saveGameResult(Game game) throws DerffException {
-        if (game.getIsResultSave() == null || !game.getIsResultSave()) {
+        if (!game.isResultSave()) {
             for (Goal goal : game.getGoals()
             ) {
                 goalService.save(goal);
@@ -665,7 +713,7 @@ public class AdministrationController {
             ) {
                 offenseService.save(offense);
             }
-            game.setIsResultSave(true);
+            game.setResultSave(true);
             gameService.save((Game) context.getFromContext("game"));
         } else {
             throw new DerffException("gameResultsAreAlreadyExists");

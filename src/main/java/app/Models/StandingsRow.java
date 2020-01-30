@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Data
 public class StandingsRow {
 

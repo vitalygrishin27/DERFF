@@ -22,6 +22,8 @@ public interface GameService {
 
     List<Game> findGamesBetweenDates(Date from, Date to);
 
+    List<Game> findGamesWithResultByTeam(Team team,boolean isResultSave);
+
     void update(Game game);
 
 }

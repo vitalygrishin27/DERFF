@@ -66,8 +66,8 @@ public class Game {
         return dateFormat.format(this.getDate());
     }*/
 
-    @Column(name = "is_result_save",nullable = false)
-    private Boolean isResultSave;
+    @Column(name = "is_result_save", nullable = false)
+    private boolean isResultSave;
 
     @Override
     public String toString() {
