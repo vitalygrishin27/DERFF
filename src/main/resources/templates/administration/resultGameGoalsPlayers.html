@@ -19,8 +19,8 @@
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active">Игроки</a>
+                <div style="text-align:center; color:#ffff00;" class="input-group">
+                    Игроки забившие мячи
                 </div>
             </td>
         </tr>
@@ -32,51 +32,15 @@
         </tr>
         <tr>
             <td colspan="2">
-                <div class="p-t-10" style="text-align:center;">
+                <div class="p-t-10" style="text-align:center;" id="thirdStep">
                     <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
                     <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getThirdStep()">Продолжить</a>
                     </button>
                 </div>
             </td>
         </tr>
-    <!--    <tr>
-            <td>
-                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${masterTeamName}">Команда</p>
-                </div>
-            </td>
-            <td>
-                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                       th:utext="${slaveTeamName}">Команда</p>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultGoalsCount"
-                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam">
-            </td>
-            <td>
-                <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultGoalsCount"
-                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam">
-            </td>
-
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div class="p-t-10" style="text-align:center;">
-                    <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit
-                    </button>
-                </div>
-            </td>
-        </tr>
--->
     </table>
-    <div id="thirdStep"/>
+   <!-- <div id="thirdStep"/> -->
 
 </div>
 

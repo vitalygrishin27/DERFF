@@ -164,7 +164,9 @@ public class AdministrationController {
 
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) throws DerffException {
-        // model.addAttribute("teams", teamService.findAllTeams());
+        if (messageGenerator.isActive()) {
+            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+        }
         return "administration/calendar";
     }
 
@@ -471,18 +473,20 @@ public class AdministrationController {
 
 
     @GetMapping(value = "/administration/resultGame/{id}")
-    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) {
+    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
         context.clear();
-        //    context.putToContext("countGoalsMasterTeam",0);
-        //     context.putToContext("countGoalsSlaveTeam",0);
         Game game = gameService.findGameById(id);
-        context.putToContext("game", game);
-        //    model.addAttribute("game",game);
-        model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
-        model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
-        model.addAttribute("countGoalsMasterTeam", 0);
-        model.addAttribute("countGoalsSlaveTeam", 0);
-        return "administration/resultGame";
+        if (game.getIsResultSave() == null || !game.getIsResultSave()) {
+            context.putToContext("game", game);
+            model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
+            model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
+            model.addAttribute("countGoalsMasterTeam", 0);
+            model.addAttribute("countGoalsSlaveTeam", 0);
+            return "administration/resultGame";
+        } else {
+            throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
+        }
+
     }
 
     @PostMapping(value = "/administration/resultGame")
@@ -537,7 +541,7 @@ public class AdministrationController {
                     }
                 }
                 game.setGoals(goals);
-             //   context.putToContext("game",game);
+                //   context.putToContext("game",game);
                 return "administration/resultGameYellowCardsCount";
             case "yellowCardsCount":
                 if (countYellowCardsMasterTeam.equals("")) countYellowCardsMasterTeam = "0";
@@ -611,12 +615,34 @@ public class AdministrationController {
                     }
                 }
                 game.getOffenses().addAll(offensesRed);
-                saveGameResult(game);
-                break;
+                try {
+                    saveGameResult(game);
+                    messageGenerator.setMessage((messageSource
+                            .getMessage("success.resultGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
+                                    game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
+                } catch (Exception e) {
+                    throw new DerffException("database", game, new Object[]{e.getMessage()});
+                }
+
+
+                return "redirect:/administration/calendar";
         }
 
 
-        return "administration/resultGameGoalsPlayers";
+        return "redirect:/administration/calendar";
+    }
+
+
+    @GetMapping(value = "/administration/standings")
+    public String getStandings(Model model) throws DerffException {
+        List<StandingsRow> standingsRows = new ArrayList<>();
+        for (Team team : teamService.findAllTeams()
+             ){
+
+        }
+
+        model.addAttribute("standings", standingsRows);
+        return "administration/standings";
     }
 
     private Map<Long, String> getFullNamePlayersMap(List<Player> players) {
@@ -629,16 +655,22 @@ public class AdministrationController {
     }
 
 
-    private void saveGameResult(Game game){
-        for (Goal goal: game.getGoals()
-             ) {
-            goalService.save(goal);
+    private void saveGameResult(Game game) throws DerffException {
+        if (game.getIsResultSave() == null || !game.getIsResultSave()) {
+            for (Goal goal : game.getGoals()
+            ) {
+                goalService.save(goal);
+            }
+            for (Offense offense : game.getOffenses()
+            ) {
+                offenseService.save(offense);
+            }
+            game.setIsResultSave(true);
+            gameService.save((Game) context.getFromContext("game"));
+        } else {
+            throw new DerffException("gameResultsAreAlreadyExists");
         }
-        for (Offense offense:game.getOffenses()
-             ) {
-            offenseService.save(offense);
-        }
-        gameService.save((Game)context.getFromContext("game"));
+
     }
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {

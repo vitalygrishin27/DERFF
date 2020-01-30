@@ -19,8 +19,8 @@
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active">Красные карточки (Игроки)</a>
+                <div style="text-align:center; color:#ffff00;" class="input-group">
+                    Игроки, получившие красные карточки</a>
                 </div>
             </td>
         </tr>
@@ -32,7 +32,6 @@
         <tr>
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
-                    <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
                     <a class="btn btn-lg btn-success active" th:text="#{button.submit}" th:onClick="saveResult()">Coхранить</a>
                     </button>
                 </div>
@@ -71,7 +70,10 @@ slavePlayerIdListRedCards.push($(this).val());
             masterPlayerIdListRedCards:masterPlayerIdListRedCards,
             slavePlayerIdListRedCards:slavePlayerIdListRedCards
         }),
-        cache: false
+        cache: false,
+        success: function(msg){
+                     location.href = "/administration/calendar"
+                        }
     });
 
 }
