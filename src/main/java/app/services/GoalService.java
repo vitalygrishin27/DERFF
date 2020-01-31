@@ -5,6 +5,6 @@ import app.Models.Goal;
 public interface GoalService {
     void save(Goal goal);
 
-
+    void delete(Goal goal);
 }
 

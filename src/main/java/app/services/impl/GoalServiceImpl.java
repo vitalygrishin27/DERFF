@@ -17,4 +17,9 @@ public class GoalServiceImpl implements GoalService {
 
     }
 
+    @Override
+    public void delete(Goal goal) {
+        repository.delete(goal);
+    }
+
 }

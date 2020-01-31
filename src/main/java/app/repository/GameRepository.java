@@ -22,7 +22,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("Select g from Game g where g.date >=:from and g.date <=:to")
     List<Game> findGamesBetweenDates(@Param("from")Date from,@Param("to")Date to);
 
-    @Query("Select g from Game g where g.isResultSave = ?2 and (g.masterTeam = ?1 or g.slaveTeam = ?1)")
+    @Query("Select g from Game g where g.resultSave = ?2 and (g.masterTeam = ?1 or g.slaveTeam = ?1)")
     List<Game> findGamesWithResultByTeam(Team team,boolean resultSave);
 
     @Transactional

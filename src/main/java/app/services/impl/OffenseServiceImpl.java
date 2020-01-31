@@ -18,4 +18,9 @@ public class OffenseServiceImpl implements OffenseService {
 
     }
 
+    @Override
+    public void delete(Offense offense) {
+        repository.delete(offense);
+    }
+
 }

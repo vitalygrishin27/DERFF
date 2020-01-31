@@ -226,7 +226,7 @@ public class AdministrationController {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
                     .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
-                player = (Player) messageGenerator.getTemporaryObjectForMessage();
+                player = (Player) messageGenerator.getTemporaryObjectForMessageWithSetNull();
                 player.setBirthday(null);
             }
 
@@ -465,9 +465,18 @@ public class AdministrationController {
         try {
             game = gameService.findGameById(id);
         } catch (Exception e) {
-            throw new DerffException("playerNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
+            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
         }
         try {
+            for (Offense offense:game.getOffenses()
+                 ) {
+                offenseService.delete(offense);
+            }
+            for (Goal goal:game.getGoals()
+                 ) {
+                goalService.delete(goal);
+            }
+
             gameService.delete(game);
         } catch (Exception e) {
             throw new DerffException("database", game, new Object[]{e.getMessage()});
@@ -692,6 +701,9 @@ public class AdministrationController {
         return "administration/standings";
     }
 
+    //При дообавление игрока выводит сообщение удачно добавлен и заполянет поля для нового игроа старыми данными нужно после вывода сообщения стирать и объект
+    //При редактировании игрока не меняя картоску айди выводится ошибка что такой номер не допустим.
+
     private Map<Long, String> getFullNamePlayersMap(List<Player> players) {
         Map<Long, String> result = new HashMap<>();
         for (Player player : players
@@ -827,6 +839,8 @@ public class AdministrationController {
         } catch (ParseException e) {
             throw new DerffException("date", game);
         }
+        game.setMasterGoalsCount(0);
+        game.setSlaveGoalsCount(0);
     }
 
     private String dateToString(Date date) {

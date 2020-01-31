@@ -67,7 +67,7 @@ public class Game {
     }*/
 
     @Column(name = "is_result_save", nullable = false)
-    private boolean isResultSave;
+    private boolean resultSave;
 
     @Override
     public String toString() {
