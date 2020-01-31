@@ -219,6 +219,25 @@ var d= document.getElementById("date").value;
 }
 
 
+    /*<![CDATA[*/
+    $(document).ready(function () {
+    var errorMessage = /*[[${errorMessage}]]*/;
+    console.log(errorMessage);
+    if(errorMessage!=null){
+     var delay_popup = 500;
+    var msg_pop = document.getElementById('msg_pop');
+    var msg_pop_text = document.getElementById('errorMessage');
+    msg_pop_text.innerHTML=errorMessage;
+    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+    }
+
+    });
+    /*]]>*/
+
+
+
+
+
 
 
 /*
@@ -232,7 +251,7 @@ $(document).ready(function() {
 var d= (curr_year + "-" + curr_month + "-" + curr_date);
     $.ajax({
         type: 'POST',
-        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        url: "/administration/gameListByDate",
         data: ({
             date: d
         }),

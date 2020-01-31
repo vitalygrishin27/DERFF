@@ -696,7 +696,7 @@ public class AdministrationController {
             standingsRow.setPoints(standingsRow.getWins() * 3 + standingsRow.getDraws());
             standingsRows.add(standingsRow);
         }
-
+        sortStandings(standingsRows);
         model.addAttribute("standings", standingsRows);
         return "administration/standings";
     }
@@ -731,6 +731,14 @@ public class AdministrationController {
             throw new DerffException("gameResultsAreAlreadyExists");
         }
 
+    }
+
+    private void sortStandings(List<StandingsRow> standingsRows){
+    standingsRows.sort(StandingsRow.COMPARE_BY_POINTS);
+    Collections.reverse(standingsRows);
+        for (int i = 0; i <standingsRows.size() ; i++) {
+            standingsRows.get(i).setNumber(i+1);
+        }
     }
 
     private void validatePlayerInformation(Player player, String teamName, MultipartFile file) throws DerffException {

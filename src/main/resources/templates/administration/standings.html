@@ -19,33 +19,64 @@
 <div>
     <table class="table_dark">
         <tr>
-            <td>
+            <td colspan="9">
                 <div style="text-align:center;">
                     <a class="btn btn-lg btn-success active" href="/administration/newGame">Турнирная таблица</a>
                 </div>
             </td>
         </tr>
-        <!--      <tr>
-                <td>
-                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                       <p style="display: inline-block; color:#ffff00; vertical-align:  middle; ">Показать игры по дате &nbsp;&nbsp;&nbsp;</p>
-                        <input type="date"
-                               id="date"  th:onChange="getGamesByDate('none')">
-                        <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('first')">1 круг &nbsp;&nbsp;&nbsp;</p>
-                        <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('second')">2 круг &nbsp;&nbsp;&nbsp;</p>
-                       <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+        <tr th:each="standingRow : ${standings}">
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.teamName}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.games}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.wins}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.draws}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.losses}"/>
+                </div>
+            </td>
+     <!--       <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.scoredGoals}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.concededGoals}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.ratioGoals}"/>
+                </div>
+            </td>  -->
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.stringRatioGoals}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${standingRow.points}"/>
                 </div>
             </td>
         </tr>
-
-        <tr>
-              <td>
-                  <select id="team" name="teamName" th:onchange="show()" style="width:100%">
-                      <option th:value="${team.teamName}" th:each="team : ${teams}"
-                              th:utext="${team.teamName}">Team
-                      </option>
-                  </select></td>
-          </tr>  -->
     </table>
     <div id="block"/>
 
