@@ -19,14 +19,14 @@
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center; color:#ffff00;" class="input-group">
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
                     Игроки забившие мячи
                 </div>
             </td>
         </tr>
 
         <tr>
-            <td id="masterListGoals"></td>
+            <td id="masterListGoals" width="50%"></td>
             <td id="slaveListGoals"></td>
 
         </tr>
@@ -109,7 +109,9 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		masterListGoals.appendChild(s);
-		masterListGoals.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countMasterGoals}]]*/){
+		 masterListGoals.innerHTML += "<br/><br/>";
+		 }
 	}
 
     for (var i = 0; i < /*[[${countSlaveGoals}]]*/ ; i++) {
@@ -122,7 +124,9 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		slaveListGoals.appendChild(s);
-		slaveListGoals.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countSlaveGoals}]]*/){
+		 slaveListGoals.innerHTML += "<br/><br/>";
+		 }
 	}
 
 

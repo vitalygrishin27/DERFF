@@ -116,7 +116,7 @@ body {
   text-align: left;
   border-collapse: collapse;
   background: #252F48;
-  margin: 10px;
+ margin: auto;
 }
 .table_dark th {
   color: #EDB749;
@@ -137,4 +137,11 @@ body {
 }
 .table_dark tr:hover td {
   text-decoration: underline;
+}
+
+.masterListGoals{
+width: 100%;
+}
+.slaveListGoals{
+width: 100%;
 }

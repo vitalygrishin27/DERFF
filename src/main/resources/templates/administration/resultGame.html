@@ -15,54 +15,50 @@
 <th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
 
+<div style="text-align:center;">
+    <a class="btn btn-lg btn-success active">Результаты игры</a>
+</div>
 
-<div>
+<div id="secondStep">
     <table class="table_dark">
+
         <tr>
-            <td colspan="2">
-                <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active">Результаты игры</a>
+            <td>
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${masterTeamName}">Команды</p>
+                </div>
+            </td>
+            <td>
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${slaveTeamName}">Команды</p>
                 </div>
             </td>
         </tr>
+        <tr>
+            <td>
+                <input class="input--style-3" type="number" min="0" max="20" step="1"
+                       placeholder="defaultGoalsCount"
+                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
+                       id="countGoalsMasterTeam">
+            </td>
+            <td>
+                <input class="input--style-3" type="number" min="0" max="20" step="1"
+                       placeholder="defaultGoalsCount"
+                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam"
+                       id="countGoalsSlaveTeam">
+            </td>
 
-            <tr>
-                <td>
-                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                           th:utext="${masterTeamName}">Команды</p>
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
-                        <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
-                           th:utext="${slaveTeamName}">Команды</p>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
-                    id="countGoalsMasterTeam">
-                </td>
-                <td>
-                    <input class="input--style-3" type="number" min="0" max="20" step="1"
-                           placeholder="defaultGoalsCount"
-                           th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam"
-                           id="countGoalsSlaveTeam">
-                </td>
-
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="p-t-10" style="text-align:center;" id="secondStep">
-                            <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSecondStep()">Продолжить</a>
-                        </button>
-                    </div>
-                </td>
-            </tr>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="p-t-10" style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSecondStep()">Продолжить</a>
+                    </button>
+                </div>
+            </td>
+        </tr>
 
     </table>
     <!-- <div id="secondStep"/>  -->
@@ -89,6 +85,7 @@ var countGoalsSlaveTeam= document.getElementById("countGoalsSlaveTeam").value;
         }
     });
 }
+
 
 
 </script>
