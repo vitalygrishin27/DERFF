@@ -15,23 +15,23 @@
 <div th:insert="common/message :: message"></div>
 
 
-<div>
+<div  id="fifthStep">
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center; color:#ffff00;" class="input-group">
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
                   Игроки, получившие желтые карточки
                 </div>
             </td>
         </tr>
         <tr>
-            <td id="masterListYellowCards"></td>
+            <td id="masterListYellowCards" width="50%"></td>
             <td id="slaveListYellowCards"></td>
 
         </tr>
         <tr>
             <td colspan="2">
-                <div class="p-t-10" style="text-align:center;" id="fifthStep">
+                <div class="p-t-10" style="text-align:center;">
                     <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getFifthStep()">Продолжить</a>
                     </button>
                 </div>
@@ -108,7 +108,10 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		masterListYellowCards.appendChild(s);
-		masterListYellowCards.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countYellowCardsMasterTeam}]]*/){
+		 masterListYellowCards.innerHTML += "<br/><br/>";
+		 }
+
 	}
 
     for (var i = 0; i < /*[[${countYellowCardsSlaveTeam}]]*/ ; i++) {
@@ -121,7 +124,10 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		slaveListYellowCards.appendChild(s);
-		slaveListYellowCards.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countYellowCardsSlaveTeam}]]*/){
+		 slaveListYellowCards.innerHTML += "<br/><br/>";
+		 }
+
 	}
 
 

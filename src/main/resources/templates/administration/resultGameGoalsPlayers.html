@@ -15,7 +15,7 @@
 <div th:insert="common/message :: message"></div>
 
 
-<div>
+<div id="thirdStep">
     <table class="table_dark">
         <tr>
             <td colspan="2">
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <div class="p-t-10" style="text-align:center;" id="thirdStep">
+                <div class="p-t-10" style="text-align:center;">
                     <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
                     <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getThirdStep()">Продолжить</a>
                     </button>

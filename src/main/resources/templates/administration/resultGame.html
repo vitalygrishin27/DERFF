@@ -15,15 +15,17 @@
 <th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
 
-<div style="text-align:center;">
-    <a class="btn btn-lg btn-success active">Результаты игры</a>
-</div>
-
-<div id="secondStep">
+<div>
     <table class="table_dark">
-
         <tr>
-            <td>
+            <td colspan="2">
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" onclick="window.location.reload();">Результаты игры</a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td width="50%">
                 <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
                     <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
                        th:utext="${masterTeamName}">Команды</p>
@@ -36,37 +38,44 @@
                 </div>
             </td>
         </tr>
-        <tr>
-            <td>
-                <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultGoalsCount"
-                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
-                       id="countGoalsMasterTeam">
-            </td>
-            <td>
-                <input class="input--style-3" type="number" min="0" max="20" step="1"
-                       placeholder="defaultGoalsCount"
-                       th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam"
-                       id="countGoalsSlaveTeam">
-            </td>
-
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div class="p-t-10" style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSecondStep()">Продолжить</a>
-                    </button>
-                </div>
-            </td>
-        </tr>
-
     </table>
-    <!-- <div id="secondStep"/>  -->
-
 </div>
 
 
-<script th:inline="javascript">
+        <div id="secondStep">
+            <table class="table_dark">
+                <tr>
+                    <td width="50%">
+                        <input class="input--style-3" type="number" min="0" max="20" step="1"
+                               placeholder="defaultGoalsCount"
+                               th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
+                               id="countGoalsMasterTeam">
+                    </td>
+                    <td>
+                        <input class="input--style-3" type="number" min="0" max="20" step="1"
+                               placeholder="defaultGoalsCount"
+                               th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsSlaveTeam"
+                               id="countGoalsSlaveTeam">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="p-t-10" style="text-align:center;">
+                            <a class="btn btn-lg btn-success active" th:text="#{button.continue}"
+                               th:onClick="getSecondStep()">Продолжить</a>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+            <!-- <div id="secondStep"/>  -->
+
+        </div>
+
+
+        <script th:inline="javascript">
 function getSecondStep() {
 
 var countGoalsMasterTeam= document.getElementById("countGoalsMasterTeam").value;
@@ -88,7 +97,8 @@ var countGoalsSlaveTeam= document.getElementById("countGoalsSlaveTeam").value;
 
 
 
-</script>
+
+        </script>
 
 </body>
 </html>

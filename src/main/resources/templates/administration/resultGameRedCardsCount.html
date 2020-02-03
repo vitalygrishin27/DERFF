@@ -15,11 +15,11 @@
 <div th:insert="common/message :: message"></div>
 
 
-<div>
+<div  id="sixthStep">
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center; color:#ffff00;" class="input-group">
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
                    Количество красных карточек
                 </div>
             </td>
@@ -27,7 +27,7 @@
 
 
         <tr>
-            <td>
+            <td width="50%">
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
                        placeholder="defaultRedCardCount"
                        th:placeholder="#{placeholder.defaultRedCardCount}" name="countRedCardsMasterTeam"
@@ -43,7 +43,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <div class="p-t-10" style="text-align:center;" id="sixthStep">
+                <div class="p-t-10" style="text-align:center;">
                     <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSixthStep()">Продолжить</a>
                     </button>
                 </div>

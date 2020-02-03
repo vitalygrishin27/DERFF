@@ -19,13 +19,13 @@
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="text-align:center; color:#ffff00;" class="input-group">
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
                     Игроки, получившие красные карточки</a>
                 </div>
             </td>
         </tr>
         <tr>
-            <td id="masterListRedCards"></td>
+            <td id="masterListRedCards" width="50%"></td>
             <td id="slaveListRedCards"></td>
 
         </tr>
@@ -108,7 +108,10 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		masterListRedCards.appendChild(s);
-		masterListRedCards.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countRedCardsMasterTeam}]]*/){
+		 masterListRedCards.innerHTML += "<br/><br/>";
+		 }
+
 	}
 
     for (var i = 0; i < /*[[${countRedCardsSlaveTeam}]]*/ ; i++) {
@@ -121,7 +124,10 @@ $(document).ready(function () {
 			s.appendChild(o);
 		});
 		slaveListRedCards.appendChild(s);
-		slaveListRedCards.innerHTML += "<br/><br/>";
+		if (i+1</*[[${countRedCardsSlaveTeam}]]*/){
+		 slaveListRedCards.innerHTML += "<br/><br/>";
+		 }
+
 	}
 
 

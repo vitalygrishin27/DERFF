@@ -468,12 +468,12 @@ public class AdministrationController {
             throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
         }
         try {
-            for (Offense offense:game.getOffenses()
-                 ) {
+            for (Offense offense : game.getOffenses()
+            ) {
                 offenseService.delete(offense);
             }
-            for (Goal goal:game.getGoals()
-                 ) {
+            for (Goal goal : game.getGoals()
+            ) {
                 goalService.delete(goal);
             }
 
@@ -515,6 +515,26 @@ public class AdministrationController {
                                    @ModelAttribute("countRedCardsSlaveTeam") String countRedCardsSlaveTeam
     ) throws DerffException {
         Game game = (Game) context.getFromContext("game");
+        if (step.equals("goalsCount") &&
+                (countGoalsMasterTeam.equals("") || countGoalsMasterTeam.equals("0")) &&
+                (countGoalsSlaveTeam.equals("") || countGoalsSlaveTeam.equals("0"))) {
+            game.setGoals(new ArrayList<Goal>());
+            return "administration/resultGameYellowCardsCount";
+        }
+        if (step.equals("yellowCardsCount") &&
+                (countYellowCardsMasterTeam.equals("") || countYellowCardsMasterTeam.equals("0")) &&
+                (countYellowCardsSlaveTeam.equals("") || countYellowCardsSlaveTeam.equals("0"))) {
+            game.setOffenses(new ArrayList<Offense>());
+            return "administration/resultGameRedCardsCount";
+        }
+        if (step.equals("redCardsCount") &&
+                (countRedCardsMasterTeam.equals("") || countRedCardsMasterTeam.equals("0")) &&
+                (countRedCardsSlaveTeam.equals("") || countRedCardsSlaveTeam.equals("0"))) {
+            step="saveResult";
+        }
+
+
+
         switch (step) {
             case "goalsCount":
                 if (countGoalsMasterTeam.equals("")) countGoalsMasterTeam = "0";
@@ -733,11 +753,11 @@ public class AdministrationController {
 
     }
 
-    private void sortStandings(List<StandingsRow> standingsRows){
-    standingsRows.sort(StandingsRow.COMPARE_BY_POINTS);
-    Collections.reverse(standingsRows);
-        for (int i = 0; i <standingsRows.size() ; i++) {
-            standingsRows.get(i).setNumber(i+1);
+    private void sortStandings(List<StandingsRow> standingsRows) {
+        standingsRows.sort(StandingsRow.COMPARE_BY_POINTS);
+        Collections.reverse(standingsRows);
+        for (int i = 0; i < standingsRows.size(); i++) {
+            standingsRows.get(i).setNumber(i + 1);
         }
     }
 
