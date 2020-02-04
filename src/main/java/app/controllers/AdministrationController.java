@@ -486,6 +486,13 @@ public class AdministrationController {
         return "redirect:/administration/calendar";
     }
 
+    @PostMapping(value = "/administration/deleteGame")
+    public String deleteGames(HttpServletRequest request, Model model,@ModelAttribute("gameIdForDelete") String[] gameIdForDelete) throws DerffException {
+        request.getParameterValues("gameIdForDelete[]");
+        return "redirect:/administration/calendar";
+    }
+
+
 
     @GetMapping(value = "/administration/resultGame/{id}")
     public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {

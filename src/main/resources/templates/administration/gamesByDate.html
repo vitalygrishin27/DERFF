@@ -1,5 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
 <table class="table_dark">
     <tr th:each="game : ${games}">
         <td>
@@ -21,16 +25,65 @@
             </div>
         </td>
         <td>
-            <label th:onclick="|window.location='/administration/resultGame/${game.id}'|" style="cursor:pointer;">Результаты</label>
+            <label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|" style="cursor:pointer;">Результаты</label>
         </td>
         <td>
             <label th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;">Редактировать</label>
         </td>
         <td>
-            <a th:href="|/administration/deleteGame/${game.id}|"
-               onclick="return confirm('Вы уверены, что хотите удалить игру?')"
-               th:onclick="return confirm('Вы уверены, что хотите удалить игру?')" style="cursor:pointer;">Удалить</a>
+            <input type="checkbox" class="checkForDelete" th:id="${game.id}">
+            <label th:onclick="|deleteGames('${game.id}')|" style="cursor:pointer;">Удалить</label>
         </td>
     </tr>
 </table>
+<script th:inline="javascript">
+
+     /*<![CDATA[*/
+     function deleteGames(gameId){
+            var checkboxes = document.getElementsByClassName('checkForDelete');
+            var gameIdForDelete = [];
+
+            $(checkboxes).each(function(s){
+                if(this.checked==true){
+                    console.log(this.id);
+                    gameIdForDelete.push(this.id);
+                }
+            });
+            var mess;
+            if(gameIdForDelete.length<2){
+            mess='Вы уверены, что хотите удалить игру?';
+            }else{
+            mess='Внимание. Вы удаляете несколько игр. Уверены?';
+            console.log(gameIdForDelete);
+            }
+
+            if(confirm(mess)){
+        $.ajax({
+        type: 'POST',
+        url:'/administration/deleteGame',
+        data:({gameIdForDelete:gameIdForDelete}),
+         success: function(msg){
+        location.href = "/administration/calendar";
+        }
+    });
+}
+
+
+      }
+
+
+
+    function resultIsAlreadyExist(){
+         var errorMessage = /*[[#{error.resultIsAlreadyExist}]]*/;
+    console.log(errorMessage);
+    if(errorMessage!=null){
+     var delay_popup = 500;
+    var msg_pop = document.getElementById('msg_pop');
+    var msg_pop_text = document.getElementById('errorMessage');
+    msg_pop_text.innerHTML=errorMessage;
+    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+    }
+}
+    /*]]>*/
+</script>
 </html>
