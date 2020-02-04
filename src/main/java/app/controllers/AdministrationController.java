@@ -671,7 +671,7 @@ public class AdministrationController {
                 }
 
 
-                return "redirect:/administration/calendar";
+                return "administration/calendar";
         }
 
 
