@@ -31,20 +31,20 @@
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
                        placeholder="defaultRedCardCount"
                        th:placeholder="#{placeholder.defaultRedCardCount}" name="countRedCardsMasterTeam"
-                       id="countRedCardsMasterTeam">
+                       id="countRedCardsMasterTeam" oninput="changeButtonTitle()">
             </td>
             <td>
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
                        placeholder="defaultRedCardCount"
                        th:placeholder="#{placeholder.defaultRedCardCount}" name="countRedCardsSlaveTeam"
-                       id="countRedCardsSlaveTeam">
+                       id="countRedCardsSlaveTeam" oninput="changeButtonTitle()">
             </td>
 
         </tr>
         <tr>
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getSixthStep()">Продолжить</a>
+                    <a class="btn btn-lg btn-success active" th:text="#{button.submit}" th:onClick="getSixthStep()" id="button">Продолжить</a>
                     </button>
                 </div>
             </td>
@@ -58,10 +58,38 @@
 
 
 <script th:inline="javascript">
+
+function changeButtonTitle(){
+var countRedCardsMasterTeam= document.getElementById("countRedCardsMasterTeam").value;
+var countRedCardsSlaveTeam= document.getElementById("countRedCardsSlaveTeam").value;
+    if((countRedCardsMasterTeam==0 || countRedCardsMasterTeam=='') && (countRedCardsSlaveTeam==0 || countRedCardsSlaveTeam=='')){
+        document.getElementById("button").text="Сохранить";
+    }else{
+    document.getElementById("button").text="Продолжить";
+}
+
+
 function getSixthStep() {
 
 var countRedCardsMasterTeam= document.getElementById("countRedCardsMasterTeam").value;
 var countRedCardsSlaveTeam= document.getElementById("countRedCardsSlaveTeam").value;
+   alert(countRedCardsMasterTeam);
+   if((countRedCardsMasterTeam==0 || countRedCardsMasterTeam=='') && (countRedCardsSlaveTeam==0 || countRedCardsSlaveTeam=='')){
+       alert( "ewfewfewfewf");
+    $.ajax({
+        type: 'POST',
+        url: "/administration/resultGame",
+        data: ({
+            step: 'saveResult',
+            masterPlayerIdListRedCards:masterPlayerIdListRedCards,
+            slavePlayerIdListRedCards:slavePlayerIdListRedCards
+        }),
+        cache: false,
+        success: function(msg){
+                     location.href = "/administration/calendar"
+                        }
+    });
+   }else{
     $.ajax({
         type: 'POST',
         url: "/administration/resultGame",
@@ -75,6 +103,12 @@ var countRedCardsSlaveTeam= document.getElementById("countRedCardsSlaveTeam").va
             $("#sixthStep").html(html);
         }
     });
+}
+   }
+
+
+
+
 }
 
 
