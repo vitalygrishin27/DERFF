@@ -184,7 +184,7 @@ public class AdministrationController {
     }
 
 
-    @DeleteMapping(value = "/administration/calendar")
+ /*   @DeleteMapping(value = "/administration/calendar")
     public void deleteGame(Integer gameId) throws DerffException {
         Game game = gameService.findGameById(gameId);
         try {
@@ -195,7 +195,7 @@ public class AdministrationController {
         }
 
     }
-
+*/
     @GetMapping(value = "/administration/players")
     public String getListOfPlayers(Model model) throws DerffException {
         if (messageGenerator.isActive())
@@ -354,6 +354,9 @@ public class AdministrationController {
                                     .getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
                             .parse(configurationService.getValue(SECOND_ROUND_END)));
                     break;
+                case "all":
+                    games = gameService.findAllGames();
+                    break;
             }
         } catch (Exception e) {
             throw new DerffException("database");
@@ -459,8 +462,8 @@ public class AdministrationController {
     }
 
 
-    @GetMapping(value = "/administration/deleteGame/{id}")
-    public String deleteGame(Model model, @PathVariable("id") long id) throws DerffException {
+
+    private void deleteGame(long id) throws DerffException {
         Game game = new Game();
         try {
             game = gameService.findGameById(id);
@@ -482,14 +485,19 @@ public class AdministrationController {
             throw new DerffException("database", game, new Object[]{e.getMessage()});
         }
 
-
-        return "redirect:/administration/calendar";
     }
 
     @PostMapping(value = "/administration/deleteGame")
-    public String deleteGames(HttpServletRequest request, Model model,@ModelAttribute("gameIdForDelete") String[] gameIdForDelete) throws DerffException {
-        request.getParameterValues("gameIdForDelete[]");
-        return "redirect:/administration/calendar";
+    public String deleteGames(HttpServletRequest request) throws DerffException {
+        List<String> gamesIdForDelete=new ArrayList<>();
+        Collections.addAll(gamesIdForDelete, request.getParameterValues("gameIdForDelete[]"));
+        for (String s:gamesIdForDelete
+             ) {
+            deleteGame(Long.valueOf(s));
+        }
+            messageGenerator.setMessage((messageSource.getMessage("success.deleteGames", new Object[]{gamesIdForDelete.size()}, Locale.getDefault())));
+
+        return "administration/calendar";
     }
 
 

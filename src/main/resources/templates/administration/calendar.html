@@ -33,6 +33,7 @@
                            id="date"  th:onChange="getGamesByDate('none')">
                     <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('first')">1 круг &nbsp;&nbsp;&nbsp;</p>
                     <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('second')">2 круг &nbsp;&nbsp;&nbsp;</p>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle; " th:onClick="getGamesByDate('all')">Все &nbsp;&nbsp;&nbsp;</p>
                     <!--  <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i> -->
                 </div>
             </td>
@@ -181,7 +182,7 @@
 
     }
 
-    function deleteGame(gameId){
+/*    function deleteGame(gameId){
         if(confirm("Вы уверены, что хотите удалить игру?")){
              $.ajax({
                     type: 'DELETE',
@@ -192,7 +193,7 @@
                         }
                 });
         }
-    }
+    }*/
 
 function getGamesByDate(round) {
 

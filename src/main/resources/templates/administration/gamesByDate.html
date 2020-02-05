@@ -25,24 +25,29 @@
             </div>
         </td>
         <td>
-            <label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|" style="cursor:pointer;">Результаты</label>
+            <label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|"
+                   style="cursor:pointer;">Результаты</label>
         </td>
         <td>
             <label th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;">Редактировать</label>
         </td>
         <td>
-            <input type="checkbox" class="checkForDelete" th:id="${game.id}">
-            <label th:onclick="|deleteGames('${game.id}')|" style="cursor:pointer;">Удалить</label>
+            <div style="white-space: nowrap;">
+                <input type="checkbox" class="checkForDelete" th:id="${game.id}">
+                <label th:onclick="|deleteGames('${game.id}')|"
+                       style="cursor:pointer;">Удалить</label>
+            </div>
         </td>
     </tr>
 </table>
 <script th:inline="javascript">
 
+
      /*<![CDATA[*/
      function deleteGames(gameId){
             var checkboxes = document.getElementsByClassName('checkForDelete');
+             $("input[id="+gameId+"]").attr("checked","checked");
             var gameIdForDelete = [];
-
             $(checkboxes).each(function(s){
                 if(this.checked==true){
                     console.log(this.id);
@@ -63,13 +68,12 @@
         url:'/administration/deleteGame',
         data:({gameIdForDelete:gameIdForDelete}),
          success: function(msg){
-        location.href = "/administration/calendar";
+        location.href = '/administration/calendar';
         }
     });
 }
 
-
-      }
+}
 
 
 
@@ -85,5 +89,6 @@
     }
 }
     /*]]>*/
+
 </script>
 </html>
