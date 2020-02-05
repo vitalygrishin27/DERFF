@@ -44,8 +44,17 @@ public class Player {
     @Column(name = "is_legionary")
     private Boolean isLegionary;
 
+    @Column(name = "is_not_active")
+    private Boolean isNotActive;
+
     @Column(name = "registration", nullable = false)
     private String registration;
+
+    @Column(name = "inn")
+    private String inn;
+
+    @Column(name = "role")
+    private String role;
 
     @Lob
     @Column(name="photo")

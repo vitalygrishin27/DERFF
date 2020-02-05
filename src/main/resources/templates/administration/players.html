@@ -7,7 +7,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
-
+    <title th:utext="${titlePage}"></title>
     <!------ Include the above in your HEAD tag ---------->
     <!--https://bootsnipp.com/snippets/BxA1B
     Игроки в команде https://bootsnipp.com/snippets/nNoMz
@@ -28,7 +28,7 @@
         <tr>
             <td>
                 <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" href="/administration/newPlayer">Добавить нового игрока</a>
+                    <a class="btn btn-lg btn-success active" th:onclick="gotoCreatingPlayer()">Добавить нового игрока</a>
                 </div>
             </td>
         </tr>
@@ -36,7 +36,7 @@
             <td>
                 <select id="team" name="teamName" th:onchange="show()" style="width:100%">
                     <option th:value="${team.teamName}" th:each="team : ${teams}"
-                            th:utext="${team.teamName}">Team
+                            th:utext="${team.teamName}" th:id="${team.id}">Team
                     </option>
                 </select></td>
         </tr>
@@ -45,12 +45,23 @@
 
 </div>
 
-<script>
+<script th:inline="javascript">
+function gotoCreatingPlayer(){
+//document.getElementById("
+//var t = $("#team");
+var s = document.querySelector('select');
+var indexSelected = s.selectedIndex;
+option = s.querySelectorAll('option')[indexSelected];
+var selectedId = option.getAttribute('id');
+alert(selectedId);
+window.location='/administration/newPlayer/'+selectedId;
+}
+
 function show(teamName) {
     var t = $("#team").val();
     $.ajax({
         type: 'POST',
-        url: "/administration/playerListByTeam", // загружает вот это страницу каждую минуту
+        url: "/administration/playerListByTeam",
         data: ({
             teamName: t
         }),
@@ -61,7 +72,18 @@ function show(teamName) {
     });
 }
 
-$(document).ready(function() {
+
+  /*<![CDATA[*/
+    $(document).ready(function () {
+    var errorMessage = /*[[${errorMessage}]]*/;
+    console.log(errorMessage);
+    if(errorMessage!=null){
+     var delay_popup = 500;
+    var msg_pop = document.getElementById('msg_pop');
+    var msg_pop_text = document.getElementById('errorMessage');
+    msg_pop_text.innerHTML=errorMessage;
+    setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+    }
 
     var t = $("#team").val();
     $.ajax({
@@ -75,7 +97,9 @@ $(document).ready(function() {
             $("#block").html(html);
         }
     });
-})
+
+
+    });
 </script>
 </body>
 </html>
