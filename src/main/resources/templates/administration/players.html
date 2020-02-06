@@ -53,7 +53,6 @@ var s = document.querySelector('select');
 var indexSelected = s.selectedIndex;
 option = s.querySelectorAll('option')[indexSelected];
 var selectedId = option.getAttribute('id');
-alert(selectedId);
 window.location='/administration/newPlayer/'+selectedId;
 }
 
