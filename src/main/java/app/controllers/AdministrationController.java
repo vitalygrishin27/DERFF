@@ -237,6 +237,8 @@ public class AdministrationController {
             // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
 
         }
+        model.addAttribute("titleNewPlayer", messageSource
+                .getMessage("label.newPlayer", new Object[]{teamService.findTeamById(id).getTeamName()}, Locale.getDefault()));
         model.addAttribute("player", player);
         //   model.addAttribute("teams", teamService.findAllTeams());
 
