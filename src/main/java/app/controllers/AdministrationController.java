@@ -331,6 +331,9 @@ public class AdministrationController {
         }
         try {
             playerService.delete(player);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.deletePlayer", new Object[]{player.getFirstName() + " " + player
+                            .getLastName()}, Locale.getDefault())));
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
