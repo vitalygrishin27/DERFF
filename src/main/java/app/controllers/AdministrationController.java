@@ -305,7 +305,8 @@ public class AdministrationController {
                                       @ModelAttribute("file") MultipartFile file,
                                       @PathVariable("teamId") long teamId) throws DerffException {
 
-        validatePlayerInformation(player, teamId, file);
+
+        validatePlayerInformation(player,teamService.findTeamByName(teamName).getId(), file);
         try {
             playerService.update(player);
             messageGenerator.setMessage((messageSource
