@@ -46,8 +46,14 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public List<Player> findAllActivePlayersInTeam(Team team){
+        return repository.findAllActivePlayersInTeam(team, Boolean.FALSE);
+    }
+
+    @Override
     public void update(Player player) {
-        repository.update(player.getId(),player.getLastName(),player.getFirstName(),player.getSecondName(),player.getBirthday(),player.getStringBirthday(),player.getIdCard(),player.getIsLegionary(),player.getRegistration(),player.getPhoto(),player.getTeam());
+        //repository.update(player.getId(),player.getLastName(),player.getFirstName(),player.getSecondName(),player.getBirthday(),player.getStringBirthday(),player.getIdCard(),player.getIsLegionary(),player.getRegistration(),player.getPhoto(),player.getTeam(),player.getInn(),player.getRole());
+        repository.saveAndFlush(player);
     }
 
     @Override

@@ -200,6 +200,8 @@ public class AdministrationController {
     public String getListOfPlayers(Model model) throws DerffException {
         if (messageGenerator.isActive())
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+        model.addAttribute("titlePage", messageSource
+                .getMessage("page.title.players.list", null, Locale.getDefault()));
         model.addAttribute("teams", teamService.findAllTeams());
         // model.addAttribute("players", playerService.findAllPlayers());
         // model.addAttribute("players", players);
@@ -208,8 +210,8 @@ public class AdministrationController {
 
     @PostMapping(value = "/administration/playerListByTeam")
     public String getPlayersByTeam(Model model, @ModelAttribute("teamName") String teamName) throws DerffException {
-        List players = playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
-
+      //  List players = playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
+        List players = playerService.findAllActivePlayersInTeam(teamService.findTeamByName(teamName));
         model.addAttribute("players", players);
         // model.addAttribute("teams", teamService.findAllTeams());
 
@@ -222,6 +224,8 @@ public class AdministrationController {
     @GetMapping(value = "/administration/newPlayer")
     public String getFormforNewPlayer(Model model) throws DerffException {
         Player player = new Player();
+        model.addAttribute("titlePage", messageSource
+                .getMessage("page.title.player.creating", null, Locale.getDefault()));
         if (messageGenerator.isActive()) {
             model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
@@ -266,6 +270,8 @@ public class AdministrationController {
     @GetMapping(value = "/administration/editPlayer/{id}")
     public String getFormforEditPlayer(Model model, @PathVariable("id") long id) throws DerffException {
         Player player = new Player();
+        model.addAttribute("titlePage", messageSource
+                .getMessage("page.title.player.editing", null, Locale.getDefault()));
         try {
             player = playerService.getPlayerById(id);
         } catch (Exception e) {
