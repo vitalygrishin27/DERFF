@@ -66,7 +66,7 @@ public class AdministrationController {
     @GetMapping(value = "/")
     public String getMainPage(Model model) throws DerffException {
         if (messageGenerator.isActive())
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
 
         return "administration/mainPage";
     }
@@ -76,7 +76,7 @@ public class AdministrationController {
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) throws DerffException {
         if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         }
         return "administration/calendar";
     }
@@ -107,151 +107,7 @@ public class AdministrationController {
 
        }
    */
-    @GetMapping(value = "/administration/players")
-    public String getListOfPlayers(Model model) throws DerffException {
-        if (messageGenerator.isActive())
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.players.list", null, Locale.getDefault()));
-        model.addAttribute("teams", teamService.findAllTeams());
-        // model.addAttribute("players", playerService.findAllPlayers());
-        // model.addAttribute("players", players);
-        return "administration/players";
-    }
 
-    @PostMapping(value = "/administration/playerListByTeam")
-    public String getPlayersByTeam(Model model, @ModelAttribute("teamName") String teamName) throws DerffException {
-        //  List players = playerService.findAllPlayersInTeam(teamService.findTeamByName(teamName));
-        List players = playerService.findAllActivePlayersInTeam(teamService.findTeamByName(teamName));
-        model.addAttribute("players", players);
-        // model.addAttribute("teams", teamService.findAllTeams());
-
-        // model.addAttribute("players", playerService.findAllPlayers());
-        //model.addAttribute("player", new Player());
-        return "administration/playersByTeam";
-        // return "efewfewfewf";
-    }
-
-    @GetMapping(value = "/administration/newPlayer/{id}")
-    public String getFormforNewPlayer(Model model, @PathVariable("id") long id) throws DerffException {
-        Player player = new Player();
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.player.creating", null, Locale.getDefault()));
-        if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
-                    .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
-                player = (Player) messageGenerator.getTemporaryObjectForMessageWithSetNull();
-                player.setBirthday(null);
-            }
-
-            // model.addAttribute("preDate", dateToString(((Player)obj).getBirthday()));
-
-        }
-        model.addAttribute("titleNewPlayer", messageSource
-                .getMessage("label.newPlayer", new Object[]{teamService.findTeamById(id).getTeamName()}, Locale.getDefault()));
-        model.addAttribute("player", player);
-        //   model.addAttribute("teams", teamService.findAllTeams());
-
-        // model.addAttribute("players", playerService.findAllPlayers());
-        // model.addAttribute("players", players);
-        return "administration/newPlayer";
-    }
-
-
-    @PostMapping(value = "/administration/newPlayer/{teamId}")
-    public String saveNewPlayer(@ModelAttribute("player") Player player,
-                                // @ModelAttribute("team") Team team,
-                                // @ModelAttribute("preDate") String preDate,
-                                @ModelAttribute("teamName") String teamName,
-                                // @ModelAttribute("isLegionary") String isLegionary,
-                                @ModelAttribute("file") MultipartFile file,
-                                @PathVariable("teamId") long teamId) throws DerffException {
-
-
-        validatePlayerInformation(player, teamId, file);
-        try {
-            playerService.save(player);
-            messageGenerator.setMessage((messageSource
-                    .getMessage("success.newPlayer", new Object[]{player.getFirstName() + " " + player
-                            .getLastName()}, Locale.getDefault())));
-        } catch (Exception e) {
-            throw new DerffException("database", player, new Object[]{e.getMessage()});
-        }
-
-        return "redirect:/administration/newPlayer/" + teamId;
-    }
-
-    @GetMapping(value = "/administration/editPlayer/{teamId}/{id}")
-    public String getFormforEditPlayer(Model model, @PathVariable("id") long id) throws DerffException {
-        Player player = new Player();
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.player.editing", null, Locale.getDefault()));
-        try {
-            player = playerService.getPlayerById(id);
-        } catch (Exception e) {
-            throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
-        }
-
-        if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
-                    .getTemporaryObjectForMessage().getClass().isInstance(new Player())) {
-                player = (Player) messageGenerator.getTemporaryObjectForMessage();
-                player.setBirthday(null);
-            }
-        }
-        model.addAttribute("player", player);
-        model.addAttribute("teams", teamService.findAllTeams());
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.player.editing", null, Locale.getDefault()));
-
-        return "administration/editPlayer";
-    }
-
-    @PostMapping(value = "/administration/editPlayer/{teamId}/{id}")
-    public String savePlayerAfterEdit(@ModelAttribute("player") Player player,
-                                      // @ModelAttribute("team") Team team,
-                                      // @ModelAttribute("preDate") String preDate,
-                                      @ModelAttribute("teamName") String teamName,
-                                      // @ModelAttribute("isLegionary") String isLegionary,
-                                      @ModelAttribute("file") MultipartFile file,
-                                      @PathVariable("teamId") long teamId) throws DerffException {
-
-
-        validatePlayerInformation(player,teamService.findTeamByName(teamName).getId(), file);
-        try {
-            playerService.update(player);
-            messageGenerator.setMessage((messageSource
-                    .getMessage("success.updatePlayer", new Object[]{player.getFirstName() + " " + player
-                            .getLastName()}, Locale.getDefault())));
-        } catch (Exception e) {
-            throw new DerffException("database", player, new Object[]{e.getMessage()});
-        }
-
-        return "redirect:/administration/players";
-    }
-
-    @GetMapping(value = "/administration/deletePlayer/{id}")
-    public String deletePlayer(Model model, @PathVariable("id") long id) throws DerffException {
-        Player player = new Player();
-        try {
-            player = playerService.getPlayerById(id);
-        } catch (Exception e) {
-            throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
-        }
-        try {
-            playerService.delete(player);
-            messageGenerator.setMessage((messageSource
-                    .getMessage("success.deletePlayer", new Object[]{player.getFirstName() + " " + player
-                            .getLastName()}, Locale.getDefault())));
-        } catch (Exception e) {
-            throw new DerffException("database", player, new Object[]{e.getMessage()});
-        }
-
-
-        return "redirect:/administration/players";
-    }
 
 
     @PostMapping(value = "/administration/gameListByDate")
@@ -299,7 +155,7 @@ public class AdministrationController {
         game.setSlaveTeam(team);
         game.setDate(new Date());
         if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
                     .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
                 game = (Game) messageGenerator.getTemporaryObjectForMessage();
@@ -352,7 +208,7 @@ public class AdministrationController {
         }
 
         if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
                     .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
                 game = (Game) messageGenerator.getTemporaryObjectForMessage();
@@ -700,58 +556,7 @@ public class AdministrationController {
     }
 
 
-    private void validatePlayerInformation(Player player, long id, MultipartFile file) throws DerffException {
 
-        //Date validate
-        if (player.getStringBirthday() == null) {
-            throw new DerffException("date", player);
-        }
-
-        try {
-            player.setBirthday(new SimpleDateFormat("yyyy-MM-dd").parse(player.getStringBirthday()));
-        } catch (ParseException e) {
-            throw new DerffException("date", player);
-        }
-
-
-        //Team validation
-        try {
-            player.setTeam(teamService.findTeamById(id));
-        } catch (Exception e) {
-            throw new DerffException("database", player, new Object[]{e.getMessage()});
-        }
-
-        // Id card validation
-        if (player.getIdCard() != null && playerService.getPlayerByIdCard(player.getIdCard()) != null) {
-            throw new DerffException("IdCardNotCorrect", player);
-        }
-
-        // File size validation
-        if (file.getSize() > maxUploadFileSizePlayerPhoto)
-            throw new DerffException("maxUploadFileSizePlayerPhoto", player, new Object[]{maxUploadFileSizePlayerPhoto, file.getSize()});
-
-        // File extension validation
-        if (file.getSize() > 0) {
-            boolean isCorrectFileExtention = false;
-            for (String regex : availableFileExtension.split(";")
-            ) {
-                if (file.getOriginalFilename().endsWith(regex)) {
-                    isCorrectFileExtention = true;
-                    break;
-                }
-            }
-            if (!isCorrectFileExtention)
-                throw new DerffException("notAvailableFileExtension", player, new Object[]{availableFileExtension});
-
-            //Set byte[] to Player photo
-            try {
-                player.setPhoto(file.getBytes());
-            } catch (IOException e) {
-                throw new DerffException("fileGetBytes", player, new Object[]{e.getMessage()});
-            }
-        }
-
-    }
 
     private void validateTeamInformation(Game newGame, String preDate, String masterTeamName, String slaveTeamName) throws DerffException {
 

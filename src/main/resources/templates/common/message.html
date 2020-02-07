@@ -1,10 +1,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="message">
     <div id="msg_pop" onclick="document.getElementById('msg_pop').style.display='none'; return false;">
-        <h4>Внимание! </h4><br/>
-        <div id="errorMessage">
-            Текст ошибки
-        </div>
+        <h4 th:text="#{label.attention}"/><br/>
+        <div id="message"/>
     </div>
 </div>
 </html>

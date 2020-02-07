@@ -1,7 +1,6 @@
 package app.services.impl;
 
-import app.Models.Competition;
-import app.Models.Region;
+
 import app.Models.Team;
 import app.repository.TeamRepository;
 import app.services.TeamService;

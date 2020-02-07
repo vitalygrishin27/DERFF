@@ -1,6 +1,5 @@
 package app.repository;
 
-import app.Models.Competition;
 import app.Models.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

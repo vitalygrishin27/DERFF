@@ -46,7 +46,7 @@ public class TeamController {
     @GetMapping(value = "administration/teams")
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
         return "administration/team/teams";
     }
@@ -55,7 +55,6 @@ public class TeamController {
     public String deleteTeam(@PathVariable("id") long id) throws DerffException {
         Team team = teamService.findTeamById(id);
         if (!gameService.findGameWithTeam(team).isEmpty()) {
-            // TODO: 20.11.2019 циклический вызов
             throw new DerffException("notAvailableDeleteTeamWithGame", null, new Object[]{team.getTeamName()});
         }
         try {
@@ -69,17 +68,15 @@ public class TeamController {
     }
 
     @GetMapping(value = "administration/newTeam")
-    public String getTeamForm(Model model) throws DerffException {
+    public String getTeamForm(Model model) {
         Team team = new Team();
         if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
                     .getTemporaryObjectForMessage().getClass().isInstance(new Team()))
                 team = (Team) messageGenerator.getTemporaryObjectForMessageWithSetNull();
         }
         model.addAttribute("team", team);
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.teams.new", null, Locale.getDefault()));
         return "administration/team/newTeam";
     }
 
@@ -97,10 +94,10 @@ public class TeamController {
     }
 
     @GetMapping(value = "administration/editTeam/{id}")
-    public String getTeamForEdit(Model model, @PathVariable("id") long id) throws DerffException {
+    public String getTeamForEdit(Model model, @PathVariable("id") long id) {
         Team team = new Team();
         if (messageGenerator.isActive()) {
-            model.addAttribute("errorMessage", messageGenerator.getMessageWithSetNotActive());
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
             if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
                     .getTemporaryObjectForMessage().getClass().isInstance(new Team())) {
                 team = (Team) messageGenerator.getTemporaryObjectForMessageWithSetNull();
@@ -108,8 +105,6 @@ public class TeamController {
         } else {
             team = teamService.findTeamById(id);
         }
-        model.addAttribute("titlePage", messageSource
-                .getMessage("page.title.teams.edit", null, Locale.getDefault()));
         model.addAttribute("team", team);
         model.addAttribute("needToReplaceFile", new BooleanWrapper(false));
         return "administration/team/editTeam";
