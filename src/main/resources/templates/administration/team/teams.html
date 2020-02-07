@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:utext="#{titlePage.teams}"></title>
+    <meta charset="UTF-8">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
+</head>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div class="container">
+    <br>
+    <h4 style="text-align:center; color: #ffffff;" th:text="#{label.Championchip}"/>
+    <br>
+    <div class="row" id="ads">
+        <div class="col-md-4" th:each="team : ${teams}" style="opacity: 0.85;">
+            <div class="card rounded">
+                <div class="card-image" style="text-align:center;">
+                       <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                          onclick="return confirm('Вы уверены, что хотите удалить игру?')"
+                          th:onclick="return confirm('Вы уверены, что хотите удалить игру?')" style="cursor:pointer;">Х</a>
+                    <img class="img-fluid" th:src="${team.symbolString}"/>
+
+
+
+
+
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="${team.teamName}">Name</h5>
+                    </div>
+                    <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+        <div class="col-md-4">
+            <div class="card rounded">
+                <div class="card-image">
+                    <img class="img-fluid" th:src="@{/images/new-team.jpg}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="#{label.newTeam}"/>
+                    </div>
+                    <a class="ad-btn1" th:href="|/administration/newTeam?lang=${#request.Locale.getDefault()}|" th:text="#{label.add}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+
+    function deleteTeam(teamId, teamName){
+        if(confirm("Вы уверены, что хотите удалить команду "+teamName+"?")){
+             $.ajax({
+                     type: 'DELETE',
+                    url:'/administration/teams',
+                    data:({teamId:teamId}),
+                     success: function(msg){
+                     location.href = "/administration/teams"
+                        }
+                });
+        }
+    }
+
+/*<![CDATA[*/
+    $(document).ready(function () {
+        var errorMessage = /*[[${errorMessage}]]*/;
+        if(errorMessage!=null){
+            var delay_popup = 500;
+            var msg_pop = document.getElementById('msg_pop');
+            var msg_pop_text = document.getElementById('errorMessage');
+            msg_pop_text.innerHTML=errorMessage;
+            setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
+        }
+    });
+/*]]>*/
+
+
+</script>
+
+
+</body>
+</html>
+

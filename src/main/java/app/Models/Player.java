@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -70,12 +69,12 @@ public class Player {
     @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
     private Collection<Offense> offenses;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+  /*  @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_player",
             joinColumns = @JoinColumn(name = "player_id"),
             inverseJoinColumns = @JoinColumn(name = "competition_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private List<Competition> competitions = new ArrayList<>();
+    private List<Competition> competitions = new ArrayList<>();*/
 
     @Override
     public String toString() {

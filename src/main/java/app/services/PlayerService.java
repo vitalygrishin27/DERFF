@@ -1,6 +1,5 @@
 package app.services;
 
-import app.Models.Competition;
 import app.Models.Player;
 import app.Models.Team;
 
@@ -14,8 +13,6 @@ public interface PlayerService {
     Player getPlayerByIdCard(int id);
 
     List<Player> findAllPlayers();
-
-    List<Player> findAllPlayersInTeamForCurrentCompetition(Competition competition, Team team);
 
     List<Player> findAllPlayersInTeam(Team team);
 

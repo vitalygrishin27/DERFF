@@ -20,11 +20,16 @@
     <link href="../static/vendor/datepicker/daterangepicker.css" th:href="@{/vendor/datepicker/daterangepicker.css}"
           rel="stylesheet" media="all"/>
     <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
+    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
 </head>
 <body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
 
 <div id="msg_pop" onclick="document.getElementById('msg_pop').style.display='none'; return false;">
-    <h4>Внимание!</h4><br/>
+    <h4>Внимание! </h4><br/>
     <div id="errorMessage">
         Текст ошибки
     </div>
@@ -35,12 +40,16 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h2 class="title" th:utext="#{page.title.competition.creating}">Создание сезона</h2>
-                <form method="POST" enctype="multipart/form-data" th:object="${player}">
+                <h3 class="title" th:utext="#{label.team.creating}">Регистрация команды</h3>
+                <form method="POST" enctype="multipart/form-data" th:object="${team}">
                     <div class="input-group">
-                        <input class="input--style-3" type="text" placeholder="Имя/год"
-                               th:placeholder="#{placeholder.competition}" th:value="${competition.name}" name="name"
+                        <input class="input--style-3" type="text" placeholder="Название"
+                               th:placeholder="#{placeholder.name}" th:value="${team.teamName}" name="teamName"
                                required>
+                    </div>
+                    <div class="input-group" style="color:#ffff00">
+                        <p>Эмблема команды</p><br/>
+                        <input type="file" name="file">
                     </div>
                     <div class="p-t-10">
                         <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}">Submit
@@ -72,6 +81,7 @@
 
     });
     /*]]>*/
+
 
 </script>
 </body>

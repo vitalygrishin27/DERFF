@@ -51,10 +51,4 @@ public class Referee {
     @Fetch(FetchMode.SUBSELECT)
     private List<Game> games = new ArrayList<>();
 
-    @ManyToMany (fetch = FetchType.LAZY)
-    @JoinTable (name="referee_competition",
-            joinColumns = @JoinColumn(name = "referee_id"),
-            inverseJoinColumns = @JoinColumn(name="competition_id"))
-    @Fetch(FetchMode.SUBSELECT)
-    private List<Competition> competitions = new ArrayList<>();
 }
