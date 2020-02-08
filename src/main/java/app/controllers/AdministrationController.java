@@ -473,47 +473,7 @@ public class AdministrationController {
     }
 
 
-    @GetMapping(value = "/administration/standings")
-    public String getStandings(Model model) throws DerffException {
-        List<StandingsRow> standingsRows = new ArrayList<>();
-        for (Team team : teamService.findAllTeams()
-        ) {
-            StandingsRow standingsRow = new StandingsRow();
-            standingsRow.setTeamName(team.getTeamName());
 
-            for (Game game : gameService.findGamesWithResultByTeam(team, true)
-            ) {
-                standingsRow.setGames(standingsRow.getGames() + 1);
-                if (team.equals(game.getMasterTeam())) {
-                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
-                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getSlaveGoalsCount());
-                    if (game.getMasterGoalsCount().equals(game.getSlaveGoalsCount())) {
-                        standingsRow.setDraws(standingsRow.getDraws() + 1);
-                    } else if (game.getMasterGoalsCount() > game.getSlaveGoalsCount()) {
-                        standingsRow.setWins(standingsRow.getWins() + 1);
-                    } else {
-                        standingsRow.setLosses(standingsRow.getLosses() + 1);
-                    }
-                } else {
-                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getSlaveGoalsCount());
-                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getMasterGoalsCount());
-                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())) {
-                        standingsRow.setDraws(standingsRow.getDraws() + 1);
-                    } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount()) {
-                        standingsRow.setWins(standingsRow.getWins() + 1);
-                    } else {
-                        standingsRow.setLosses(standingsRow.getLosses() + 1);
-                    }
-                }
-            }
-            standingsRow.setRatioGoals(standingsRow.getScoredGoals() - standingsRow.getConcededGoals());
-            standingsRow.setPoints(standingsRow.getWins() * 3 + standingsRow.getDraws());
-            standingsRows.add(standingsRow);
-        }
-        sortStandings(standingsRows);
-        model.addAttribute("standings", standingsRows);
-        return "administration/standings";
-    }
 
     //При дообавление игрока выводит сообщение удачно добавлен и заполянет поля для нового игроа старыми данными нужно после вывода сообщения стирать и объект
     //При редактировании игрока не меняя картоску айди выводится ошибка что такой номер не допустим.
@@ -547,13 +507,7 @@ public class AdministrationController {
 
     }
 
-    private void sortStandings(List<StandingsRow> standingsRows) {
-        standingsRows.sort(StandingsRow.COMPARE_BY_POINTS);
-        Collections.reverse(standingsRows);
-        for (int i = 0; i < standingsRows.size(); i++) {
-            standingsRows.get(i).setNumber(i + 1);
-        }
-    }
+
 
 
 

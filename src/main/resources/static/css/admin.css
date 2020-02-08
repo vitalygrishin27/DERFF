@@ -101,17 +101,19 @@ body {
   width: 640px;
   text-align: left;
   border-collapse: collapse;
-  background: #252F48;
+ background: #252F48;
  margin: auto;
 }
 .table_dark th {
   color: #EDB749;
+   border-left:1px solid #37B5A5;
+    border-right:1px solid #37B5A5;
+    border-top: 1px solid #37B5A5;
   border-bottom: 1px solid #37B5A5;
   padding: 12px 17px;
 }
 .table_dark td {
   color: #CAD4D6;
-  border-left:1px solid #37B5A5;
   border-left:1px solid #37B5A5;
   border-top: 1px solid #37B5A5;
   border-right:1px solid #37B5A5;

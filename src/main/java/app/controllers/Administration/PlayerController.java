@@ -139,7 +139,7 @@ public class PlayerController {
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/players";
+        return "redirect:/administration/players/"+teamId;
     }
 
     @GetMapping(value = "/administration/deletePlayer/{teamId}/{id}")
