@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.calendar}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td>
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" href="/administration/newGame" th:text="#{label.newGame}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                       th:onClick="getGamesByDate('date')" th:utext="#{label.showGameByDate}"/>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                       th:onClick="getGamesByDate('first')" th:utext="#{label.firstRound}"/>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                       th:onClick="getGamesByDate('second')" th:utext="#{label.secondRound}"/>
+                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                       th:onClick="getGamesByDate('all')" th:utext="#{label.allRounds}"/>
+                    <input type="date" id="date" th:onChange="getGamesByDate('date')">
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+
+function selectGame(gameId){
+    $.ajax({
+        type: 'POST',
+        url:'/selectTeamForCompetition',
+        data:({teamId:teamId}),
+        success: function(msg,url){
+            if(msg==null && url!=null){
+                location.href = url;
+            }else{
+                location.href = "/selectTeamForCompetition";
+            }
+
+        }
+    });
+}
+
+function getGamesByDate(round) {
+    var d= document.getElementById("date").value;
+    $.ajax({
+        type: 'POST',
+        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        data: ({
+            date: d,
+            round:round
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+        error: function() {
+            alert("ewfewfef");
+            window.location='/administration/calendar';
+        }
+    });
+}
+</script>
+</body>
+</html>

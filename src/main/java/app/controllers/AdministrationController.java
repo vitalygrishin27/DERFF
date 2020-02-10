@@ -73,13 +73,7 @@ public class AdministrationController {
 
 
 
-    @GetMapping(value = "/administration/calendar")
-    public String getCalendar(Model model) throws DerffException {
-        if (messageGenerator.isActive()) {
-            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-        }
-        return "administration/calendar";
-    }
+
 
     @PostMapping(value = "/administration/calendar")
     public String addGame(@ModelAttribute("preDate") String preDate, @ModelAttribute("masterTeamName") String masterTeamName, @ModelAttribute("slaveTeamName") String slaveTeamName) throws DerffException {
@@ -116,7 +110,7 @@ public class AdministrationController {
         List<Game> games = new ArrayList<>();
         try {
             switch (round) {
-                case "none":
+                case "date":
                     Date date = null;
                     try {
                         date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
