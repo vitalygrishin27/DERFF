@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Locale;
@@ -30,8 +31,8 @@ public class CompetitionController {
     public String getCompetitions(Model model) {
         if (messageGenerator.isActive()) {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-            model.addAttribute("competitions", competitionService.findAllCompetition());
         }
+        model.addAttribute("competitions", competitionService.findAllCompetition());
         return "administration/competition/competitions";
     }
 
@@ -64,9 +65,41 @@ public class CompetitionController {
         return "redirect:/administration/competitions";
     }
 
+    @GetMapping(value = "/administration/editCompetition/{id}")
+    public String getFormforEditCompetition(Model model, @PathVariable("id") long id) throws DerffException {
+        Competition competition = new Competition();
+        try {
+            competition = competitionService.findCompetitionById(id);
+        } catch (Exception e) {
+            throw new DerffException("competitionNotExists", competition, new Object[]{id, e.getMessage()}, "/administration/competitions");
+        }
+        if (messageGenerator.isActive()) {
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Competition())) {
+                competition = (Competition) messageGenerator.getTemporaryObjectForMessage();
+            }
+        }
+        model.addAttribute("competition", competition);
+        return "administration/competition/editCompetition";
+    }
+
+    @PostMapping(value = "/administration/editCompetition/{id}")
+    public String saveCompetitionAfterEdit(@ModelAttribute("competition") Competition competition) throws DerffException {
+        validateCompetitionInformation(competition);
+        try {
+            competitionService.save(competition);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.updateCompetition", new Object[]{competition.getName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", competition, new Object[]{e.getMessage()});
+        }
+        return "redirect:/administration/competitions";
+    }
+
     private void validateCompetitionInformation(Competition competition) throws DerffException {
         //validate Competition name
-        if (competitionService.findCompetitionByName(competition.getName()) != null) {
+        if (competitionService.findCompetitionByName(competition.getName()) != null && competition.getId() == 0) {
             throw new DerffException("notAvailableCompetitionName", competition);
         }
 

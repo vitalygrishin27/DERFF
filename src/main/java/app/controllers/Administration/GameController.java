@@ -4,9 +4,11 @@ import app.Models.Competition;
 import app.Models.Game;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
+import app.services.impl.CompetitionServiceImpl;
 import app.services.impl.ConfigurationImpl;
 import app.services.impl.GameServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static app.Utils.ConfigurationKey.*;
 import static app.Utils.ConfigurationKey.SECOND_ROUND_END;
@@ -33,12 +36,20 @@ public class GameController {
     @Autowired
     ConfigurationImpl configurationService;
 
+    @Autowired
+    CompetitionServiceImpl competitionService;
+
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
+
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) {
         if (messageGenerator.isActive()) {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-            model.addAttribute("competition", "Cup");
         }
+        List<Competition>competitions=competitionService.findAllCompetition();
+        competitions.add(new Competition(-1,messageSource.getMessage("label.competitions.all",null, Locale.getDefault()),null));
+        model.addAttribute("competitions",competitions);
         return "administration/game/calendar";
     }
 

@@ -26,22 +26,41 @@
                            th:onClick="getGamesByDate('second')" th:utext="#{label.secondRound}"/>
                     <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
                            th:onClick="getGamesByDate('all')" th:utext="#{label.allRounds}"/>
-                    <br/><br/>
-                    <div style="white-space: nowrap">
-                        <input type="radio" th:id="ChampoinChip" th:utext="#{label.ChampionShipShort}"
-                               th:name="competition" th:checked="true">
-                        <input type="radio" th:id="Cup" th:utext="#{label.Cup}" th:name="competition">
-                        <input type="radio" th:id="HopeCup" th:utext="#{label.HopeCup}" th:name="competition">
-                        <input type="radio" th:id="All" th:utext="#{label.all}" th:name="competition">
-                    </div>
                 </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="competitions" style="text-align: center;"></div>
             </td>
         </tr>
     </table>
     <div id="block"/>
 </div>
 <script th:inline="javascript">
-/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+/*<![CDATA[*/ $(document).ready(function () {
+loadMessage( /*[[${message}]]*/);
+var competitionsBlock = document.getElementById('competitions');
+	var competitions = /*[[${competitions}]]*/ ;
+		$.each(competitions, function (key, value) {
+			var inp = document.createElement("input");
+			inp.type='radio';
+			inp.value = value.name;
+			inp.id=value.id;
+			inp.text = value.name;
+			inp.name='competition';
+			inp.checked='true';
+			competitionsBlock.appendChild(inp);
+			var lab = document.createElement("label");
+			lab.innerHTML=value.name;
+			lab.for=value.id;
+			competitionsBlock.appendChild(lab);
+			var spaces = document.createElement("label");
+			spaces.innerHTML='&nbsp;&nbsp;&nbsp;';
+			competitionsBlock.appendChild(spaces);
+		});
+
+});/*]]>*/
 
 function selectGame(gameId){
     $.ajax({
@@ -86,6 +105,8 @@ var radios = document.getElementsByName("competition");
         }
     }
 }
+
+
 
 </script>
 </body>
