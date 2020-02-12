@@ -126,7 +126,7 @@ body {
   border-right: 1px solid #37B5A5;
 }
 .table_dark tr:hover td {
-  text-decoration: underline;
+ // text-decoration: underline;
 }
 
 .masterListGoals{

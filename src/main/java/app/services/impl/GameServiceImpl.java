@@ -1,5 +1,6 @@
 package app.services.impl;
 
+import app.Models.Competition;
 import app.Models.Game;
 import app.Models.Team;
 import app.repository.GameRepository;
@@ -18,7 +19,6 @@ public class GameServiceImpl implements GameService {
     @Override
     public void save(Game game) {
         repository.saveAndFlush(game);
-
     }
 
     @Override
@@ -32,11 +32,27 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public void delete(Game game) {
-    repository.delete(game);
+    public List<Game> findAllGamesByCompetition(Competition competition) {
+        return repository.findAllGamesByCompetition(competition);
     }
+
     @Override
-    public List<Game> findGameWithTeam(Team team){
+    public List<Game> findGamesByDateAndCompetition(Date date, Competition competition) {
+        return repository.findGamesByDateAndCompetition(date, competition);
+    }
+
+    @Override
+    public List<Game> findGamesBetweenDatesAndCompetition(Date from, Date to, Competition competition) {
+        return repository.findGamesBetweenDatesAndCompetition(from, to, competition);
+    }
+
+    @Override
+    public void delete(Game game) {
+        repository.delete(game);
+    }
+
+    @Override
+    public List<Game> findGameWithTeam(Team team) {
         return repository.findGameWithTeam(team);
     }
 
@@ -47,15 +63,16 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public List<Game> findGamesBetweenDates(Date from, Date to) {
-        return repository.findGamesBetweenDates(from,to);
+        return repository.findGamesBetweenDates(from, to);
     }
 
     @Override
     public void update(Game game) {
-        repository.update(game.getId(),game.getMasterTeam(),game.getSlaveTeam(),game.getDate(),game.getStringDate());
+        repository.update(game.getId(), game.getMasterTeam(), game.getSlaveTeam(), game.getDate(), game.getStringDate());
     }
+
     @Override
-    public List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave){
-       return repository.findGamesWithResultByTeam(team, isResultSave);
+    public List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave) {
+        return repository.findGamesWithResultByTeam(team, isResultSave);
     }
 }

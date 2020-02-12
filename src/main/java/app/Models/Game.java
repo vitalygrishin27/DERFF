@@ -39,6 +39,10 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private Collection<Offense> offenses;
 
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_competition")
+    private Competition competition;
+
    /* @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "game_team",
             joinColumns = @JoinColumn(name = "game_id"),

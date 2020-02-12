@@ -16,16 +16,24 @@
         </tr>
         <tr>
             <td>
-                <div>
-                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
-                       th:onClick="getGamesByDate('date')" th:utext="#{label.showGameByDate}"/>
-                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
-                       th:onClick="getGamesByDate('first')" th:utext="#{label.firstRound}"/>
-                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
-                       th:onClick="getGamesByDate('second')" th:utext="#{label.secondRound}"/>
-                    <p style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
-                       th:onClick="getGamesByDate('all')" th:utext="#{label.allRounds}"/>
+                <div style="text-align: center;">
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('date')" th:utext="#{label.showGameByDate}"/>
                     <input type="date" id="date" th:onChange="getGamesByDate('date')">
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('first')" th:utext="#{label.firstRound}"/>
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('second')" th:utext="#{label.secondRound}"/>
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('all')" th:utext="#{label.allRounds}"/>
+                    <br/><br/>
+                    <div style="white-space: nowrap">
+                        <input type="radio" th:id="ChampoinChip" th:utext="#{label.ChampionShipShort}"
+                               th:name="competition" th:checked="true">
+                        <input type="radio" th:id="Cup" th:utext="#{label.Cup}" th:name="competition">
+                        <input type="radio" th:id="HopeCup" th:utext="#{label.HopeCup}" th:name="competition">
+                        <input type="radio" th:id="All" th:utext="#{label.all}" th:name="competition">
+                    </div>
                 </div>
             </td>
         </tr>
@@ -58,18 +66,27 @@ function getGamesByDate(round) {
         url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
         data: ({
             date: d,
-            round:round
+            round: round,
+            competition: getCompetition()
         }),
         cache: false,
         success: function(html) {
             $("#block").html(html);
         }
-        error: function() {
-            alert("ewfewfef");
-            window.location='/administration/calendar';
-        }
     });
 }
+
+function getCompetition(){
+var radios = document.getElementsByName("competition");
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+           // alert(radios[i].value);
+            return radios[i].id;
+            break;
+        }
+    }
+}
+
 </script>
 </body>
 </html>

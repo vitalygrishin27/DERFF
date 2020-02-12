@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <title th:utext="#{label.team.editing}"></title>
 <th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
 <body>
 <th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>

@@ -104,42 +104,7 @@ public class AdministrationController {
 
 
 
-    @PostMapping(value = "/administration/gameListByDate")
-    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate, @ModelAttribute("round") String round) throws DerffException {
 
-        List<Game> games = new ArrayList<>();
-        try {
-            switch (round) {
-                case "date":
-                    Date date = null;
-                    try {
-                        date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
-                    } catch (ParseException e) {
-                        throw new DerffException("date");
-                    }
-                    games = gameService.findGamesByDate(date);
-                    break;
-                case "first":
-                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
-                            .parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
-                            .parse(configurationService.getValue(FIRST_ROUND_END)));
-                    break;
-                case "second":
-                    games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
-                            .parse(configurationService
-                                    .getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
-                            .parse(configurationService.getValue(SECOND_ROUND_END)));
-                    break;
-                case "all":
-                    games = gameService.findAllGames();
-                    break;
-            }
-        } catch (Exception e) {
-            throw new DerffException("database");
-        }
-        model.addAttribute("games", games);
-        return "administration/gamesByDate";
-    }
 
     @GetMapping(value = "/administration/newGame")
     public String getFormforNewGame(Model model) throws DerffException {

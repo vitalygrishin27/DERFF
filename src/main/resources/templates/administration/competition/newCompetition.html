@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<title th:utext="#{label.newTeam}"></title>
+<title th:utext="#{label.newCompetition}"></title>
 <th:block th:include="common/common"></th:block>
 <link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
 <body>
@@ -11,15 +11,11 @@
         <div class="card card-3">
             <div class="card-heading"></div>
             <div class="card-body">
-                <h3 class="title" th:utext="#{label.team.creating}"/>
-                <form method="POST" enctype="multipart/form-data" th:object="${team}">
+                <h3 class="title" th:utext="#{label.newCompetition}"/>
+                <form method="POST" enctype="multipart/form-data" th:object="${competition}">
                     <div class="input-group">
-                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.name}"
-                               th:value="${team.teamName}" name="teamName" required>
-                    </div>
-                    <div class="input-group" style="color:#ffff00">
-                        <p th:text="#{label.symbol}"/><br/>
-                        <input type="file" name="file">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.title}"
+                               th:value="${competition.name}" name="name" required>
                     </div>
                     <div class="p-t-10">
                         <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}"/>

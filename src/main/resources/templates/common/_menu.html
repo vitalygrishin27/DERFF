@@ -5,7 +5,7 @@
             <li class="right-item"> <a th:href="@{/administration/calendar?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.calendar}">Календарь</a></li>
             <li class="right-item"> <a th:href="@{/administration/standings?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.standings}">Турнирная таблица</a></li>
             <li class="left-item"> <a th:href="@{/administration/players?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.players}">Игроки</a></li>
-            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/members?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.member}">Участники</a></li>
+            <li class="left-item"><a th:href="@{/administration/competitions?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.competitions}">Соревнования</a></li>
             <li class="right-item"> <a th:if="${#request.userPrincipal != null}" th:href="@{/logout?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.exit}">Выйти</a></li>
             <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/jury?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.jury}">Жюри</a></li>
             <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/configuration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.configuration}">Настройки</a></li>

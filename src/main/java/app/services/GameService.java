@@ -1,6 +1,7 @@
 package app.services;
 
 
+import app.Models.Competition;
 import app.Models.Game;
 import app.Models.Team;
 
@@ -14,15 +15,21 @@ public interface GameService {
 
     List<Game> findAllGames();
 
+    List<Game> findAllGamesByCompetition(Competition competition);
+
     void delete(Game game);
 
     List<Game> findGameWithTeam(Team team);
 
     List<Game> findGamesByDate(Date date);
 
+    List<Game> findGamesByDateAndCompetition(Date date, Competition competition);
+
     List<Game> findGamesBetweenDates(Date from, Date to);
 
-    List<Game> findGamesWithResultByTeam(Team team,boolean isResultSave);
+    List<Game> findGamesBetweenDatesAndCompetition(Date from, Date to, Competition competition);
+
+    List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave);
 
     void update(Game game);
 
