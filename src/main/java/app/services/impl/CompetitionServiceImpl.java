@@ -1,7 +1,6 @@
 package app.services.impl;
 
 import app.Models.Competition;
-import app.Models.Region;
 import app.repository.CompetitionRepository;
 import app.services.CompetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import java.util.List;
 
 @Service
 public class CompetitionServiceImpl implements CompetitionService {
+
     @Autowired
     CompetitionRepository repository;
 
@@ -20,27 +20,22 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Competition findCompetitionByName(String competitionName) {
-        return repository.findCompetitionByName(competitionName);
-    }
-
-    @Override
-    public Competition findCompetitionById(Long id) {
+    public Competition findCompetitionById(long id) {
         return repository.getOne(id);
     }
 
     @Override
-    public List<Competition> findAllCompetitions() {
-        return  repository.findAll();
+    public List<Competition> findAllCompetition() {
+        return repository.findAll();
     }
 
     @Override
-    public void deleteById(long id) {
-        repository.deleteById(id);
+    public void delete(Competition competition) {
+        repository.delete(competition);
     }
 
     @Override
-    public List<Competition> findAllCompetitionsInRegion(Region region) {
-        return repository.findAllCompetitionsInRegion(region);
+    public Competition findCompetitionByName(String name) {
+        return repository.findCompetitionByName(name);
     }
 }

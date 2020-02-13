@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{label.player.editing}"></title>
+<th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+    <div class="wrapper wrapper--w780">
+        <div class="card card-3">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <h3 class="title" th:utext="#{label.player.editing}"/>
+                <form method="POST" enctype="multipart/form-data" th:object="${player}">
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.lastName}"
+                               th:value="${player.lastName}" name="lastName" required>
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.firstName}"
+                               th:value="${player.firstName}" name="firstName" required>
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.secondName}"
+                               th:value="${player.secondName}" name="secondName" required>
+                    </div>
+                    <div class="input-group">
+                        <select id="team" name="teamName">
+                            <option th:value="${team.teamName}" th:each="team : ${teams}"
+                                    th:utext="${team.teamName}"
+                                    th:selected="${team.teamName==player.team.teamName}"/>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="date" th:value="${player.stringBirthday}"
+                               th:field="${player.stringBirthday}" th:name="stringBirthday" required>
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="number" min="0" max="100000" step="1"
+                               th:placeholder="#{placeholder.idCard}" th:value="${player.idCard}" name="IdCard">
+                    </div>
+                    <div class="input-group" style="color:#ffff00">
+                        <input type="checkbox" th:utext="#{placeholder.isLegionary}" th:field="${player.isLegionary}"
+                               th:value="${player.isLegionary}" name="isLegionary">
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.registration}"
+                               th:value="${player.registration}" name="registration" required>
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.INN}"
+                               th:value="${player.inn}" name="inn">
+                    </div>
+                    <div class="input-group">
+                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.role}"
+                               th:value="${player.role}" name="role">
+                    </div>
+                    <div class="input-group" style="color:#ffff00">
+                        <p th:text="#{label.photo}"/><br/><input type="file" name="file">
+                    </div>
+                    <div class="input-group" style="color:#ffff00">
+                        <input type="checkbox" th:utext="#{placeholder.isNotActive}" th:field="${player.isNotActive}"
+                               th:value="${player.isNotActive}" name="isNotActive">
+                    </div>
+                    <div class="p-t-10">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.save}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/
+</script>
+</body>
+</html>

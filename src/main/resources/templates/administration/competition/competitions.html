@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.competitions}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+    <table class="table_dark">
+        <tr>
+            <td colspan="3">
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" href="/administration/newCompetition" th:text="#{label.newCompetition}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:each="competition : ${competitions}">
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${competition.name}"
+                           th:id="${competition.id}"/>
+                </div>
+            </td>
+            <td>
+                <label th:onclick="|window.location='/administration/editCompetition/${competition.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
+            </td>
+            <td>
+                <a th:text="#{label.delete}" th:href="|/administration/deleteCompetition/${competition.id}|"
+                   th:onclick="return confirm('[[#{label.confirmation.competition}]]')" style="cursor:pointer;"/>
+            </td>
+        </tr>
+    </table>
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+</script>
+</body>
+</html>

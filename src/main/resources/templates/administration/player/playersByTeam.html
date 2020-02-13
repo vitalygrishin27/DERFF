@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<table class="table_dark">
+    <tr th:each="player, custStat : ${players}">
+        <td th:text="${custStat.count}"/>
+        <td>
+            <div>
+                <label class="input--style-3"
+                       th:text="${player.lastName}+' '+${player.firstName}+' '+${player.secondName}"
+                       th:id="${player.id}"/>
+            </div>
+        </td>
+        <td>
+            <label th:text="#{label.edit}"
+                   th:onclick="|window.location='/administration/editPlayer/${player.team.id}/${player.id}'|"
+                   style="cursor:pointer;"/>
+        </td>
+        <td>
+            <a th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
+               th:onclick="return confirm('[[#{label.confirmation.player}]]')" style="cursor:pointer;"/>
+        </td>
+    </tr>
+</table>
+</html>

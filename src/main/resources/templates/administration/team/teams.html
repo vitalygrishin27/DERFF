@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.teams}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div class="container">
+    <br>
+    <h4 style="text-align:center; color: #ffffff;" th:text="#{label.ChampionChip}"/>
+    <br>
+    <div class="row" id="ads">
+        <div class="col-md-4" th:each="team : ${teams}" style="opacity: 0.85;">
+            <div class="card rounded">
+                <div class="card-image" style="text-align:center;">
+                    <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                       th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a>
+                    <img class="img-fluid" th:src="${team.symbolString}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="${team.teamName}">Name</h5>
+                    </div>
+                    <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+        <div class="col-md-4">
+            <div class="card rounded">
+                <div class="card-image">
+                    <img class="img-fluid" th:src="@{/images/new-team.jpg}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="#{label.newTeam}"/>
+                    </div>
+                    <a class="ad-btn1" th:href="|/administration/newTeam?lang=${#request.Locale.getDefault()}|"
+                       th:text="#{label.add}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+</script>
+</body>
+</html>

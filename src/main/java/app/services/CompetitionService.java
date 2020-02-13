@@ -2,22 +2,18 @@ package app.services;
 
 
 import app.Models.Competition;
-import app.Models.Region;
-
 import java.util.List;
 
 public interface CompetitionService {
     void save(Competition competition);
 
-    Competition findCompetitionByName(String competitionName);
+    Competition findCompetitionById(long id);
 
-    List<Competition> findAllCompetitionsInRegion(Region region);
+    List<Competition> findAllCompetition();
 
-    Competition findCompetitionById(Long id);
+    void delete(Competition competition);
 
-    List<Competition> findAllCompetitions();
-
-    void deleteById(long id);
-
+    Competition findCompetitionByName(String name);
 
 }
+

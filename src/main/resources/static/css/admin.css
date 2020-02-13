@@ -8,12 +8,8 @@ body {
     background-size: 100% 100%;
 }
 
-/* Category Ads */
-
 #ads {
     margin: 30px 0 30px 0;
-
-
 }
 
 #ads .card-notify-badge {
@@ -26,8 +22,6 @@ body {
         color: #000;
         padding: 5px 10px;
         font-size: 14px;
-
-
     }
 
 #ads .card-notify-year {
@@ -45,7 +39,6 @@ body {
         cursor: pointer;
 }
 
-
 #ads .card-detail-badge {
         background: #f2d900;
         text-align: center;
@@ -53,10 +46,7 @@ body {
         color: #000;
         padding: 5px 10px;
         font-size: 14px;
-
     }
-
-
 
 #ads .card:hover {
             background: #fff;
@@ -67,14 +57,11 @@ body {
 
 #ads .card-image-overlay {
         font-size: 20px;
-
     }
-
 
 #ads .card-image-overlay span {
             display: inline-block;
         }
-
 
 #ads .ad-btn1 {
         text-transform: uppercase;
@@ -108,24 +95,25 @@ body {
         font-size: 18px;
     }
 
-
 .table_dark {
   font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
   font-size: 14px;
   width: 640px;
   text-align: left;
   border-collapse: collapse;
-  background: #252F48;
+ background: #252F48;
  margin: auto;
 }
 .table_dark th {
   color: #EDB749;
+   border-left:1px solid #37B5A5;
+    border-right:1px solid #37B5A5;
+    border-top: 1px solid #37B5A5;
   border-bottom: 1px solid #37B5A5;
   padding: 12px 17px;
 }
 .table_dark td {
   color: #CAD4D6;
-  border-left:1px solid #37B5A5;
   border-left:1px solid #37B5A5;
   border-top: 1px solid #37B5A5;
   border-right:1px solid #37B5A5;
@@ -138,7 +126,7 @@ body {
   border-right: 1px solid #37B5A5;
 }
 .table_dark tr:hover td {
-  text-decoration: underline;
+ // text-decoration: underline;
 }
 
 .masterListGoals{

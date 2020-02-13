@@ -1,6 +1,5 @@
 package app.services.impl;
 
-import app.Models.Competition;
 import app.Models.Player;
 import app.Models.Team;
 import app.repository.PlayerRepository;
@@ -33,11 +32,6 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<Player> findAllPlayers() {
         return repository.findAll();
-    }
-
-    @Override
-    public List<Player> findAllPlayersInTeamForCurrentCompetition(Competition competition, Team team) {
-        return repository.findAllPlayersInTeamForCurrentCompetition(competition,team);
     }
 
     @Override

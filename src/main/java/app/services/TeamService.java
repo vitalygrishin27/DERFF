@@ -1,8 +1,7 @@
 package app.services;
 
 
-import app.Models.Competition;
-import app.Models.Region;
+
 import app.Models.Team;
 
 import java.util.List;

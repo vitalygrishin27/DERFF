@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.calendar}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td>
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" href="/administration/newGame" th:text="#{label.newGame}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="text-align: center;">
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('date')" th:utext="#{label.showGameByDate}"/>
+                    <input type="date" id="date" th:onChange="getGamesByDate('date')">
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('first')" th:utext="#{label.firstRound}"/>
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('second')" th:utext="#{label.secondRound}"/>
+                    <label style="cursor:pointer; display: inline-block; color:#ffff00; vertical-align:  middle;"
+                           th:onClick="getGamesByDate('all')" th:utext="#{label.allRounds}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="competitions" style="text-align: center;"></div>
+            </td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {
+loadMessage( /*[[${message}]]*/);
+var competitionsBlock = document.getElementById('competitions');
+	var competitions = /*[[${competitions}]]*/ ;
+		$.each(competitions, function (key, value) {
+			var inp = document.createElement("input");
+			inp.type='radio';
+			inp.id=key;
+			inp.name='competition';
+			inp.checked='true';
+			inp.setAttribute('onClick','getGamesByDate("all")');
+			competitionsBlock.appendChild(inp);
+			var lab = document.createElement("label");
+			lab.innerHTML=value;
+			lab.for=key;
+			competitionsBlock.appendChild(lab);
+			var spaces = document.createElement("label");
+			spaces.innerHTML='&nbsp;&nbsp;&nbsp;';
+			competitionsBlock.appendChild(spaces);
+		});
+
+});/*]]>*/
+
+function selectGame(gameId){
+    $.ajax({
+        type: 'POST',
+        url:'/selectTeamForCompetition',
+        data:({teamId:teamId}),
+        success: function(msg,url){
+            if(msg==null && url!=null){
+                location.href = url;
+            }else{
+                location.href = "/selectTeamForCompetition";
+            }
+
+        }
+    });
+}
+
+function getGamesByDate(round) {
+    var d= document.getElementById("date").value;
+    $.ajax({
+        type: 'POST',
+        url: "/administration/gameListByDate", // загружает вот это страницу каждую минуту
+        data: ({
+            date: d,
+            round: round,
+            competitionId: getCompetitionId()
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+}
+
+function getCompetitionId(){
+var radios = document.getElementsByName("competition");
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+           // alert(radios[i].value);
+            return radios[i].id;
+            break;
+        }
+    }
+}
+
+</script>
+</body>
+</html>

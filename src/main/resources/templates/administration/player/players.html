@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.players}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td>
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" th:onclick="gotoCreatingPlayer()"
+                       th:text="#{label.addPlayer}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select id="team" name="teamName" th:onchange="show()" style="width:100%">
+                    <option th:value="${team.teamName}" th:each="team : ${teams}"
+                            th:utext="${team.teamName}" th:id="${team.id}"
+                            th:selected="${activeTeamId==team.id}"/>
+                </select></td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);
+show();
+});/*]]>*/
+
+function gotoCreatingPlayer(){
+    var s = document.querySelector('select');
+    var indexSelected = s.selectedIndex;
+    option = s.querySelectorAll('option')[indexSelected];
+    var selectedId = option.getAttribute('id');
+    window.location='/administration/newPlayer/'+selectedId;
+}
+
+function show() {
+    var s = document.querySelector('select');
+    var indexSelected = s.selectedIndex;
+    option = s.querySelectorAll('option')[indexSelected];
+    var selectedId = option.getAttribute('id');
+    $.ajax({
+        type: 'POST',
+        url: "/administration/playerListByTeam/"+selectedId,
+        data: ({
+            teamId: selectedId
+        }),
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+}
+
+</script>
+</body>
+</html>
