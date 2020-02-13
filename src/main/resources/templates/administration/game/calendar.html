@@ -45,15 +45,14 @@ var competitionsBlock = document.getElementById('competitions');
 		$.each(competitions, function (key, value) {
 			var inp = document.createElement("input");
 			inp.type='radio';
-			inp.value = value.name;
-			inp.id=value.id;
-			inp.text = value.name;
+			inp.id=key;
 			inp.name='competition';
 			inp.checked='true';
+			inp.setAttribute('onClick','getGamesByDate("all")');
 			competitionsBlock.appendChild(inp);
 			var lab = document.createElement("label");
-			lab.innerHTML=value.name;
-			lab.for=value.id;
+			lab.innerHTML=value;
+			lab.for=key;
 			competitionsBlock.appendChild(lab);
 			var spaces = document.createElement("label");
 			spaces.innerHTML='&nbsp;&nbsp;&nbsp;';
@@ -86,7 +85,7 @@ function getGamesByDate(round) {
         data: ({
             date: d,
             round: round,
-            competition: getCompetition()
+            competitionId: getCompetitionId()
         }),
         cache: false,
         success: function(html) {
@@ -95,7 +94,7 @@ function getGamesByDate(round) {
     });
 }
 
-function getCompetition(){
+function getCompetitionId(){
 var radios = document.getElementsByName("competition");
     for (var i = 0; i < radios.length; i++) {
         if (radios[i].checked) {
@@ -105,8 +104,6 @@ var radios = document.getElementsByName("competition");
         }
     }
 }
-
-
 
 </script>
 </body>

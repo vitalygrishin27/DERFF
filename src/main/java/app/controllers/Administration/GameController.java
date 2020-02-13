@@ -2,11 +2,13 @@ package app.controllers.Administration;
 
 import app.Models.Competition;
 import app.Models.Game;
+import app.Models.Team;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.CompetitionServiceImpl;
 import app.services.impl.ConfigurationImpl;
 import app.services.impl.GameServiceImpl;
+import app.services.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -17,10 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static app.Utils.ConfigurationKey.*;
 import static app.Utils.ConfigurationKey.SECOND_ROUND_END;
@@ -32,6 +31,9 @@ public class GameController {
 
     @Autowired
     GameServiceImpl gameService;
+
+    @Autowired
+    TeamServiceImpl teamService;
 
     @Autowired
     ConfigurationImpl configurationService;
@@ -47,14 +49,19 @@ public class GameController {
         if (messageGenerator.isActive()) {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         }
-        List<Competition>competitions=competitionService.findAllCompetition();
-        competitions.add(new Competition(-1,messageSource.getMessage("label.competitions.all",null, Locale.getDefault()),null));
-        model.addAttribute("competitions",competitions);
+        List<Competition> competitions = competitionService.findAllCompetition();
+        competitions.add(new Competition(-1, messageSource.getMessage("label.competitions.all", null, Locale.getDefault()), null));
+        Map<Long, String> comp = new HashMap<>();
+        for (Competition competition : competitions
+        ) {
+            comp.put(competition.getId(), competition.getName());
+        }
+        model.addAttribute("competitions", comp);
         return "administration/game/calendar";
     }
 
     @PostMapping(value = "/administration/gameListByDate")
-    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate, @ModelAttribute("round") String round, @ModelAttribute("competition") Competition competition) throws DerffException {
+    public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate, @ModelAttribute("round") String round, @ModelAttribute("competitionId") Long competitionId) throws DerffException {
         List<Game> games = new ArrayList<>();
         try {
             switch (round) {
@@ -65,41 +72,41 @@ public class GameController {
                     } catch (ParseException e) {
                         break;
                     }
-                    if (competition.getName().equals("All")) {
+                    if (competitionId == -1) {
                         games = gameService.findGamesByDate(date);
-                    }else{
-                        games = gameService.findGamesByDateAndCompetition(date, competition);
+                    } else {
+                        games = gameService.findGamesByDateAndCompetition(date, competitionService.findCompetitionById(competitionId));
                     }
                     break;
                 case "first":
-                    if (competition.getName().equals("All")) {
+                    if (competitionId == -1) {
                         games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService.getValue(FIRST_ROUND_END)));
-                    }else{
+                    } else {
                         games = gameService.findGamesBetweenDatesAndCompetition(new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService.getValue(FIRST_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
-                                .parse(configurationService.getValue(FIRST_ROUND_END)), competition);
+                                .parse(configurationService.getValue(FIRST_ROUND_END)), competitionService.findCompetitionById(competitionId));
                     }
                     break;
                 case "second":
-                    if (competition.getName().equals("All")) {
+                    if (competitionId == -1) {
                         games = gameService.findGamesBetweenDates(new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService
                                         .getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService.getValue(SECOND_ROUND_END)));
-                    }else{
+                    } else {
                         games = gameService.findGamesBetweenDatesAndCompetition(new SimpleDateFormat("yyyy-MM-dd")
                                 .parse(configurationService
                                         .getValue(SECOND_ROUND_BEGIN)), new SimpleDateFormat("yyyy-MM-dd")
-                                .parse(configurationService.getValue(SECOND_ROUND_END)), competition);
+                                .parse(configurationService.getValue(SECOND_ROUND_END)), competitionService.findCompetitionById(competitionId));
                     }
                     break;
                 case "all":
-                    if (competition.getName().equals("All")) {
+                    if (competitionId == -1) {
                         games = gameService.findAllGames();
-                    }else {
-                        games = gameService.findAllGamesByCompetition(competition);
+                    } else {
+                        games = gameService.findAllGamesByCompetition(competitionService.findCompetitionById(competitionId));
                     }
                     break;
             }
@@ -111,4 +118,68 @@ public class GameController {
     }
 
 
+    @GetMapping(value = "/administration/newGame")
+    public String getFormforNewGame(Model model) {
+        Game game = new Game();
+        Team team = new Team();
+        game.setMasterTeam(team);
+        game.setSlaveTeam(team);
+        game.setDate(new Date());
+        if (messageGenerator.isActive()) {
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+                game = (Game) messageGenerator.getTemporaryObjectForMessage();
+            }
+        }
+        model.addAttribute("game", game);
+        model.addAttribute("stringDate", "");
+        model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("competitions", competitionService.findAllCompetition());
+        return "administration/game/newGame";
+    }
+
+
+    @PostMapping(value = "/administration/newGame")
+    public String saveNewGame(@ModelAttribute("game") Game game,
+                              @ModelAttribute("competitionId") String competitionId,
+                              @ModelAttribute("masterTeamName") String masterTeamName,
+                              @ModelAttribute("slaveTeamName") String slaveTeamName,
+                              @ModelAttribute("stringDate") String stringDate) throws DerffException {
+
+        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate, competitionId);
+        try {
+            gameService.save(game);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.newGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
+                            game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/newGame";
+    }
+
+    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName, String stringDate, String competitionId) throws DerffException {
+        //validate Teams
+        if (masterTeamName.equals(slaveTeamName)) {
+            throw new DerffException("sameTeam", game);
+        }
+        game.setMasterTeam(teamService.findTeamByName(masterTeamName));
+        game.setSlaveTeam(teamService.findTeamByName(slaveTeamName));
+        game.setStringDate(stringDate);
+        try {
+            game.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(stringDate));
+        } catch (ParseException e) {
+            throw new DerffException("date", game);
+        }
+        game.setMasterGoalsCount(0);
+        game.setSlaveGoalsCount(0);
+        //Validate competition
+        try {
+            game.setCompetition(competitionService.findCompetitionById(Long.valueOf(competitionId)));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+    }
 }
