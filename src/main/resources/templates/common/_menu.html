@@ -13,7 +13,7 @@
             <li class="right-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/criterions?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.criterion}">Критерии</a></li>
             <li class="right-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/statement?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.statement}">Отчет</a></li>
         </ul>
-        <a class="navbar-logo" href=""><img src="/img/logo_small.png" th:src="@{/images/logo.png}"></a>
+        <a class="navbar-logo" href="/"><img src="/img/logo_small.png" th:src="@{/images/logo.png}"></a>
     </nav>
 </div>
 

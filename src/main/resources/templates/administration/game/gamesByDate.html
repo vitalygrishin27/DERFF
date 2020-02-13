@@ -23,7 +23,7 @@
                    style="cursor:pointer;" th:text="#{label.results}"/>
         </td>
         <td>
-            <label th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
+            <label th:if="${!game.resultSave}" th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
         </td>
         <td>
             <div  style="text-align:center;">

@@ -1,22 +1,19 @@
 package app.controllers.Administration;
 
-import app.Models.Competition;
-import app.Models.Game;
-import app.Models.Team;
+import app.Models.*;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
-import app.services.impl.CompetitionServiceImpl;
-import app.services.impl.ConfigurationImpl;
-import app.services.impl.GameServiceImpl;
-import app.services.impl.TeamServiceImpl;
+import app.services.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,6 +37,12 @@ public class GameController {
 
     @Autowired
     CompetitionServiceImpl competitionService;
+
+    @Autowired
+    OffenseServiceImpl offenseService;
+
+    @Autowired
+    GoalServiceImpl goalService;
 
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
@@ -142,12 +145,11 @@ public class GameController {
 
     @PostMapping(value = "/administration/newGame")
     public String saveNewGame(@ModelAttribute("game") Game game,
-                              @ModelAttribute("competitionId") String competitionId,
                               @ModelAttribute("masterTeamName") String masterTeamName,
                               @ModelAttribute("slaveTeamName") String slaveTeamName,
                               @ModelAttribute("stringDate") String stringDate) throws DerffException {
 
-        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate, competitionId);
+        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
         try {
             gameService.save(game);
             messageGenerator.setMessage((messageSource
@@ -156,11 +158,10 @@ public class GameController {
         } catch (Exception e) {
             throw new DerffException("database", game, new Object[]{e.getMessage()});
         }
-
         return "redirect:/administration/newGame";
     }
 
-    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName, String stringDate, String competitionId) throws DerffException {
+    private void validateGameInformation(Game game, String masterTeamName, String slaveTeamName, String stringDate) throws DerffException {
         //validate Teams
         if (masterTeamName.equals(slaveTeamName)) {
             throw new DerffException("sameTeam", game);
@@ -177,9 +178,90 @@ public class GameController {
         game.setSlaveGoalsCount(0);
         //Validate competition
         try {
-            game.setCompetition(competitionService.findCompetitionById(Long.valueOf(competitionId)));
+            game.setCompetition(competitionService.findCompetitionByName(game.getCompetition().getName()));
         } catch (Exception e) {
             throw new DerffException("database", game, new Object[]{e.getMessage()});
         }
     }
+
+    @GetMapping(value = "/administration/editGame/{id}")
+    public String getFormForEditGame(Model model, @PathVariable("id") long id) throws DerffException {
+        Game game = new Game();
+        try {
+            game = gameService.findGameById(id);
+        } catch (Exception e) {
+            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
+        }
+
+        if (messageGenerator.isActive()) {
+            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
+            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
+                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
+                game = (Game) messageGenerator.getTemporaryObjectForMessage();
+            }
+        }
+        model.addAttribute("game", game);
+        model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("competitions", competitionService.findAllCompetition());
+        return "administration/game/editGame";
+    }
+
+    @PostMapping(value = "/administration/editGame/{id}")
+    public String saveGameAfterEdit(@ModelAttribute("game") Game game,
+                                      @ModelAttribute("masterTeamName") String masterTeamName,
+                                      @ModelAttribute("slaveTeamName") String slaveTeamName,
+                                      @ModelAttribute("stringDate") String stringDate
+    ) throws DerffException {
+
+        validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
+        try {
+            gameService.save(game);
+            messageGenerator.setMessage((messageSource
+                    .getMessage("success.editGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
+                            game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+        return "redirect:/administration/calendar";
+    }
+
+
+    @PostMapping(value = "/administration/deleteGame")
+    public String deleteGames(HttpServletRequest request) throws DerffException {
+        List<String> gamesIdForDelete = new ArrayList<>();
+        Collections.addAll(gamesIdForDelete, request.getParameterValues("gameIdForDelete[]"));
+        for (String s : gamesIdForDelete
+        ) {
+            deleteGame(Long.valueOf(s));
+        }
+        messageGenerator.setMessage((messageSource.getMessage("success.deleteGames", new Object[]{gamesIdForDelete.size()}, Locale.getDefault())));
+
+        return "administration/game/calendar";
+    }
+
+    private void deleteGame(long id) throws DerffException {
+        Game game = new Game();
+        try {
+            game = gameService.findGameById(id);
+        } catch (Exception e) {
+            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
+        }
+        try {
+            for (Offense offense : game.getOffenses()
+            ) {
+                offenseService.delete(offense);
+            }
+            for (Goal goal : game.getGoals()
+            ) {
+                goalService.delete(goal);
+            }
+
+            gameService.delete(game);
+        } catch (Exception e) {
+            throw new DerffException("database", game, new Object[]{e.getMessage()});
+        }
+
+    }
+
 }

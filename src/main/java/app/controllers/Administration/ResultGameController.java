@@ -1,196 +1,46 @@
-package app.controllers;
+package app.controllers.Administration;
 
 import app.Models.*;
-import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
-import app.services.impl.*;
-
+import app.services.impl.GameServiceImpl;
+import app.services.impl.GoalServiceImpl;
+import app.services.impl.OffenseServiceImpl;
+import app.services.impl.PlayerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static app.Utils.ConfigurationKey.*;
-
 @Controller
-public class AdministrationController {
-
-    @Value("${maxUploadFileSizeTeamSymbol}")
-    private Long maxUploadFileSizeTeamSymbol;
-
-    @Value("${maxUploadFileSizePlayerPhoto}")
-    private Long maxUploadFileSizePlayerPhoto;
-
-    @Value("${availableFileExtension}")
-    private String availableFileExtension;
-
+public class ResultGameController {
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
-
-    @Autowired
-    TeamServiceImpl teamService;
-
-    @Autowired
-    PlayerServiceImpl playerService;
 
     @Autowired
     MessageGenerator messageGenerator;
 
     @Autowired
+    Context context;
+
+    @Autowired
     GameServiceImpl gameService;
+
+    @Autowired
+    PlayerServiceImpl playerService;
 
     @Autowired
     GoalServiceImpl goalService;
 
     @Autowired
     OffenseServiceImpl offenseService;
-
-    @Autowired
-    ConfigurationImpl configurationService;
-
-    @Autowired
-    Context context;
-
-    @GetMapping(value = "/")
-    public String getMainPage(Model model) throws DerffException {
-        if (messageGenerator.isActive())
-            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-
-        return "administration/mainPage";
-    }
-
-
-
-
-
-    @PostMapping(value = "/administration/calendar")
-    public String addGame(@ModelAttribute("preDate") String preDate, @ModelAttribute("masterTeamName") String masterTeamName, @ModelAttribute("slaveTeamName") String slaveTeamName) throws DerffException {
-        Game newGame = new Game();
-        validateTeamInformation(newGame, preDate, masterTeamName, slaveTeamName);
-        try {
-            gameService.save(newGame);
-            messageGenerator.setMessage((messageSource.getMessage("success.newGame", null, Locale.getDefault())));
-        } catch (Exception e) {
-            throw new DerffException("database", newGame, new Object[]{e.getMessage()});
-        }
-        return "redirect:/administration/calendar";
-    }
-
-
-    /*   @DeleteMapping(value = "/administration/calendar")
-       public void deleteGame(Integer gameId) throws DerffException {
-           Game game = gameService.findGameById(gameId);
-           try {
-               gameService.delete(game);
-               messageGenerator.setMessage((messageSource.getMessage("success.deleteGame", null, Locale.getDefault())));
-           } catch (Exception e) {
-               throw new DerffException("database", game, new Object[]{e.getMessage()});
-           }
-
-       }
-   */
-
-
-
-
-
-
-
-    @GetMapping(value = "/administration/editGame/{id}")
-    public String getFormforEditGame(Model model, @PathVariable("id") long id) throws DerffException {
-        Game game = new Game();
-        try {
-            game = gameService.findGameById(id);
-        } catch (Exception e) {
-            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
-        }
-
-        if (messageGenerator.isActive()) {
-            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-            if (messageGenerator.getTemporaryObjectForMessage() != null && messageGenerator
-                    .getTemporaryObjectForMessage().getClass().isInstance(new Game())) {
-                game = (Game) messageGenerator.getTemporaryObjectForMessage();
-            }
-        }
-        model.addAttribute("game", game);
-        model.addAttribute("teams", teamService.findAllTeams());
-        model.addAttribute("titlePage", messageSource.getMessage("page.title.game.editing", null, Locale.getDefault()));
-
-        return "administration/editGame";
-    }
-
-    @PostMapping(value = "/administration/editGame/{id}")
-    public String savePlayerAfterEdit(@ModelAttribute("game") Game game,
-                                      @ModelAttribute("masterTeamName") String masterTeamName,
-                                      @ModelAttribute("slaveTeamName") String slaveTeamName,
-                                      @ModelAttribute("stringDate") String stringDate
-                                      // @ModelAttribute("isLegionary") String isLegionary,
-                                      //  @ModelAttribute("file") MultipartFile file
-    ) throws DerffException {
-
-       // validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
-        try {
-            gameService.update(game);
-            messageGenerator.setMessage((messageSource
-                    .getMessage("success.editGame", new Object[]{game.getMasterTeam().getTeamName() + " - " +
-                            game.getSlaveTeam().getTeamName()}, Locale.getDefault())));
-        } catch (Exception e) {
-            throw new DerffException("database", game, new Object[]{e.getMessage()});
-        }
-
-        return "redirect:/administration/calendar";
-    }
-
-
-    private void deleteGame(long id) throws DerffException {
-        Game game = new Game();
-        try {
-            game = gameService.findGameById(id);
-        } catch (Exception e) {
-            throw new DerffException("gameNotExists", game, new Object[]{id, e.getMessage()}, "/administration/calendar");
-        }
-        try {
-            for (Offense offense : game.getOffenses()
-            ) {
-                offenseService.delete(offense);
-            }
-            for (Goal goal : game.getGoals()
-            ) {
-                goalService.delete(goal);
-            }
-
-            gameService.delete(game);
-        } catch (Exception e) {
-            throw new DerffException("database", game, new Object[]{e.getMessage()});
-        }
-
-    }
-
-    @PostMapping(value = "/administration/deleteGame")
-    public String deleteGames(HttpServletRequest request) throws DerffException {
-        List<String> gamesIdForDelete = new ArrayList<>();
-        Collections.addAll(gamesIdForDelete, request.getParameterValues("gameIdForDelete[]"));
-        for (String s : gamesIdForDelete
-        ) {
-            deleteGame(Long.valueOf(s));
-        }
-        messageGenerator.setMessage((messageSource.getMessage("success.deleteGames", new Object[]{gamesIdForDelete.size()}, Locale.getDefault())));
-
-        return "administration/calendar";
-    }
-
 
     @GetMapping(value = "/administration/resultGame/{id}")
     public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
@@ -206,31 +56,30 @@ public class AdministrationController {
         } else {
             throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
         }
-
     }
 
     @PostMapping(value = "/administration/resultGame")
-    public String saveCountOfGoals(HttpServletRequest request, Model model,
-                                   @ModelAttribute("step") String step,
-                                   @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
-                                   @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam,
-                                   @ModelAttribute("countYellowCardsMasterTeam") String countYellowCardsMasterTeam,
-                                   @ModelAttribute("countYellowCardsSlaveTeam") String countYellowCardsSlaveTeam,
-                                   @ModelAttribute("countRedCardsMasterTeam") String countRedCardsMasterTeam,
-                                   @ModelAttribute("countRedCardsSlaveTeam") String countRedCardsSlaveTeam
+    public String saveResultsOfGame(HttpServletRequest request, Model model,
+                                    @ModelAttribute("step") String step,
+                                    @ModelAttribute("countGoalsMasterTeam") String countGoalsMasterTeam,
+                                    @ModelAttribute("countGoalsSlaveTeam") String countGoalsSlaveTeam,
+                                    @ModelAttribute("countYellowCardsMasterTeam") String countYellowCardsMasterTeam,
+                                    @ModelAttribute("countYellowCardsSlaveTeam") String countYellowCardsSlaveTeam,
+                                    @ModelAttribute("countRedCardsMasterTeam") String countRedCardsMasterTeam,
+                                    @ModelAttribute("countRedCardsSlaveTeam") String countRedCardsSlaveTeam
     ) throws DerffException {
         Game game = (Game) context.getFromContext("game");
         if (step.equals("goalsCount") &&
                 (countGoalsMasterTeam.equals("") || countGoalsMasterTeam.equals("0")) &&
                 (countGoalsSlaveTeam.equals("") || countGoalsSlaveTeam.equals("0"))) {
             game.setGoals(new ArrayList<Goal>());
-            return "administration/resultGameYellowCardsCount";
+            return "administration/resultGames/resultGameYellowCardsCount";
         }
         if (step.equals("yellowCardsCount") &&
                 (countYellowCardsMasterTeam.equals("") || countYellowCardsMasterTeam.equals("0")) &&
                 (countYellowCardsSlaveTeam.equals("") || countYellowCardsSlaveTeam.equals("0"))) {
             game.setOffenses(new ArrayList<Offense>());
-            return "administration/resultGameRedCardsCount";
+            return "administration/resultGames/resultGameRedCardsCount";
         }
         if (step.equals("redCardsCount") &&
                 (countRedCardsMasterTeam.equals("") || countRedCardsMasterTeam.equals("0")) &&
@@ -254,7 +103,7 @@ public class AdministrationController {
                         .findAllPlayersInTeam(game.getMasterTeam())));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
                         .findAllPlayersInTeam(game.getSlaveTeam())));
-                return "administration/resultGameGoalsPlayers";
+                return "administration/resultGames/resultGameGoalsPlayers";
             case "goalsPlayers":
                 ArrayList<String> masterPlayerIdListGoals = new ArrayList<>();
                 List<Goal> goals = new ArrayList<>();
@@ -284,7 +133,7 @@ public class AdministrationController {
                 }
                 game.setGoals(goals);
                 //   context.putToContext("game",game);
-                return "administration/resultGameYellowCardsCount";
+                return "administration/resultGames/resultGameYellowCardsCount";
             case "yellowCardsCount":
                 if (countYellowCardsMasterTeam.equals("")) countYellowCardsMasterTeam = "0";
                 if (countYellowCardsSlaveTeam.equals("")) countYellowCardsSlaveTeam = "0";
@@ -294,7 +143,7 @@ public class AdministrationController {
                         .findAllPlayersInTeam(game.getMasterTeam())));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
                         .findAllPlayersInTeam(game.getSlaveTeam())));
-                return "administration/resultGameYellowCardsPlayer";
+                return "administration/resultGames/resultGameYellowCardsPlayer";
             case "yellowCardsPlayers":
                 ArrayList<String> masterPlayerIdListYellowCards = new ArrayList<>();
                 List<Offense> offenses = new ArrayList<>();
@@ -325,7 +174,7 @@ public class AdministrationController {
                 }
                 game.setOffenses(offenses);
                 //context.putToContext("offenses", offenses);
-                return "administration/resultGameRedCardsCount";
+                return "administration/resultGames/resultGameRedCardsCount";
             case "redCardsCount":
                 if (countRedCardsMasterTeam.equals("")) countRedCardsMasterTeam = "0";
                 if (countRedCardsSlaveTeam.equals("")) countRedCardsSlaveTeam = "0";
@@ -335,7 +184,7 @@ public class AdministrationController {
                         .findAllPlayersInTeam(game.getMasterTeam())));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
                         .findAllPlayersInTeam(game.getSlaveTeam())));
-                return "administration/resultGameRedCardsPlayer";
+                return "administration/resultGames/resultGameRedCardsPlayer";
             case "saveResult":
                 ArrayList<String> masterPlayerIdListRedCards = new ArrayList<>();
                 List<Offense> offensesRed = new ArrayList<>();
@@ -374,19 +223,13 @@ public class AdministrationController {
                     throw new DerffException("database", game, new Object[]{e.getMessage()});
                 }
 
-
-                return "administration/calendar";
+                return "redirect:/administration/calendar";
+              // return "administration/game/calendar";
         }
 
 
         return "redirect:/administration/calendar";
     }
-
-
-
-
-    //При дообавление игрока выводит сообщение удачно добавлен и заполянет поля для нового игроа старыми данными нужно после вывода сообщения стирать и объект
-    //При редактировании игрока не меняя картоску айди выводится ошибка что такой номер не допустим.
 
     private Map<Long, String> getFullNamePlayersMap(List<Player> players) {
         Map<Long, String> result = new HashMap<>();
@@ -397,7 +240,6 @@ public class AdministrationController {
         }
         return result;
     }
-
 
     private void saveGameResult(Game game) throws DerffException {
         if (!game.isResultSave()) {
@@ -415,49 +257,6 @@ public class AdministrationController {
             throw new DerffException("gameResultsAreAlreadyExists");
         }
 
-    }
-
-
-
-
-
-
-    private void validateTeamInformation(Game newGame, String preDate, String masterTeamName, String slaveTeamName) throws DerffException {
-
-        Team master;
-        Team slave;
-
-        //Date parse
-        try {
-            newGame.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(preDate));
-        } catch (Exception e) {
-            throw new DerffException("date", newGame);
-        }
-
-
-        // validate teams
-        try {
-            master = teamService.findTeamByName(masterTeamName);
-            slave = teamService.findTeamByName(slaveTeamName);
-            newGame.setMasterTeam(master);
-            newGame.setSlaveTeam(slave);
-        } catch (Exception e) {
-            throw new DerffException("game");
-        }
-
-        // validate not same teams
-        if (master.getId() == slave.getId()) {
-            throw new DerffException("sameTeams", newGame);
-        }
-
-
-    }
-
-
-
-    private String dateToString(Date date) {
-        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return date == null ? null : formatter.format(date);
     }
 
 }

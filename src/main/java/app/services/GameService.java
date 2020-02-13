@@ -31,6 +31,8 @@ public interface GameService {
 
     List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave);
 
+    List<Game> findGamesWithResultByTeamAndCompetition(Team team, Competition competition, boolean isResultSave);
+
     void update(Game game);
 
 }

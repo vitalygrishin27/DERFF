@@ -32,6 +32,9 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("Select g from Game g where g.resultSave = ?2 and (g.masterTeam = ?1 or g.slaveTeam = ?1)")
     List<Game> findGamesWithResultByTeam(Team team, boolean resultSave);
 
+    @Query("Select g from Game g where g.competition =?2 and g.resultSave = ?3 and (g.masterTeam = ?1 or g.slaveTeam = ?1)")
+    List<Game> findGamesWithResultByTeamAndCompetition(Team team, Competition competition, boolean resultSave);
+
     @Query("Select g from Game g where g.competition =:competition")
     List<Game> findAllGamesByCompetition(@Param("competition") Competition competition);
 

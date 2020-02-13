@@ -4,6 +4,7 @@ import app.Models.Game;
 import app.Models.StandingsRow;
 import app.Models.Team;
 import app.exceptions.DerffException;
+import app.services.impl.CompetitionServiceImpl;
 import app.services.impl.GameServiceImpl;
 import app.services.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class StandingsController {
     @Autowired
     GameServiceImpl gameService;
 
+    @Autowired
+    CompetitionServiceImpl competitionService;
+
     @GetMapping(value = "/administration/standings")
     public String getStandings(Model model) {
         List<StandingsRow> standingsRows = new ArrayList<>();
@@ -30,8 +34,8 @@ public class StandingsController {
         ) {
             StandingsRow standingsRow = new StandingsRow();
             standingsRow.setTeamName(team.getTeamName());
-
-            for (Game game : gameService.findGamesWithResultByTeam(team, true)
+            // TODO: 13.02.2020 refactor hardcode for 'findCompetitionById(1)'. This value should be set in Configuration
+            for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competitionService.findCompetitionById(1), true)
             ) {
                 standingsRow.setGames(standingsRow.getGames() + 1);
                 if (team.equals(game.getMasterTeam())) {

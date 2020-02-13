@@ -75,4 +75,11 @@ public class GameServiceImpl implements GameService {
     public List<Game> findGamesWithResultByTeam(Team team, boolean isResultSave) {
         return repository.findGamesWithResultByTeam(team, isResultSave);
     }
+
+    @Override
+    public List<Game> findGamesWithResultByTeamAndCompetition(Team team, Competition competition, boolean isResultSave) {
+        return repository.findGamesWithResultByTeamAndCompetition(team, competition, isResultSave);
+    }
+
+
 }
