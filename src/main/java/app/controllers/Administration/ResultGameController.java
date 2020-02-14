@@ -62,7 +62,7 @@ public class ResultGameController {
     }
 
     @GetMapping(value = "/administration/resultGame")
-    public String saveResultsOfGame(HttpServletRequest request){
+    public String saveResultsOfGame1(HttpServletRequest request){
         return "administration/resultGames/resultGame";
     }
 
