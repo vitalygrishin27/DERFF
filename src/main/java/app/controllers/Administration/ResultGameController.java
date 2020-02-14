@@ -46,16 +46,24 @@ public class ResultGameController {
     public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
         context.clear();
         Game game = gameService.findGameById(id);
-        if (!game.isResultSave()) {
+        if (game.isResultSave()) {
+            model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
+                    game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
+        }
             context.putToContext("game", game);
             model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
             model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
             model.addAttribute("countGoalsMasterTeam", 0);
             model.addAttribute("countGoalsSlaveTeam", 0);
-            return "administration/resultGame";
-        } else {
+            return "administration/resultGames/resultGame";
+       /* } else {
             throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
-        }
+        }*/
+    }
+
+    @GetMapping(value = "/administration/resultGame")
+    public String saveResultsOfGame(HttpServletRequest request){
+        return "administration/resultGames/resultGame";
     }
 
     @PostMapping(value = "/administration/resultGame")

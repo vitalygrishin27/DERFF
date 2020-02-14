@@ -19,8 +19,10 @@
             </div>
         </td>
         <td>
-            <label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|"
-                   style="cursor:pointer;" th:text="#{label.results}"/>
+            <!--<label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|"-->
+                   <!--style="cursor:pointer;" th:text="#{label.results}"/>-->
+            <label th:onclick="|window.location='/administration/resultGame/${game.id}'|"
+            style="cursor:pointer;" th:text="#{label.results}"/>
         </td>
         <td>
             <label th:if="${!game.resultSave}" th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
