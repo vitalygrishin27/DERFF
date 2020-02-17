@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.gameOverview}"></title>
+<th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td colspan="3">
+                <div style="text-align:center;">
+                    <label class="btn btn-lg btn-success active" th:utext="${game.competition.name}"/>
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.stringDate}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.masterTeam.teamName}"/>
+                </div>
+            </td>
+            <td width="20%">
+                <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                   th:utext="${game.masterGoalsCount+':'+game.slaveGoalsCount}"/>
+            </td>
+            <td style="align:center;">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.slaveTeam.teamName}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="align:center;">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="#{label.yellowCards}"/>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/
+
+
+</script>
+</body>
+</html>

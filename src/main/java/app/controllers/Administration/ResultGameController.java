@@ -47,8 +47,11 @@ public class ResultGameController {
         context.clear();
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
+            model.addAttribute("game",game);
             model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
                     game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
+            return "administration/resultGames/gameOverview";
+
         }
             context.putToContext("game", game);
             model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
@@ -59,11 +62,6 @@ public class ResultGameController {
        /* } else {
             throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
         }*/
-    }
-
-    @GetMapping(value = "/administration/resultGame")
-    public String saveResultsOfGame1(HttpServletRequest request){
-        return "administration/resultGames/resultGame";
     }
 
     @PostMapping(value = "/administration/resultGame")
