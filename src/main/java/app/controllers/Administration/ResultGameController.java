@@ -48,6 +48,7 @@ public class ResultGameController {
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
             model.addAttribute("game",game);
+            model.addAttribute("masterPlayersWithYellowCards",game.getOffenses().forEach();)
             model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
                     game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
             return "administration/resultGames/gameOverview";

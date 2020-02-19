@@ -10,7 +10,7 @@
 <div>
     <table class="table_dark">
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <div style="text-align:center;">
                     <label class="btn btn-lg btn-success active" th:utext="${game.competition.name}"/>
                     <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
@@ -25,7 +25,7 @@
                        th:utext="${game.masterTeam.teamName}"/>
                 </div>
             </td>
-            <td width="20%">
+            <td width="15%" colspan="2">
                 <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
                    th:utext="${game.masterGoalsCount+':'+game.slaveGoalsCount}"/>
             </td>
@@ -37,19 +37,27 @@
             </td>
         </tr>
         <tr>
-            <td style="align:center;">
+            <td style="align:center;" colspan="4">
                 <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; ">
                     <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
                        th:utext="#{label.yellowCards}"/>
                 </div>
             </td>
         </tr>
+        <tr>
+            <td width="50%">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.slaveTeam.teamName}"/>
+                </div>
+            </td>
+        </tr>
+
     </table>
     <div id="block"/>
 </div>
 <script th:inline="javascript">
     /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/
-
 
 </script>
 </body>
