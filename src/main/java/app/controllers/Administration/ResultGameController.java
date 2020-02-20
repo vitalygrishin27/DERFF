@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class ResultGameController {
@@ -42,13 +43,34 @@ public class ResultGameController {
     @Autowired
     OffenseServiceImpl offenseService;
 
+    @GetMapping(value = "/administration/resultGame/{id}/reenterResult")
+    public String deleteResultsAndStartReenter(Model model, @PathVariable("id") long id) {
+        Game game = gameService.findGameById(id);
+        game.getOffenses().forEach(offense -> offenseService.delete(offense));
+        game.getGoals().forEach(goal ->goalService.delete(goal));
+        game.setOffenses(null);
+        game.setGoals(null);
+        game.setResultSave(false);
+        game.setMasterGoalsCount(0);
+        game.setSlaveGoalsCount(0);
+        gameService.save(game);
+        return "redirect:/administration/resultGame/"+id;
+    }
+
     @GetMapping(value = "/administration/resultGame/{id}")
-    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
+    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) {
         context.clear();
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
-            model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
-                    game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
+            model.addAttribute("game",game);
+            model.addAttribute("masterPlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("slavePlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("masterPlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("slavePlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
+           // model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
+             //       game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
+            return "administration/resultGames/gameOverview";
+
         }
             context.putToContext("game", game);
             model.addAttribute("masterTeamName", game.getMasterTeam().getTeamName());
@@ -59,11 +81,6 @@ public class ResultGameController {
        /* } else {
             throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
         }*/
-    }
-
-    @GetMapping(value = "/administration/resultGame")
-    public String saveResultsOfGame1(HttpServletRequest request){
-        return "administration/resultGames/resultGame";
     }
 
     @PostMapping(value = "/administration/resultGame")

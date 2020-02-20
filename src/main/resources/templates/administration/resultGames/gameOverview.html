@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.gameOverview}"></title>
+<th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td colspan="4">
+                <div style="text-align:center;">
+                    <label class="btn btn-lg btn-success active" th:utext="${game.competition.name}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div style="text-align:center;">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.stringDate}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.masterTeam.teamName}"/>
+                </div>
+            </td>
+            <td width="20%" colspan="2">
+                <div style="text-align:center;">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle;"
+                       th:utext="${game.masterGoalsCount+':'+game.slaveGoalsCount}"/>
+                </div>
+            </td>
+            <td style="align:center;">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; ">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${game.slaveTeam.teamName}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.size(masterPlayersWithYellowCards)>0 || #lists.size(slavePlayersWithYellowCards)>0}">
+            <td style="align:center;" colspan="4">
+                <div class="input-group"
+                     style="display: inline-block; vertical-align:  middle; align:center; text-align:center;">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="#{label.yellowCards}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.size(masterPlayersWithYellowCards)>0 || #lists.size(slavePlayersWithYellowCards)>0}">
+            <td width="50%" colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${masterPlayersWithYellowCards}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${slavePlayersWithYellowCards}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.size(masterPlayersWithRedCards)>0 || #lists.size(slavePlayersWithRedCards)>0}">
+            <td style="align:center;" colspan="4">
+                <div class="input-group"
+                     style="display: inline-block; vertical-align:  middle; align:center; text-align:center;">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="#{label.redCards}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.size(masterPlayersWithRedCards)>0 || #lists.size(slavePlayersWithRedCards)>0}">
+            <td width="50%" colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${masterPlayersWithRedCards}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${slavePlayersWithRedCards}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div class="p-t-10" style="text-align:center;">
+                    <button class="btn btn--pill btn-danger" type="button"
+                            th:onclick="|window.location='/administration/resultGame/${game.id}/reenterResult'|"
+                            th:text="#{button.deleteAndReenter}"/>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/
+
+</script>
+</body>
+</html>
