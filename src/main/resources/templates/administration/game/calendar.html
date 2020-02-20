@@ -58,8 +58,20 @@ var competitionsBlock = document.getElementById('competitions');
 			spaces.innerHTML='&nbsp;&nbsp;&nbsp;';
 			competitionsBlock.appendChild(spaces);
 		});
+showUpcomingGames();
 
 });/*]]>*/
+
+function showUpcomingGames(){
+    $.ajax({
+        type: 'POST',
+        url: "/administration/gameUpcomingList",
+        cache: false,
+        success: function(html) {
+            $("#block").html(html);
+        }
+    });
+}
 
 function selectGame(gameId){
     $.ajax({
