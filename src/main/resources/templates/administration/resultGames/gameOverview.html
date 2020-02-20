@@ -97,7 +97,9 @@
         <tr>
             <td colspan="4">
                 <div class="p-t-10" style="text-align:center;">
-                    <button class="btn btn--pill btn-danger" type="submit" th:text="#{button.deleteAndReenter}"/>
+                    <button class="btn btn--pill btn-danger" type="button"
+                            th:onclick="|window.location='/administration/resultGame/${game.id}/reenterResult'|"
+                            th:text="#{button.deleteAndReenter}"/>
                 </div>
             </td>
         </tr>

@@ -43,8 +43,22 @@ public class ResultGameController {
     @Autowired
     OffenseServiceImpl offenseService;
 
+    @GetMapping(value = "/administration/resultGame/{id}/reenterResult")
+    public String deleteResultsAndStartReenter(Model model, @PathVariable("id") long id) {
+        Game game = gameService.findGameById(id);
+        game.getOffenses().forEach(offense -> offenseService.delete(offense));
+        game.getGoals().forEach(goal ->goalService.delete(goal));
+        game.setOffenses(null);
+        game.setGoals(null);
+        game.setResultSave(false);
+        game.setMasterGoalsCount(0);
+        game.setSlaveGoalsCount(0);
+        gameService.save(game);
+        return "redirect:/administration/resultGame/"+id;
+    }
+
     @GetMapping(value = "/administration/resultGame/{id}")
-    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) throws DerffException {
+    public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) {
         context.clear();
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
