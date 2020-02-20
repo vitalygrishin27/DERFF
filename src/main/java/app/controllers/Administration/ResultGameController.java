@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class ResultGameController {
@@ -48,9 +49,12 @@ public class ResultGameController {
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
             model.addAttribute("game",game);
-            model.addAttribute("masterPlayersWithYellowCards",game.getOffenses().forEach();)
-            model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
-                    game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
+            model.addAttribute("masterPlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("slavePlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("masterPlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("slavePlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
+           // model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
+             //       game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
             return "administration/resultGames/gameOverview";
 
         }
