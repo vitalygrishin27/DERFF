@@ -63,6 +63,21 @@ public class GameController {
         return "administration/game/calendar";
     }
 
+
+    @PostMapping(value = "/administration/gameUpcomingList")
+    public String getUpcomingGames(Model model) throws DerffException {
+        Calendar cal=Calendar.getInstance();
+        cal.add(Calendar.YEAR,1);
+        Date resultDate=cal.getTime();
+        for (Game game:gameService.findAllGames()
+             ) {
+            if(game.getDate().before(resultDate)){
+                resultDate=game.getDate();
+            }
+        }
+        return getGamesByDate(model,new SimpleDateFormat("yyyy-MM-dd").format(resultDate),"all",-1L);
+    }
+
     @PostMapping(value = "/administration/gameListByDate")
     public String getGamesByDate(Model model, @ModelAttribute("date") String stringDate, @ModelAttribute("round") String round, @ModelAttribute("competitionId") Long competitionId) throws DerffException {
         List<Game> games = new ArrayList<>();
