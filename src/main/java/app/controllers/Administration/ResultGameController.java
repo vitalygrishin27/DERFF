@@ -67,8 +67,6 @@ public class ResultGameController {
             model.addAttribute("slavePlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("masterPlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("slavePlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
-           // model.addAttribute("message", messageSource.getMessage("warning.gameResultsAlreadyExists", new Object[]{game.getMasterTeam().getTeamName() + "-" +
-             //       game.getSlaveTeam().getTeamName()}, Locale.getDefault()));
             return "administration/resultGames/gameOverview";
 
         }
@@ -78,9 +76,6 @@ public class ResultGameController {
             model.addAttribute("countGoalsMasterTeam", 0);
             model.addAttribute("countGoalsSlaveTeam", 0);
             return "administration/resultGames/resultGame";
-       /* } else {
-            throw new DerffException("gameResultsAreAlreadyExists", null, null, "/administration/calendar");
-        }*/
     }
 
     @PostMapping(value = "/administration/resultGame")
@@ -125,9 +120,9 @@ public class ResultGameController {
                 model.addAttribute("countMasterGoals", countGoalsMasterTeam);
                 model.addAttribute("countSlaveGoals", countGoalsSlaveTeam);
                 model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getMasterTeam())));
+                        .findAllPlayersInTeam(game.getMasterTeam()),true));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getSlaveTeam())));
+                        .findAllPlayersInTeam(game.getSlaveTeam()),true));
                 return "administration/resultGames/resultGameGoalsPlayers";
             case "goalsPlayers":
                 ArrayList<String> masterPlayerIdListGoals = new ArrayList<>();
@@ -165,9 +160,9 @@ public class ResultGameController {
                 model.addAttribute("countYellowCardsMasterTeam", countYellowCardsMasterTeam);
                 model.addAttribute("countYellowCardsSlaveTeam", countYellowCardsSlaveTeam);
                 model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getMasterTeam())));
+                        .findAllPlayersInTeam(game.getMasterTeam()),false));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getSlaveTeam())));
+                        .findAllPlayersInTeam(game.getSlaveTeam()),false));
                 return "administration/resultGames/resultGameYellowCardsPlayer";
             case "yellowCardsPlayers":
                 ArrayList<String> masterPlayerIdListYellowCards = new ArrayList<>();
@@ -206,9 +201,9 @@ public class ResultGameController {
                 model.addAttribute("countRedCardsMasterTeam", countRedCardsMasterTeam);
                 model.addAttribute("countRedCardsSlaveTeam", countRedCardsSlaveTeam);
                 model.addAttribute("masterTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getMasterTeam())));
+                        .findAllPlayersInTeam(game.getMasterTeam()),false));
                 model.addAttribute("slaveTeamPlayersMap", getFullNamePlayersMap(playerService
-                        .findAllPlayersInTeam(game.getSlaveTeam())));
+                        .findAllPlayersInTeam(game.getSlaveTeam()),false));
                 return "administration/resultGames/resultGameRedCardsPlayer";
             case "saveResult":
                 ArrayList<String> masterPlayerIdListRedCards = new ArrayList<>();
@@ -256,13 +251,14 @@ public class ResultGameController {
         return "redirect:/administration/calendar";
     }
 
-    private Map<Long, String> getFullNamePlayersMap(List<Player> players) {
+    private Map<Long, String> getFullNamePlayersMap(List<Player> players, Boolean autogoal) {
         Map<Long, String> result = new HashMap<>();
         for (Player player : players
         ) {
             result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player
                     .getSecondName());
         }
+       if(autogoal) result.put(-1L,messageSource.getMessage("label.autogoal", null, Locale.getDefault()));
         return result;
     }
 

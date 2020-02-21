@@ -1,54 +1,28 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-
-    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
-    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
-    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
-</head>
 <body>
-<div th:insert="common/message :: message"></div>
-
-
 <div id="thirdStep">
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
-                    Игроки забившие мячи
-                </div>
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group" th:text="#{label.playersWithGoals}"/>
             </td>
         </tr>
-
         <tr>
             <td id="masterListGoals" width="50%"></td>
             <td id="slaveListGoals"></td>
-
         </tr>
         <tr>
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
-                    <!--  <button class="btn btn-lg btn-success active" type="submit" th:text="#{button.continue}">Submit -->
-                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getThirdStep()">Продолжить</a>
-                    </button>
+                    <a class="btn btn-lg btn-success active" th:text="#{button.continue}" th:onClick="getThirdStep()"/>
                 </div>
             </td>
         </tr>
     </table>
-   <!-- <div id="thirdStep"/> -->
-
 </div>
-
-
 <script th:inline="javascript">
-
 function getThirdStep() {
-
 var masterPlayers = document.getElementsByClassName('masterListGoals');
 var slavePlayers = document.getElementsByClassName('slaveListGoals');
 var masterPlayerIdListGoals = [];
@@ -74,27 +48,11 @@ slavePlayerIdListGoals.push($(this).val());
             $("#thirdStep").html(html);
         }
     });
-
-
-
-
 }
-
-
 
 /*<![CDATA[*/
 $(document).ready(function () {
-	var errorMessage = /*[[${errorMessage}]]*/ ;
-	console.log(errorMessage);
-	if (errorMessage != null) {
-		var delay_popup = 500;
-		var msg_pop = document.getElementById('msg_pop');
-		var msg_pop_text = document.getElementById('errorMessage');
-		msg_pop_text.innerHTML = errorMessage;
-		setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
-	}
-
-	var masterListGoals = document.getElementById('masterListGoals');
+		var masterListGoals = document.getElementById('masterListGoals');
 	var slaveListGoals = document.getElementById('slaveListGoals');
 	var masterTeamPlayers = /*[[${masterTeamPlayersMap}]]*/ ;
 	var slaveTeamPlayers = /*[[${slaveTeamPlayersMap}]]*/ ;
@@ -128,15 +86,9 @@ $(document).ready(function () {
 		 slaveListGoals.innerHTML += "<br/><br/>";
 		 }
 	}
-
-
-
 });
 
-
 /*]]>*/
-
 </script>
-
 </body>
 </html>
