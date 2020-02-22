@@ -1,6 +1,7 @@
 package app.repository;
 
 import app.Models.Player;
+import app.Models.PlayerRole;
 import app.Models.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,6 +19,9 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
 
     @Query("Select p from Player p where p.team =:team and p.isNotActive =:isNotActive")
     List<Player> findAllActivePlayersInTeam(@Param("team") Team team,@Param("isNotActive") Boolean isNotActive);
+
+    @Query("Select p from Player p where p.team =:team and p.role =:role and p.isNotActive =:isNotActive")
+    List<Player> findAllActiveInTeamByRole(@Param("team") Team team, @Param("role") String playerRole, @Param("isNotActive") Boolean isNotActive);
 
     @Query("Select p from Player p where p.idCard =:idCard")
     Player findByIdCard(@Param("idCard") int idCard);

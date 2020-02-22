@@ -7,10 +7,10 @@
 <div th:insert="common/message :: message"></div>
 <div class="container">
     <br>
-    <h4 style="text-align:center; color: #ffffff;" th:text="#{label.ChampionChip}"/>
+    <h4 style="text-align:center; color: #ffffff;" th:text="${team.teamName}"/>
     <br>
     <div class="row" id="ads">
-        <div class="col-md-4" th:each="team : ${teams}" style="opacity: 0.85;">
+        <div class="col-md-4" th:each="player : ${goalkeepers}" style="opacity: 0.85;">
             <div class="card rounded">
                 <div class="card-image" style="text-align:center;">
                     <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
