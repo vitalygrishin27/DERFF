@@ -1,67 +1,41 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-
-    <link href="../static/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet" media="all"/>
-    <link href="../static/css/message.css" th:href="@{/css/message.css}" rel="stylesheet" media="all"/>
-    <link href="../static/css/menu.css" th:href="@{/css/menu.css}" rel="stylesheet" media="all"/>
-</head>
-<body>
-<div th:insert="common/message :: message"></div>
-
-
 <div>
     <table class="table_dark">
         <tr>
             <td colspan="2">
-                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group">
-                    Игроки, получившие красные карточки</a>
-                </div>
+                <div style="display: inline-block; text-align:center; color:#ffff00;" class="input-group"
+                     th:text="#{label.playersWithRedCards}"/>
             </td>
         </tr>
         <tr>
             <td id="masterListRedCards" width="50%"></td>
             <td id="slaveListRedCards"></td>
-
         </tr>
         <tr>
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:text="#{button.submit}" th:onClick="saveResult()">Coхранить</a>
+                    <a class="btn btn-lg btn-success active" th:text="#{button.submit}" th:onClick="saveResult()"/>
                     </button>
                 </div>
             </td>
         </tr>
-
-
     </table>
-
-
 </div>
-
-
 <script th:inline="javascript">
-
-
 function saveResult() {
+    var masterPlayers = document.getElementsByClassName('masterListRedCards');
+    var slavePlayers = document.getElementsByClassName('slaveListRedCards');
+    var masterPlayerIdListRedCards = [];
+    var slavePlayerIdListRedCards = new Array();
 
-var masterPlayers = document.getElementsByClassName('masterListRedCards');
-var slavePlayers = document.getElementsByClassName('slaveListRedCards');
-var masterPlayerIdListRedCards = [];
-var slavePlayerIdListRedCards = new Array();
+    $(masterPlayers).each(function(s){
+        masterPlayerIdListRedCards.push($(this).val());
+    });
 
-$(masterPlayers).each(function(s){
-masterPlayerIdListRedCards.push($(this).val());
-});
-
-$(slavePlayers).each(function(s){
-slavePlayerIdListRedCards.push($(this).val());
-});
+    $(slavePlayers).each(function(s){
+        slavePlayerIdListRedCards.push($(this).val());
+    });
     $.ajax({
         type: 'POST',
         url: "/administration/resultGame",
@@ -72,27 +46,13 @@ slavePlayerIdListRedCards.push($(this).val());
         }),
         cache: false,
         success: function(msg){
-                     location.href = "/administration/calendar";
-                        }
+            location.href = "/administration/calendar";
+        }
     });
-
 }
-
-
-
 
 /*<![CDATA[*/
 $(document).ready(function () {
-	var errorMessage = /*[[${errorMessage}]]*/ ;
-	console.log(errorMessage);
-	if (errorMessage != null) {
-		var delay_popup = 500;
-		var msg_pop = document.getElementById('msg_pop');
-		var msg_pop_text = document.getElementById('errorMessage');
-		msg_pop_text.innerHTML = errorMessage;
-		setTimeout("document.getElementById('msg_pop').style.display='block';document.getElementById('msg_pop').className += 'fadeIn';", delay_popup);
-	}
-
 	var masterListRedCards = document.getElementById('masterListRedCards');
 	var slaveListRedCards = document.getElementById('slaveListRedCards');
 	var masterTeamPlayers = /*[[${masterTeamPlayersMap}]]*/ ;
@@ -109,9 +69,8 @@ $(document).ready(function () {
 		});
 		masterListRedCards.appendChild(s);
 		if (i+1</*[[${countRedCardsMasterTeam}]]*/){
-		 masterListRedCards.innerHTML += "<br/><br/>";
-		 }
-
+		    masterListRedCards.innerHTML += "<br/><br/>";
+		}
 	}
 
     for (var i = 0; i < /*[[${countRedCardsSlaveTeam}]]*/ ; i++) {
@@ -125,21 +84,11 @@ $(document).ready(function () {
 		});
 		slaveListRedCards.appendChild(s);
 		if (i+1</*[[${countRedCardsSlaveTeam}]]*/){
-		 slaveListRedCards.innerHTML += "<br/><br/>";
-		 }
-
+		    slaveListRedCards.innerHTML += "<br/><br/>";
+		}
 	}
-
-
-
 });
-
-
 /*]]>*/
 
-
-
 </script>
-
-</body>
 </html>
