@@ -15,7 +15,7 @@
                 <div class="card-image" style="text-align:center;">
                     <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
                        th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a>
-                    <img class="img-fluid" th:src="${team.symbolString}"/>
+                    <img class="img-fluid" th:src="${player.photoString}"/>
                 </div>
                 <div class="card-body text-center">
                     <div class="ad-title1 m-auto">

@@ -2,6 +2,7 @@ package app.controllers.Administration;
 
 import app.Models.Player;
 import app.Models.Team;
+import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.PlayerServiceImpl;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,13 +58,14 @@ public class PlayerController {
         model.addAttribute("activeTeamId", id);
         return "administration/player/players";
     }
+
     @GetMapping(value = "/administration/players")
     public String getListContainer() {
-        List<Team> teams =teamService.findAllTeams();
-        if(teams.isEmpty()){
+        List<Team> teams = teamService.findAllTeams();
+        if (teams.isEmpty()) {
             return "redirect:/administration/players/-1";
         }
-        return "redirect:/administration/players/"+teams.get(0).getId();
+        return "redirect:/administration/players/" + teams.get(0).getId();
     }
 
     @PostMapping(value = "/administration/playerListByTeam/{id}")
@@ -94,7 +97,7 @@ public class PlayerController {
     public String saveNewPlayer(@ModelAttribute("player") Player player,
                                 @ModelAttribute("file") MultipartFile file,
                                 @PathVariable("teamId") long teamId) throws DerffException {
-        validatePlayerInformation(player, teamId, file);
+        validatePlayerInformation(player, teamId, file, false);
         try {
             playerService.save(player);
             messageGenerator.setMessage((messageSource
@@ -124,6 +127,7 @@ public class PlayerController {
         }
         model.addAttribute("player", player);
         model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("needToReplaceFile", new BooleanWrapper(false));
         return "administration/player/editPlayer";
     }
 
@@ -131,8 +135,9 @@ public class PlayerController {
     public String savePlayerAfterEdit(@ModelAttribute("player") Player player,
                                       @ModelAttribute("teamName") String teamName,
                                       @ModelAttribute("file") MultipartFile file,
-                                      @PathVariable("teamId") long teamId) throws DerffException {
-        validatePlayerInformation(player, teamService.findTeamByName(teamName).getId(), file);
+                                      @PathVariable("teamId") long teamId,
+                                      @ModelAttribute("needToReplaceFile") BooleanWrapper needToReplaceFile) throws DerffException {
+        validatePlayerInformation(player, teamService.findTeamByName(teamName).getId(), file, needToReplaceFile.isValue());
         try {
             playerService.update(player);
             messageGenerator.setMessage((messageSource
@@ -141,11 +146,11 @@ public class PlayerController {
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/players/"+teamId;
+        return "redirect:/administration/players/" + teamId;
     }
 
     @GetMapping(value = "/administration/deletePlayer/{teamId}/{id}")
-    public String deletePlayer(@PathVariable("id") long id,@PathVariable("teamId") long teamId) throws DerffException {
+    public String deletePlayer(@PathVariable("id") long id, @PathVariable("teamId") long teamId) throws DerffException {
         Player player = new Player();
         try {
             player = playerService.findPlayerById(id);
@@ -160,10 +165,10 @@ public class PlayerController {
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/players/"+teamId;
+        return "redirect:/administration/players/" + teamId;
     }
 
-    private void validatePlayerInformation(Player player, long id, MultipartFile file) throws DerffException {
+    private void validatePlayerInformation(Player player, long id, MultipartFile file, boolean needToReplaceFile) throws DerffException {
         //Date validate
         if (player.getStringBirthday() == null) {
             throw new DerffException("date", player);
@@ -204,9 +209,15 @@ public class PlayerController {
             if (!isCorrectFileExtention)
                 throw new DerffException("notAvailableFileExtension", player, new Object[]{availableFileExtension});
 
-            //Set byte[] to Player photo
             try {
-                player.setPhoto(file.getBytes());
+                if (player.getPhotoString() == null || needToReplaceFile) {
+                    byte[] bytes = file.getBytes();
+                    player.setPhotoString("data:image/jpeg;base64, " + Base64Utils.encodeToString(bytes));
+                    player.setPhoto(bytes);
+                } else if (player.getId() != 0) {
+                    player.setPhoto(playerService.findPlayerById(player.getId()).getPhoto());
+                    player.setPhotoString(playerService.findPlayerById(player.getId()).getPhotoString());
+                }
             } catch (IOException e) {
                 throw new DerffException("fileGetBytes", player, new Object[]{e.getMessage()});
             }

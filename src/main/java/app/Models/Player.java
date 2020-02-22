@@ -59,6 +59,10 @@ public class Player implements Comparable{
     @Column(name="photo")
     private byte[] photo;
 
+    @Lob
+    @Column(name = "photoString")
+    private String photoString;
+
     @ManyToOne (optional = false)
     @JoinColumn(name = "id_team")
     private Team team;
