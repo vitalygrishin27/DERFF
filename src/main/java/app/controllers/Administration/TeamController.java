@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Controller
 public class TeamController {
@@ -47,7 +50,7 @@ public class TeamController {
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-        model.addAttribute("teams", teamService.findAllTeams());
+            model.addAttribute("teams", teamService.findAllTeams().stream().filter(team -> !team.getTeamName().equals("AUTOGOAL")).collect(Collectors.toList()));
         return "administration/team/teams";
     }
 
