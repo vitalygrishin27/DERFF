@@ -44,6 +44,31 @@
                 </div>
             </td>
         </tr>
+        <tr th:if="${#lists.size(masterPlayersGoals)>0 || #lists.size(slavePlayersGoals)>0}">
+            <td style="align:center;" colspan="4">
+                <div class="input-group"
+                     style="display: inline-block; vertical-align:  middle; align:center; text-align:center;">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="#{label.goals}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:if="${#lists.size(masterPlayersGoals)>0 || #lists.size(slavePlayersGoals)>0}">
+            <td width="50%" colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${masterPlayersGoals}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+            <td colspan="2">
+                <div class="input-group" style="display: inline-block; vertical-align:  middle; align:center; "
+                     th:each="player : ${slavePlayersGoals}">
+                    <p style="display: inline-block; color:#ffff00; vertical-align:  middle; "
+                       th:utext="${player.lastName +' '+ player.firstName}"/>
+                </div>
+            </td>
+        </tr>
         <tr th:if="${#lists.size(masterPlayersWithYellowCards)>0 || #lists.size(slavePlayersWithYellowCards)>0}">
             <td style="align:center;" colspan="4">
                 <div class="input-group"

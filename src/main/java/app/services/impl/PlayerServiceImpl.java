@@ -20,8 +20,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Player getPlayerById(long id) {
-        return repository.getOne(id);
+    public Player findPlayerById(long id) {
+        return repository.findPlayerById(id);
     }
 
     @Override
@@ -42,6 +42,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<Player> findAllActivePlayersInTeam(Team team){
         return repository.findAllActivePlayersInTeam(team, Boolean.FALSE);
+    }
+
+    @Override
+    public Player findPlayerByRegistration(String registration) {
+        return repository.findPlayerByRegistration(registration);
     }
 
     @Override

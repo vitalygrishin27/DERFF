@@ -3,10 +3,7 @@ package app.controllers.Administration;
 import app.Models.*;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
-import app.services.impl.GameServiceImpl;
-import app.services.impl.GoalServiceImpl;
-import app.services.impl.OffenseServiceImpl;
-import app.services.impl.PlayerServiceImpl;
+import app.services.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -41,6 +38,9 @@ public class ResultGameController {
     GoalServiceImpl goalService;
 
     @Autowired
+    TeamServiceImpl teamService;
+
+    @Autowired
     OffenseServiceImpl offenseService;
 
     @GetMapping(value = "/administration/resultGame/{id}/reenterResult")
@@ -63,6 +63,8 @@ public class ResultGameController {
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
             model.addAttribute("game",game);
+            model.addAttribute("masterPlayersGoals",game.getGoals().stream().filter(goal -> goal.getTeam().equals(game.getMasterTeam())).map(Goal::getPlayer).collect(Collectors.toList()));
+            model.addAttribute("slavePlayersGoals",game.getGoals().stream().filter(goal -> goal.getTeam().equals(game.getSlaveTeam())).map(Goal::getPlayer).collect(Collectors.toList()));
             model.addAttribute("masterPlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("slavePlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("masterPlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
@@ -135,7 +137,7 @@ public class ResultGameController {
                         Goal goal = new Goal();
                         goal.setTeam(game.getMasterTeam());
                         goal.setGame(game);
-                        goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        goal.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         goals.add(goal);
                     }
                 }
@@ -147,7 +149,7 @@ public class ResultGameController {
                         Goal goal = new Goal();
                         goal.setTeam(game.getSlaveTeam());
                         goal.setGame(game);
-                        goal.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        goal.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         goals.add(goal);
                     }
                 }
@@ -175,7 +177,7 @@ public class ResultGameController {
                         Offense offense = new Offense();
                         offense.setGame(game);
                         offense.setType("YELLOW");
-                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offense.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         offenses.add(offense);
                     }
                 }
@@ -188,7 +190,7 @@ public class ResultGameController {
                         Offense offense = new Offense();
                         offense.setGame(game);
                         offense.setType("YELLOW");
-                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offense.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         offenses.add(offense);
                     }
                 }
@@ -216,7 +218,7 @@ public class ResultGameController {
                         Offense offense = new Offense();
                         offense.setGame(game);
                         offense.setType("RED");
-                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offense.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         offensesRed.add(offense);
                     }
                 }
@@ -229,7 +231,7 @@ public class ResultGameController {
                         Offense offense = new Offense();
                         offense.setGame(game);
                         offense.setType("RED");
-                        offense.setPlayer(playerService.getPlayerById(Long.valueOf(id)));
+                        offense.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
                         offensesRed.add(offense);
                     }
                 }
@@ -252,13 +254,16 @@ public class ResultGameController {
     }
 
     private Map<Long, String> getFullNamePlayersMap(List<Player> players, Boolean autogoal) {
+        if(autogoal){
+            checkAvailableAutogoalInDB();
+            players.add(playerService.findPlayerByRegistration("AUTOGOAL"));
+        }
         Map<Long, String> result = new HashMap<>();
         for (Player player : players
         ) {
             result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player
                     .getSecondName());
         }
-       if(autogoal) result.put(-1L,messageSource.getMessage("label.autogoal", null, Locale.getDefault()));
         return result;
     }
 
@@ -278,6 +283,23 @@ public class ResultGameController {
             throw new DerffException("gameResultsAreAlreadyExists");
         }
 
+    }
+
+    private void checkAvailableAutogoalInDB() {
+        if (teamService.findTeamByName("AUTOGOAL") == null) {
+            Team team = new Team();
+            team.setTeamName("AUTOGOAL");
+            teamService.save(team);
+        }
+        if (playerService.findPlayerByRegistration("AUTOGOAL") == null) {
+            Player player = new Player();
+            player.setFirstName(messageSource.getMessage("label.autogoal.default.firstWord", null, Locale.getDefault()));
+            player.setLastName(messageSource.getMessage("label.autogoal.default.lastWord", null, Locale.getDefault()));
+            player.setSecondName(messageSource.getMessage("label.autogoal.default.secondWord", null, Locale.getDefault()));
+            player.setRegistration("AUTOGOAL");
+            player.setTeam(teamService.findTeamByName("AUTOGOAL"));
+            playerService.save(player);
+        }
     }
 
 }
