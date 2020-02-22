@@ -70,8 +70,10 @@ slavePlayerIdListRedCards.push($(this).val());
             masterPlayerIdListRedCards:masterPlayerIdListRedCards,
             slavePlayerIdListRedCards:slavePlayerIdListRedCards
         }),
-        cache: false
-
+        cache: false,
+        success: function(msg){
+                     location.href = "/administration/calendar";
+                        }
     });
 
 }

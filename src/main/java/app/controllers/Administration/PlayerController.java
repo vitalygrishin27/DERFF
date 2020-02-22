@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -67,6 +68,7 @@ public class PlayerController {
     @PostMapping(value = "/administration/playerListByTeam/{id}")
     public String getPlayersByTeam(Model model, @PathVariable("id") long id) {
         List players = playerService.findAllActivePlayersInTeam(teamService.findTeamById(id));
+        Collections.sort(players);
         model.addAttribute("players", players);
         return "administration/player/playersByTeam";
     }
