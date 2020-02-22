@@ -22,6 +22,12 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     @Query("Select p from Player p where p.idCard =:idCard")
     Player findByIdCard(@Param("idCard") int idCard);
 
+    @Query("Select p from Player p where p.id =:id")
+    Player findPlayerById(@Param("id") long id);
+
+    @Query("Select p from Player p where p.registration =:registration")
+    Player findPlayerByRegistration(@Param("registration") String registration);
+
     @Transactional
     @Modifying
     @Query("UPDATE Player p SET p.lastName = ?2, p.firstName = ?3, p.secondName = ?4, p.birthday = ?5, p.stringBirthday = ?6, p.idCard = ?7, p.isLegionary = ?8, p.registration = ?9,  p.photo = ?10,  p.team = ?11, p.inn = ?12, p.role = ?13 WHERE p.id = ?1")

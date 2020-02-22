@@ -8,7 +8,7 @@ import java.util.List;
 public interface PlayerService {
     void save(Player player);
 
-    Player getPlayerById(long id);
+    Player findPlayerById(long id);
 
     Player getPlayerByIdCard(int id);
 
@@ -17,6 +17,8 @@ public interface PlayerService {
     List<Player> findAllPlayersInTeam(Team team);
 
     List<Player> findAllActivePlayersInTeam(Team team);
+
+    Player findPlayerByRegistration(String registration);
 
     void update(Player player);
 

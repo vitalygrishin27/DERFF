@@ -110,7 +110,7 @@ public class PlayerController {
     public String getFormforEditPlayer(Model model, @PathVariable("id") long id) throws DerffException {
         Player player = new Player();
         try {
-            player = playerService.getPlayerById(id);
+            player = playerService.findPlayerById(id);
         } catch (Exception e) {
             throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
         }
@@ -148,7 +148,7 @@ public class PlayerController {
     public String deletePlayer(@PathVariable("id") long id,@PathVariable("teamId") long teamId) throws DerffException {
         Player player = new Player();
         try {
-            player = playerService.getPlayerById(id);
+            player = playerService.findPlayerById(id);
         } catch (Exception e) {
             throw new DerffException("playerNotExists", player, new Object[]{id, e.getMessage()}, "/administration/players");
         }
