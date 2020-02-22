@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -31,7 +32,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<Team> findAllTeams() {
-        return repository.findAll();
+        return repository.findAll().stream().filter(team -> !team.getTeamName().equals("AUTOGOAL")).collect(Collectors.toList());
     }
 
 

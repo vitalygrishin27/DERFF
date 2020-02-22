@@ -50,7 +50,7 @@ public class TeamController {
     public String getTeams(Model model) throws DerffException {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-            model.addAttribute("teams", teamService.findAllTeams().stream().filter(team -> !team.getTeamName().equals("AUTOGOAL")).collect(Collectors.toList()));
+            model.addAttribute("teams", teamService.findAllTeams());
         return "administration/team/teams";
     }
 
