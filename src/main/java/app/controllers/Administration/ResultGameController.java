@@ -243,7 +243,7 @@ public class ResultGameController {
                     throw new DerffException("database", game, new Object[]{e.getMessage()});
                 }
 
-                return "redirect:/administration/calendar";
+                return "administration/resultGames/resultGame";
               // return "administration/game/calendar";
         }
 
