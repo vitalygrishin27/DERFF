@@ -155,7 +155,6 @@ public class ResultGameController {
                     }
                 }
                 game.setGoals(goals);
-                //   context.putToContext("game",game);
                 return "administration/resultGames/resultGameYellowCardsCount";
             case "yellowCardsCount":
                 if (countYellowCardsMasterTeam.equals("")) countYellowCardsMasterTeam = "0";
@@ -191,12 +190,11 @@ public class ResultGameController {
                         Offense offense = new Offense();
                         offense.setGame(game);
                         offense.setType("YELLOW");
-                        offense.setPlayer(playerService.findPlayerById(Long.valueOf(id)));
+                        offense.setPlayer(playerService.findPlayerById(Long.parseLong(id)));
                         offenses.add(offense);
                     }
                 }
                 game.setOffenses(offenses);
-                //context.putToContext("offenses", offenses);
                 return "administration/resultGames/resultGameRedCardsCount";
             case "redCardsCount":
                 if (countRedCardsMasterTeam.equals("")) countRedCardsMasterTeam = "0";
@@ -260,7 +258,7 @@ public class ResultGameController {
             players.add(playerService.findPlayerByRegistration("AUTOGOAL"));
         }
         Map<Long, String> result = new HashMap<>();
-  //      Collections.sort(players);
+        //      Collections.sort(players);
         for (Player player : players
         ) {
             result.put(player.getId(), player.getLastName() + " " + player.getFirstName() + " " + player

@@ -1,5 +1,6 @@
 package app.controllers.Administration;
 
+import app.Models.Player;
 import app.Models.PlayerRole;
 import app.Models.Team;
 import app.Utils.BooleanWrapper;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -59,17 +62,15 @@ public class TeamController {
     public String teamOverview(Model model, @PathVariable("id") long id) {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-        Team team=teamService.findTeamById(id);
+        Team team = teamService.findTeamById(id);
         model.addAttribute("team", team);
-        model.addAttribute("goalkeepers", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.GOALKEEPER));
-        model.addAttribute("defenders", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.DEFENDER));
-        model.addAttribute("midfielders", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.MIDFIELDER));
-        model.addAttribute("forwards", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.FORWARD));
-        model.addAttribute("undefineds", playerService.findAllActivePlayersInTeamByRoleUndefined(team));
-
+        model.addAttribute("goalkeepers", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.GOALKEEPER)));
+        model.addAttribute("defenders", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.DEFENDER)));
+        model.addAttribute("midfielders", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.MIDFIELDER)));
+        model.addAttribute("forwards", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.FORWARD)));
+        model.addAttribute("undefineds", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRoleUndefined(team)));
         return "administration/team/teamOverview";
     }
-
 
     @GetMapping(value = "administration/deleteTeam/{id}")
     public String deleteTeam(@PathVariable("id") long id) throws DerffException {
@@ -143,6 +144,16 @@ public class TeamController {
         return "redirect:/administration/teams";
     }
 
+    private List<Player> addStatisticToPlayers(List<Player> source) {
+        List<Player> result = new ArrayList<>();
+        source.forEach(player -> {
+            player.setGoalsCount(player.getGoals().size());
+            player.setYellowCardCount((int) player.getOffenses().stream().filter(offense -> offense.getType().equals("YELLOW")).count());
+            player.setRedCardCount((int) player.getOffenses().stream().filter(offense -> offense.getType().equals("RED")).count());
+            result.add(player);
+        });
+        return result;
+    }
 
     private void validateTeamInformation(Team team, MultipartFile file, boolean needToReplaceFile) throws DerffException {
         //validate Team name

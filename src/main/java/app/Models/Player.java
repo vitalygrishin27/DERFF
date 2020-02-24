@@ -73,6 +73,15 @@ public class Player implements Comparable{
     @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
     private Collection<Offense> offenses;
 
+    @Transient
+    private int redCardCount;
+
+    @Transient
+    private int yellowCardCount;
+
+    @Transient
+    private int goalsCount;
+
   /*  @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_player",
             joinColumns = @JoinColumn(name = "player_id"),

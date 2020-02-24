@@ -29,8 +29,10 @@
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
                     <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|"
-                       th:text="#{label.statistic}"/>
+                    <br>
+                    <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
+                    <h6 th:text="#{label.yellowCards} +' : '+ ${player.YellowCardCount}"/>
+                    <h6 th:text="#{label.redCards} +' : '+ ${player.RedCardCount}"/>
                 </div>
             </div>
             <br/>
@@ -55,8 +57,10 @@
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
                     <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|"
-                       th:text="#{label.statistic}"/>
+                    <br>
+                    <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
+                    <h6 th:text="#{label.yellowCards} +' : '+ ${player.YellowCardCount}"/>
+                    <h6 th:text="#{label.redCards} +' : '+ ${player.RedCardCount}"/>
                 </div>
             </div>
             <br/>
@@ -82,8 +86,10 @@
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
                     <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|"
-                       th:text="#{label.statistic}"/>
+                    <br>
+                    <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
+                    <h6 th:text="#{label.yellowCards} +' : '+ ${player.YellowCardCount}"/>
+                    <h6 th:text="#{label.redCards} +' : '+ ${player.RedCardCount}"/>
                 </div>
             </div>
             <br/>
@@ -109,8 +115,10 @@
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
                     <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|"
-                       th:text="#{label.statistic}"/>
+                    <br>
+                    <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
+                    <h6 th:text="#{label.yellowCards} +' : '+ ${player.YellowCardCount}"/>
+                    <h6 th:text="#{label.redCards} +' : '+ ${player.RedCardCount}"/>
                 </div>
             </div>
             <br/>
@@ -134,21 +142,18 @@
                     </div>
                     <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|"
-                       th:text="#{label.statistic}"/>
+                    <br>
+                    <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
+                    <h6 th:text="#{label.yellowCards} +' : '+ ${player.YellowCardCount}"/>
+                    <h6 th:text="#{label.redCards} +' : '+ ${player.RedCardCount}"/>
                 </div>
             </div>
             <br/>
         </div>
-
-
     </div>
 </div>
 <script th:inline="javascript">
 /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
-
-
-
 
 </script>
 </body>
