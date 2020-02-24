@@ -42,8 +42,13 @@
                                th:value="${player.inn}" name="inn">
                     </div>
                     <div class="input-group">
-                        <input class="input--style-3" type="text" th:placeholder="#{placeholder.role}"
-                               th:value="${player.role}" name="role">
+                       <!-- <input class="input--style-3" type="text" th:placeholder="#{placeholder.role}"
+                               th:value="${player.role}" name="role"> -->
+                        <select id="role" name="role" style="width:100%">
+                            <option th:value="${playerRole}" th:each="playerRole : ${playerRoles}"
+                                    th:utext="${playerRole}" th:id="${playerRole}"
+                                    th:selected="${player.role==playerRole}"/>
+                        </select>
                     </div>
                     <div class="input-group">
                         <input class="input--style-3" type="number" min="0" max="100000" step="1"

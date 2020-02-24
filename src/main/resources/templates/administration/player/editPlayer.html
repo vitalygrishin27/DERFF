@@ -58,11 +58,11 @@
                     </div>
                     <div class="input-group" style="color:#ffff00">
                         <p th:text="#{label.photo}"/><br/><input type="file" name="file">
+                        <br><br>
+                        <input type="checkbox" th:utext="#{placeholder.needToReplacePhoto}"
+                               th:field="${needToReplaceFile.value}" th:value="${needToReplaceFile.value}"
+                               name="needToReplaceFile">
                     </div>
-                    <br/><br/>
-                    <input type="checkbox" th:utext="#{placeholder.needToReplaceFile}"
-                           th:field="${needToReplaceFile.value}" th:value="${needToReplaceFile.value}"
-                           name="needToReplaceFile">
                     <div class="input-group" style="color:#ffff00">
                         <input type="checkbox" th:utext="#{placeholder.isNotActive}" th:field="${player.isNotActive}"
                                th:value="${player.isNotActive}" name="isNotActive">
