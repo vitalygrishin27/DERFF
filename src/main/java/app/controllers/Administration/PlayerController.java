@@ -1,6 +1,7 @@
 package app.controllers.Administration;
 
 import app.Models.Player;
+import app.Models.PlayerRole;
 import app.Models.Team;
 import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
@@ -22,9 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class PlayerController {
@@ -90,6 +90,7 @@ public class PlayerController {
         model.addAttribute("titleNewPlayer", messageSource
                 .getMessage("label.newPlayer", new Object[]{teamService.findTeamById(id).getTeamName()}, Locale.getDefault()));
         model.addAttribute("player", player);
+        model.addAttribute("playerRoles", getAllRoleList());
         return "administration/player/newPlayer";
     }
 
@@ -167,6 +168,10 @@ public class PlayerController {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
         return "redirect:/administration/players/" + teamId;
+    }
+
+    private List<String> getAllRoleList(){
+        return Arrays.stream(PlayerRole.values()).map(playerRole -> messageSource.getMessage(playerRole.getRole(), null, Locale.getDefault())).collect(Collectors.toList());
     }
 
     private void validatePlayerInformation(Player player, long id, MultipartFile file, boolean needToReplaceFile) throws DerffException {
