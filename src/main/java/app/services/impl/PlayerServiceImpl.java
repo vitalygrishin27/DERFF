@@ -56,7 +56,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
     @Override
     public List<Player> findAllActivePlayersInTeamByRoleUndefined(Team team){
-        return repository.findAllActivePlayersInTeamByRoleUndefined(team,Boolean.FALSE);
+        return repository.findAllActivePlayersInTeamByRoleUndefined(team,PlayerRole.GOALKEEPER.getRole(),
+                                                                                PlayerRole.DEFENDER.getRole(),
+                                                                                PlayerRole.MIDFIELDER.getRole(),
+                                                                                PlayerRole.FORWARD.getRole(),
+                                                                                Boolean.FALSE);
     }
 
     @Override
