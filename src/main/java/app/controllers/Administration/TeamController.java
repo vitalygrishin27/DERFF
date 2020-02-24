@@ -65,6 +65,7 @@ public class TeamController {
         model.addAttribute("defenders", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.DEFENDER));
         model.addAttribute("midfielders", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.MIDFIELDER));
         model.addAttribute("forwards", playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.FORWARD));
+        model.addAttribute("undefineds", playerService.findAllActivePlayersInTeamByRoleUndefined(team));
 
         return "administration/team/teamOverview";
     }

@@ -9,43 +9,134 @@
     <br>
     <h4 style="text-align:center; color: #ffffff;" th:text="${team.teamName}"/>
     <br>
+    <br>
+    <h4 style="text-align:center; color: #ffffff;" th:text="#{label.goalkeepers}"/>
+    <br>
     <div class="row" id="ads">
-        <div class="col-md-4" th:each="player : ${goalkeepers}" style="opacity: 0.85;">
+        <div class="col-md-4" th:each="player : ${goalkeepers}" style="opacity: 1;">
             <div class="card rounded">
                 <div class="card-image" style="text-align:center;">
-                    <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
-                       th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a>
+                    <!--  <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                         th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a> -->
                     <img class="img-fluid" th:src="${player.photoString}"/>
                 </div>
                 <div class="card-body text-center">
                     <div class="ad-title1 m-auto">
-                        <h5 th:text="${team.teamName}"/>
+                        <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
-                    <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/teamOverview/${team.id}|" th:text="#{label.team.overview}"/>
+                    <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
+                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|" th:text="#{label.edit}"/>
+                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|" th:text="#{label.statistic}"/>
                 </div>
             </div>
             <br/>
         </div>
-        <div class="col-md-4">
+
+        <div style="min-width: 100%; position: relative;">
+            <br>
+            <h4 style="text-align:center; color: #ffffff;" th:text="#{label.defenders}"/>
+            <br>
+        </div>
+        <div class="col-md-4" th:each="player : ${defenders}">
             <div class="card rounded">
-                <div class="card-image">
-                    <img class="img-fluid" th:src="@{/images/new-team.jpg}"/>
+                <div class="card-image" style="text-align:center;">
+                    <!--  <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                         th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a> -->
+                    <img class="img-fluid" th:src="${player.photoString}"/>
                 </div>
                 <div class="card-body text-center">
                     <div class="ad-title1 m-auto">
-                        <h5 th:text="#{label.newTeam}"/>
+                        <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
-                    <a class="ad-btn1" th:href="|/administration/newTeam?lang=${#request.Locale.getDefault()}|"
-                       th:text="#{label.add}"/>
+                    <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
+                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|" th:text="#{label.edit}"/>
+                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|" th:text="#{label.statistic}"/>
                 </div>
             </div>
             <br/>
         </div>
+
+
+        <div style="min-width: 100%; position: relative;">
+            <br>
+            <h4 style="text-align:center; color: #ffffff;" th:text="#{label.midfielders}"/>
+            <br>
+        </div>
+        <div class="col-md-4" th:each="player : ${midfielders}">
+            <div class="card rounded">
+                <div class="card-image" style="text-align:center;">
+                    <!--  <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                         th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a> -->
+                    <img class="img-fluid" th:src="${player.photoString}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="${player.lastName+' '+player.firstName}"/>
+                    </div>
+                    <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
+                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|" th:text="#{label.edit}"/>
+                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|" th:text="#{label.statistic}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+
+
+        <div style="min-width: 100%; position: relative;">
+            <br>
+            <h4 style="text-align:center; color: #ffffff;" th:text="#{label.forwards}"/>
+            <br>
+        </div>
+        <div class="col-md-4" th:each="player : ${forwards}">
+            <div class="card rounded">
+                <div class="card-image" style="text-align:center;">
+                    <!--  <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                         th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a> -->
+                    <img class="img-fluid" th:src="${player.photoString}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="${player.lastName+' '+player.firstName}"/>
+                    </div>
+                    <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
+                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|" th:text="#{label.edit}"/>
+                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|" th:text="#{label.statistic}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+
+        <div style="min-width: 100%; position: relative;">
+            <br>
+            <h4 style="text-align:center; color: #ffffff;" th:text="#{label.undefined}"/>
+            <br>
+        </div>
+        <div class="col-md-4" th:each="player : ${undefineds}">
+            <div class="card rounded">
+                <div class="card-image" style="text-align:center;">
+                    <!--  <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                         th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a> -->
+                    <img class="img-fluid" th:src="${player.photoString}"/>
+                </div>
+                <div class="card-body text-center">
+                    <div class="ad-title1 m-auto">
+                        <h5 th:text="${player.lastName+' '+player.firstName}"/>
+                    </div>
+                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|" th:text="#{label.edit}"/>
+                    <a class="ad-btn1" th:href="|/administration/playerOverview/${player.id}|" th:text="#{label.statistic}"/>
+                </div>
+            </div>
+            <br/>
+        </div>
+
+
     </div>
 </div>
 <script th:inline="javascript">
 /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+
+
+
 </script>
 </body>
 </html>

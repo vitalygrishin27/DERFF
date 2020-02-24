@@ -23,6 +23,9 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     @Query("Select p from Player p where p.team =:team and p.role =:role and p.isNotActive =:isNotActive")
     List<Player> findAllActiveInTeamByRole(@Param("team") Team team, @Param("role") String playerRole, @Param("isNotActive") Boolean isNotActive);
 
+    @Query("Select p from Player p where p.team =:team and p.role =null and p.isNotActive =:isNotActive")
+    List<Player> findAllActivePlayersInTeamByRoleUndefined(@Param("team") Team team, @Param("isNotActive") Boolean isNotActive);
+
     @Query("Select p from Player p where p.idCard =:idCard")
     Player findByIdCard(@Param("idCard") int idCard);
 

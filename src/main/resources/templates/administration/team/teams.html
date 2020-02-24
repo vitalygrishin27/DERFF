@@ -21,8 +21,9 @@
                     <div class="ad-title1 m-auto">
                         <h5 th:text="${team.teamName}"/>
                     </div>
+                    <a class="ad-btn1" th:href="|/administration/teamOverview/${team.id}|"
+                       th:text="#{label.team.overview}"/>
                     <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
-                    <a class="ad-btn1" th:href="|/administration/teamOverview/${team.id}|" th:text="#{label.team.overview}"/>
                 </div>
             </div>
             <br/>
@@ -46,6 +47,7 @@
 </div>
 <script th:inline="javascript">
 /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);});/*]]>*/
+
 </script>
 </body>
 </html>

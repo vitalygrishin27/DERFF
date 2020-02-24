@@ -21,6 +21,8 @@ public interface PlayerService {
 
     List<Player> findAllActivePlayersInTeamByRole(Team team, PlayerRole playerRole);
 
+    List<Player> findAllActivePlayersInTeamByRoleUndefined(Team team);
+
     Player findPlayerByRegistration(String registration);
 
     void update(Player player);
