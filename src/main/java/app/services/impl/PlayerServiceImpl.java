@@ -1,18 +1,24 @@
 package app.services.impl;
 
 import app.Models.Player;
+import app.Models.PlayerRole;
 import app.Models.Team;
 import app.repository.PlayerRepository;
 import app.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
     @Autowired
     PlayerRepository repository;
+
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
 
     @Override
     public void save(Player player) {
@@ -42,6 +48,19 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<Player> findAllActivePlayersInTeam(Team team){
         return repository.findAllActivePlayersInTeam(team, Boolean.FALSE);
+    }
+
+    @Override
+    public List<Player> findAllActivePlayersInTeamByRole(Team team, PlayerRole playerRole){
+        return repository.findAllActiveInTeamByRole(team, messageSource.getMessage(playerRole.getRole(),null, Locale.getDefault()),Boolean.FALSE);
+    }
+    @Override
+    public List<Player> findAllActivePlayersInTeamByRoleUndefined(Team team){
+        return repository.findAllActivePlayersInTeamByRoleUndefined(team,PlayerRole.GOALKEEPER.getRole(),
+                                                                                PlayerRole.DEFENDER.getRole(),
+                                                                                PlayerRole.MIDFIELDER.getRole(),
+                                                                                PlayerRole.FORWARD.getRole(),
+                                                                                Boolean.FALSE);
     }
 
     @Override

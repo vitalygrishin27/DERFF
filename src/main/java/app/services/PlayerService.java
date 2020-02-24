@@ -1,6 +1,7 @@
 package app.services;
 
 import app.Models.Player;
+import app.Models.PlayerRole;
 import app.Models.Team;
 
 import java.util.List;
@@ -17,6 +18,10 @@ public interface PlayerService {
     List<Player> findAllPlayersInTeam(Team team);
 
     List<Player> findAllActivePlayersInTeam(Team team);
+
+    List<Player> findAllActivePlayersInTeamByRole(Team team, PlayerRole playerRole);
+
+    List<Player> findAllActivePlayersInTeamByRoleUndefined(Team team);
 
     Player findPlayerByRegistration(String registration);
 

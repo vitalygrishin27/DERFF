@@ -75,7 +75,7 @@ public class GameController {
                 resultDate=game.getDate();
             }
         }
-        return getGamesByDate(model,new SimpleDateFormat("yyyy-MM-dd").format(resultDate),"all",-1L);
+        return getGamesByDate(model,new SimpleDateFormat("yyyy-MM-dd").format(resultDate),"date",-1L);
     }
 
     @PostMapping(value = "/administration/gameListByDate")
@@ -85,15 +85,20 @@ public class GameController {
             switch (round) {
                 case "date":
                     Date date;
+                    Date dateTo;
                     try {
                         date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+                        Calendar instance = Calendar.getInstance();
+                        instance.setTime(date); //устанавливаем дату, с которой будет производить операции
+                        instance.add(Calendar.DAY_OF_MONTH, 1);// прибавляем 3 дня к установленной дате
+                        dateTo = instance.getTime(); // получаем измененную дату
                     } catch (ParseException e) {
                         break;
                     }
                     if (competitionId == -1) {
-                        games = gameService.findGamesByDate(date);
+                        games = gameService.findGamesBetweenDates(date,dateTo);
                     } else {
-                        games = gameService.findGamesByDateAndCompetition(date, competitionService.findCompetitionById(competitionId));
+                        games = gameService.findGamesBetweenDatesAndCompetition(date, dateTo, competitionService.findCompetitionById(competitionId));
                     }
                     break;
                 case "first":
@@ -185,7 +190,11 @@ public class GameController {
         game.setSlaveTeam(teamService.findTeamByName(slaveTeamName));
         game.setStringDate(stringDate);
         try {
-            game.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(stringDate));
+            Date date=new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+            Calendar cal=Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.HOUR,6);
+            game.setDate(cal.getTime());
         } catch (ParseException e) {
             throw new DerffException("date", game);
         }
