@@ -1,4 +1,5 @@
 <div xmlns:th="http://www.thymeleaf.org">
+    <div id="skm_LockPane" class="LockOff"></div>
     <nav class="top-menu">
         <ul class="menu-main">
             <li class="left-item"> <a  th:href="@{/administration/teams?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.teams}">Команды</a></li>
