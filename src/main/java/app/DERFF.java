@@ -18,6 +18,8 @@ public class DERFF {
    //     ApplicationContext context=new AnnotationConfigApplicationContext(Context.class);
      //   https://stackoverflow.com/questions/32650536/using-thymeleaf-variable-in-onclick-attribute
         //@Temporal(TemporalType.DATE)
+
+        //https://www.thymeleaf.org/doc/articles/springmvcaccessdata.html
         Locale.setDefault(new Locale("ru"));
         SpringApplication.run(DERFF.class,args);
     }

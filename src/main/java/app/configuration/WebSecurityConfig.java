@@ -43,3 +43,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 }
+
+//https://www.thymeleaf.org/doc/articles/springsecurity.html
