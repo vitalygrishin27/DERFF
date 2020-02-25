@@ -124,7 +124,7 @@
             <br/>
         </div>
 
-        <div style="min-width: 100%; position: relative;">
+        <div th:if="${#lists.size(undefineds)>0}" style="min-width: 100%; position: relative;">
             <br>
             <h4 style="text-align:center; color: #ffffff;" th:text="#{label.undefined}"/>
             <br>
