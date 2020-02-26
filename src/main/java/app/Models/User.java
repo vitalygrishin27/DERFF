@@ -1,9 +1,13 @@
 package app.Models;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +29,13 @@ public class User {
 
     @Column(name = "role", nullable = false)
     private String role;
+
+    @ManyToMany (fetch = FetchType.LAZY)
+    @JoinTable (name="responsibility",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name="team_id"))
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Team> teams = new ArrayList<>();
 
     @Transient
     private String password;
