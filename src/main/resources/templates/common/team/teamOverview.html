@@ -27,7 +27,7 @@
                         <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
-                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
+                    <a th:if="|${user.hasResponsibility(team)}|" class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
                     <br>
                     <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
@@ -55,7 +55,7 @@
                         <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
-                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
+                    <a th:if="|${user.hasResponsibility(team)}|" class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
                     <br>
                     <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
@@ -84,7 +84,7 @@
                         <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
-                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
+                    <a th:if="|${user.hasResponsibility(team)}|" class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
                     <br>
                     <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
@@ -113,7 +113,7 @@
                         <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
                     <!-- <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>  -->
-                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
+                    <a th:if="|${user.hasResponsibility(team)}|" class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
                     <br>
                     <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>
@@ -140,7 +140,7 @@
                     <div class="ad-title1 m-auto">
                         <h5 th:text="${player.lastName+' '+player.firstName}"/>
                     </div>
-                    <a class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
+                    <a th:if="|${user.hasResponsibility(team)}|" class="ad-btn1" th:href="|/administration/editPlayer/${team.id}/${player.id}|"
                        th:text="#{label.edit}"/>
                     <br>
                     <h6 th:text="#{label.goals} +' : '+ ${player.goalsCount}"/>

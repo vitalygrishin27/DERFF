@@ -13,7 +13,7 @@
         <div class="col-md-4" th:each="team : ${teams}" style="opacity: 0.85;">
             <div class="card rounded">
                 <div class="card-image" style="text-align:center;">
-                    <a class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
+                    <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'administrator'}" class="card-notify-year" th:href="|/administration/deleteTeam/${team.id}|"
                        th:onclick="return confirm('[[#{label.confirmation.game}]]')" style="cursor:pointer;">Х</a>
                     <img class="img-fluid" th:src="${team.symbolString}"/>
                 </div>
@@ -21,14 +21,14 @@
                     <div class="ad-title1 m-auto">
                         <h5 th:text="${team.teamName}"/>
                     </div>
-                    <a class="ad-btn1" th:href="|/administration/teamOverview/${team.id}|"
+                    <a class="ad-btn1" th:href="|/teamOverview/${team.id}|"
                        th:text="#{label.team.overview}"/>
-                    <a class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
+                    <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'administrator'}" class="ad-btn1" th:href="|/administration/editTeam/${team.id}|" th:text="#{label.edit}"/>
                 </div>
             </div>
             <br/>
         </div>
-        <div class="col-md-4">
+        <div th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'administrator'}" class="col-md-4">
             <div class="card rounded">
                 <div class="card-image">
                     <img class="img-fluid" th:src="@{/images/new-team.jpg}"/>
