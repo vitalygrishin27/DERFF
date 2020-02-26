@@ -1,24 +1,35 @@
-<div xmlns:th="http://www.thymeleaf.org">
+<div xmlns:th="http://www.thymeleaf.org" >
     <div id="skm_LockPane" class="LockOff"></div>
     <nav class="top-menu">
         <ul class="menu-main">
-            <li class="left-item"> <a  th:href="@{/administration/teams?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.teams}">Команды</a></li>
-            <li class="right-item"> <a th:href="@{/administration/calendar?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.calendar}">Календарь</a></li>
-            <li class="right-item"> <a th:href="@{/administration/standings?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.standings}">Турнирная таблица</a></li>
-            <li class="left-item"> <a th:href="@{/administration/players?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.players}">Игроки</a></li>
-            <li class="left-item"><a th:href="@{/administration/competitions?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.competitions}">Соревнования</a></li>
-            <li class="right-item"> <a th:if="${#request.userPrincipal != null}" th:href="@{/logout?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.exit}">Выйти</a></li>
-            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/jury?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.jury}">Жюри</a></li>
-            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/configuration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.configuration}">Настройки</a></li>
-            <li class="right-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/categories?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.category}">Категории</a></li>
-            <li class="right-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/criterions?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.criterion}">Критерии</a></li>
-            <li class="right-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/statement?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.statement}">Отчет</a></li>
+            <li class="left-item"> <a th:href="@{/teams?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.teams}">Команды</a></li>
+            <li class="right-item"> <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration/calendar?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.calendar}">Календарь</a></li>
+            <li class="right-item"> <a th:href="@{/standings?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.standings}">Турнирная таблица</a></li>
+            <li class="left-item"> <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration/players?lang=} + ${#request.Locale.getDefault()}" th:utext="#{menu.players}">Игроки</a></li>
+            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration/competitions?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.competitions}">Соревнования</a></li>
+            <li class="left-item"> <a th:if="${#request.userPrincipal == null}" th:href="@{/login?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.enter}">Войти</a></li>
+            <li class="right-item"> <a th:if="${#request.userPrincipal != null}" th:href="@{/logout?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.exit}+' ('+${#request.getRemoteUser()}+')'">Выйти</a></li>
+            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.users}">Пользователи</a></li>
+            <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration/configuration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.configuration}">Настройки</a></li>
         </ul>
         <a class="navbar-logo" href="/"><img src="/img/logo_small.png" th:src="@{/images/logo.png}"></a>
+        <!-- <a th:utext="${#request.getRemoteUser()}"></a>
+       https://docs.oracle.com/javaee/6/api/javax/servlet/http/HttpServletRequest.html -->
     </nav>
 </div>
 
+
+
+
 <!--
+<div sec:authorize="hasRole('ROLE_ADMIN')">
+            This content is only shown to <b>administrators</b>.
+        </div>
+        <div sec:authorize="hasRole('ROLE_USER')">
+            This content is only shown to <b>users</b>.
+        </div>
+
+
     <li class="left-item"> <a th:if="${#request.userPrincipal == null}" th:href="@{/login?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.enter}">Войти</a></li>
             <li class="left-item"> <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/online?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.main}">Главная</a></li>
             <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'admin'}" th:href="@{/members?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.member}">Участники</a></li>

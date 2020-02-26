@@ -12,10 +12,5 @@ public class AdministrationController {
     @Autowired
     MessageGenerator messageGenerator;
 
-    @GetMapping(value = "/")
-    public String getMainPage(Model model){
-        if (messageGenerator.isActive())
-            model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-        return "administration/mainPage";
-    }
+
 }

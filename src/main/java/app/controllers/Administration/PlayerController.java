@@ -1,5 +1,6 @@
 package app.controllers.Administration;
 
+import app.Models.Context;
 import app.Models.Player;
 import app.Models.PlayerRole;
 import app.Models.Team;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +39,9 @@ public class PlayerController {
 
     @Value("${availableFileExtension}")
     private String availableFileExtension;
+
+    @Autowired
+    Context context;
 
     @Autowired
     MessageGenerator messageGenerator;
@@ -111,7 +116,8 @@ public class PlayerController {
     }
 
     @GetMapping(value = "/administration/editPlayer/{teamId}/{id}")
-    public String getFormforEditPlayer(Model model, @PathVariable("id") long id) throws DerffException {
+    public String getFormforEditPlayer(Model model, @PathVariable("id") long id, HttpServletRequest request) throws DerffException {
+        context.putToContext("referer", request.getHeader("referer"));
         Player player = new Player();
         try {
             player = playerService.findPlayerById(id);
@@ -137,7 +143,8 @@ public class PlayerController {
                                       @ModelAttribute("teamName") String teamName,
                                       @ModelAttribute("file") MultipartFile file,
                                       @PathVariable("teamId") long teamId,
-                                      @ModelAttribute("needToReplaceFile") BooleanWrapper needToReplaceFile) throws DerffException {
+                                      @ModelAttribute("needToReplaceFile") BooleanWrapper needToReplaceFile,
+                                      HttpServletRequest request) throws DerffException {
         validatePlayerInformation(player, teamService.findTeamByName(teamName).getId(), file, needToReplaceFile.isValue());
         try {
             playerService.update(player);
@@ -148,7 +155,12 @@ public class PlayerController {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
         //return "redirect:/administration/players/" + teamId;
-        return "redirect:/administration/teamOverview/" + teamId;
+        if (context.getContext().containsKey("referer") && context.getFromContext("referer").toString().contains("administration")) {
+            return "redirect:/administration/players/" + teamId;
+        } else {
+            return "redirect:/teamOverview/" + teamId;
+        }
+
     }
 
     @GetMapping(value = "/administration/deletePlayer/{teamId}/{id}")
@@ -170,7 +182,7 @@ public class PlayerController {
         return "redirect:/administration/players/" + teamId;
     }
 
-    private List<String> getAllRoleList(){
+    private List<String> getAllRoleList() {
         return Arrays.stream(PlayerRole.values()).map(playerRole -> messageSource.getMessage(playerRole.getRole(), null, Locale.getDefault())).collect(Collectors.toList());
     }
 
@@ -189,9 +201,24 @@ public class PlayerController {
         //Team validation
         try {
             player.setTeam(teamService.findTeamById(id));
+
         } catch (Exception e) {
             throw new DerffException("database", player, new Object[]{e.getMessage()});
         }
+
+        //Set photo ifd exists
+        try {
+            if (player.getId() != 0 && needToReplaceFile) {
+                player.setPhoto(null);
+                player.setPhotoString(null);
+            } else if (!needToReplaceFile) {
+                player.setPhoto(playerService.findPlayerById(player.getId()).getPhoto());
+                player.setPhotoString(playerService.findPlayerById(player.getId()).getPhotoString());
+            }
+        } catch (Exception e) {
+            throw new DerffException("fileGetBytes", player, new Object[]{e.getMessage()});
+        }
+
 
         // Id card validation
         if (player.getIdCard() != null && playerService.getPlayerByIdCard(player.getIdCard()) != null) {
@@ -214,20 +241,13 @@ public class PlayerController {
             }
             if (!isCorrectFileExtention)
                 throw new DerffException("notAvailableFileExtension", player, new Object[]{availableFileExtension});
-
             try {
-                if (player.getPhotoString() == null || needToReplaceFile) {
-                    byte[] bytes = file.getBytes();
-                    player.setPhotoString("data:image/jpeg;base64, " + Base64Utils.encodeToString(bytes));
-                    player.setPhoto(bytes);
-                } else if (player.getId() != 0) {
-                    player.setPhoto(playerService.findPlayerById(player.getId()).getPhoto());
-                    player.setPhotoString(playerService.findPlayerById(player.getId()).getPhotoString());
-                }
+                byte[] bytes = file.getBytes();
+                player.setPhotoString("data:image/jpeg;base64, " + Base64Utils.encodeToString(bytes));
+                player.setPhoto(bytes);
             } catch (IOException e) {
                 throw new DerffException("fileGetBytes", player, new Object[]{e.getMessage()});
             }
         }
-
     }
 }

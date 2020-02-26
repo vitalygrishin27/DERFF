@@ -3,15 +3,19 @@ package app.controllers.Administration;
 import app.Models.Player;
 import app.Models.PlayerRole;
 import app.Models.Team;
+import app.Models.User;
 import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.GameServiceImpl;
 import app.services.impl.PlayerServiceImpl;
 import app.services.impl.TeamServiceImpl;
+import app.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -50,16 +55,23 @@ public class TeamController {
     @Autowired
     PlayerServiceImpl playerService;
 
-    @GetMapping(value = "administration/teams")
+    @Autowired
+    UserServiceImpl userService;
+
+    @GetMapping(value = "teams")
     public String getTeams(Model model) {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("teams", teamService.findAllTeams());
-        return "administration/team/teams";
+        return "common/team/teams";
     }
 
-    @GetMapping(value = "administration/teamOverview/{id}")
-    public String teamOverview(Model model, @PathVariable("id") long id) {
+    @GetMapping(value = "teamOverview/{id}")
+    public String teamOverview(Model model, @PathVariable("id") long id, Principal principal) {
+        User user = new User();
+        if (principal != null) {
+            user = userService.findUserByLogin(principal.getName());
+        }
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         Team team = teamService.findTeamById(id);
@@ -69,7 +81,8 @@ public class TeamController {
         model.addAttribute("midfielders", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.MIDFIELDER)));
         model.addAttribute("forwards", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.FORWARD)));
         model.addAttribute("undefineds", addStatisticToPlayers(playerService.findAllActivePlayersInTeamByRole(team, PlayerRole.UNDEFINED)));
-        return "administration/team/teamOverview";
+        model.addAttribute("user", user);
+        return "common/team/teamOverview";
     }
 
     @GetMapping(value = "administration/deleteTeam/{id}")
@@ -85,7 +98,7 @@ public class TeamController {
         } catch (Exception e) {
             throw new DerffException("database", new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/teams";
+        return "redirect:/teams";
     }
 
     @GetMapping(value = "administration/newTeam")
@@ -111,7 +124,7 @@ public class TeamController {
         } catch (Exception e) {
             throw new DerffException("database", team, new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/teams";
+        return "redirect:/teams";
     }
 
     @GetMapping(value = "administration/editTeam/{id}")
@@ -141,7 +154,7 @@ public class TeamController {
         } catch (Exception e) {
             throw new DerffException("database", team, new Object[]{e.getMessage()});
         }
-        return "redirect:/administration/teams";
+        return "redirect:/teams";
     }
 
     private List<Player> addStatisticToPlayers(List<Player> source) {

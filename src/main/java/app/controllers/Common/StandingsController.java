@@ -1,4 +1,4 @@
-package app.controllers.Administration;
+package app.controllers.Common;
 
 import app.Models.Game;
 import app.Models.StandingsRow;
@@ -27,7 +27,7 @@ public class StandingsController {
     @Autowired
     CompetitionServiceImpl competitionService;
 
-    @GetMapping(value = "/administration/standings")
+    @GetMapping(value = "/standings")
     public String getStandings(Model model) {
         List<StandingsRow> standingsRows = new ArrayList<>();
         for (Team team : teamService.findAllTeams()
@@ -66,7 +66,7 @@ public class StandingsController {
         }
         sortStandings(standingsRows);
         model.addAttribute("standings", standingsRows);
-        return "administration/standings/standings";
+        return "common/standings/standings";
     }
 
     private void sortStandings(List<StandingsRow> standingsRows) {
