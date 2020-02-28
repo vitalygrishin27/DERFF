@@ -4,6 +4,8 @@ import app.Models.*;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.*;
+import org.apache.log4j.Logger;
+import org.apache.log4j.NDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -47,8 +49,11 @@ public class GameController {
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
 
+    private static final Logger logger = Logger.getLogger(GameController.class);
+
     @GetMapping(value = "/administration/calendar")
     public String getCalendar(Model model) {
+        logger.info("Calendar is called");
         if (messageGenerator.isActive()) {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         }
