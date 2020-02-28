@@ -14,6 +14,9 @@ import java.util.List;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
 
+    @Query("Select g from Game g order by g.date")
+    List<Game> findAllGames();
+
     @Query("Select g from Game g where g.masterTeam =:team or g.slaveTeam =:team")
     List<Game> findGameWithTeam(@Param("team") Team team);
 
@@ -23,7 +26,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("Select g from Game g where g.date =:date and g.competition =:competition")
     List<Game> findGamesByDateAndCompetition(@Param("date") Date date, @Param("competition") Competition competition);
 
-    @Query("Select g from Game g where g.date >=:from and g.date <=:to")
+    @Query("Select g from Game g where g.date >=:from and g.date <=:to order by g.date")
     List<Game> findGamesBetweenDates(@Param("from") Date from, @Param("to") Date to);
 
     @Query("Select g from Game g where g.date >=:from and g.date <=:to and g.competition =:competition")
