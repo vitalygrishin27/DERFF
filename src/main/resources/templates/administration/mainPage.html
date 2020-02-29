@@ -5,6 +5,7 @@
 <body>
 <th:block th:include="common/_menu"></th:block>
 <div th:insert="common/message :: message"></div>
+<th:block th:include="common/statistic/goals"></th:block>
 </body>
 <script th:inline="javascript">
     /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/

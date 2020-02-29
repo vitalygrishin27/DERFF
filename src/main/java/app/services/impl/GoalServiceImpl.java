@@ -6,6 +6,8 @@ import app.services.GoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GoalServiceImpl implements GoalService {
     @Autowired
@@ -20,6 +22,11 @@ public class GoalServiceImpl implements GoalService {
     @Override
     public void delete(Goal goal) {
         repository.delete(goal);
+    }
+
+    @Override
+    public List<Goal> findAll() {
+        return repository.findAll();
     }
 
 }

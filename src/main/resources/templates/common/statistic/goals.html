@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div>
+    <table class="table_dark">
+        <tr th:each="game : ${games}">
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${game.stringDate}"
+                           th:id="${game.id}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${game.masterTeam.teamName}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3" th:text="${game.slaveTeam.teamName}"/>
+                </div>
+            </td>
+            <td>
+                <!--<label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|"-->
+                <!--style="cursor:pointer;" th:text="#{label.results}"/>-->
+                <label th:onclick="|window.location='/administration/resultGame/${game.id}'|"
+                       style="cursor:pointer;" th:text="#{label.results}"/>
+            </td>
+            <td>
+                <label th:if="${!game.resultSave}" th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
+            </td>
+            <td>
+                <div  style="text-align:center;">
+                    <input type="checkbox" class="checkForDelete" th:id="${game.id}">
+                    <label th:onclick="|deleteGames('${game.id}')|"
+                           style="cursor:pointer;" th:text="#{label.delete}"/>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+</html>
