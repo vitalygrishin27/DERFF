@@ -1,10 +1,12 @@
 package app.controllers.Common;
 
 import app.Models.Context;
+import app.Models.Offense;
 import app.Models.Player;
 import app.Models.User;
 import app.Utils.MessageGenerator;
 import app.services.impl.GoalServiceImpl;
+import app.services.impl.OffenseServiceImpl;
 import app.services.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,9 @@ public class CommonController {
     TeamServiceImpl teamService;
 
     @Autowired
+    OffenseServiceImpl offenseService;
+
+    @Autowired
     Context context;
 
     @GetMapping(value = "/")
@@ -34,7 +39,9 @@ public class CommonController {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("bombardiers", getGoals(5));
+        model.addAttribute("yellowCards", getYellowCards(5));
         model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers")==null?Boolean.TRUE:context.getFromContext("needShowAllBombardiers"));
+        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards")==null?Boolean.TRUE:context.getFromContext("needShowAllYellowCards"));
         return "administration/mainPage";
     }
 
@@ -46,19 +53,8 @@ public class CommonController {
         return "login";
     }
 
-    /*  @GetMapping(value = "statistic/goals")
-      public String getGoals(Model model) {
-          Map<Player,Integer> result=new HashMap<>();
-          for (Goal goal : goalService.findAll()
-          ) {
-              result.put(goal.getPlayer(),result.containsKey(goal.getPlayer())?result.get(goal.getPlayer())+1:1);
-          }
-          model.addAttribute("bombardiers", result);
-          return "common/statistic/goals";
-      }*/
-
     @GetMapping(value = "/bombardiers")
-    public String getAllBombardiers(Model model, HttpServletRequest request) {
+    public String getBombardiers(Model model, HttpServletRequest request) {
         if (request.getParameter("show").equals("all")) {
             model.addAttribute("bombardiers", getGoals());
         } else {
@@ -66,6 +62,17 @@ public class CommonController {
         }
         model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers")==null?Boolean.TRUE:context.getFromContext("needShowAllBombardiers"));
         return "common/statistic/bombardiers";
+    }
+
+    @GetMapping(value = "/yellowCards")
+    public String getYellowCardsStatistic(Model model, HttpServletRequest request) {
+        if (request.getParameter("show").equals("all")) {
+            model.addAttribute("yellowCards", getYellowCards());
+        } else {
+            model.addAttribute("yellowCards", getYellowCards(5));
+        }
+        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards")==null?Boolean.TRUE:context.getFromContext("needShowAllYellowCards"));
+        return "common/statistic/yellowCards";
     }
 
     public Map<Player, Integer> getGoals(int count) {
@@ -97,8 +104,41 @@ public class CommonController {
         return resultSortedFirsts;
     }
 
+    public Map<Player, Integer> getYellowCards(int count) {
+        if (count == -1 && context.getFromContext("yellowCardsAll") != null) {
+            context.putToContext("needShowAllYellowCards", Boolean.FALSE);
+            return (Map<Player, Integer>) context.getFromContext("yellowCardsAll");
+        }
+        if (count > 0 && context.getFromContext("yellowCardsAll") != null) {
+            context.putToContext("needShowAllYellowCards", Boolean.TRUE);
+            return (Map<Player, Integer>) context.getFromContext("yellowCardsFirsts");
+        }
+
+        Map<Player, Integer> result = new HashMap<>();
+        Map<Player, Integer> resultSorted = new LinkedHashMap<>();
+
+        offenseService.getAllYellowCards().forEach(offense -> result.put(offense.getPlayer(), result.containsKey(offense.getPlayer()) ? result.get(offense.getPlayer()) + 1 : 1));
+        result.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).forEach(e -> resultSorted.put(e.getKey(), e.getValue()));
+        Map<Player, Integer> resultSortedFirsts = resultSorted.entrySet().stream().limit(count).collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
+
+        context.putToContext("yellowCardsAll", resultSorted);
+        context.putToContext("yellowCardsFirsts", resultSortedFirsts);
+
+        if (count > resultSorted.size()) count = -1;
+        if (count == -1) {
+            context.putToContext("needShowAllYellowCards", Boolean.FALSE);
+            return resultSorted;
+        }
+        context.putToContext("needShowAllYellowCards", Boolean.TRUE);
+        return resultSortedFirsts;
+    }
+
     public Map<Player, Integer> getGoals() {
         return getGoals(-1);
     }
+    public Map<Player, Integer> getYellowCards() {
+        return getYellowCards(-1);
+    }
+
 
 }

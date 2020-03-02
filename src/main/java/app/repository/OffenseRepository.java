@@ -3,10 +3,17 @@ package app.repository;
 import app.Models.Goal;
 import app.Models.Offense;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 
 public interface OffenseRepository extends JpaRepository<Offense, Long> {
-/*
+
+    @Query("Select o from Offense o where o.type='YELLOW'")
+    List<Offense> getAllYellowCards();
+
+    /*
     @Query("Select g from Game g where g.masterTeam =:team or g.slaveTeam =:team")
     List<Game> findGameWithTeam(@Param("team") Team team);
 

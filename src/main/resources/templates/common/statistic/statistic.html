@@ -11,24 +11,20 @@
                     <h3 class="widget-title" th:text="#{label.bombardiers}"/>
                     <th:block th:include="common/statistic/bombardiers"></th:block>
                 </div>
-
-            </div>
-            <div class="col-md-4">
-                <div class="widget widget-call-to-action well-primary">
-                    <h3 class="widget-title">Book Your Appointment</h3>
-                    <p class="text-white">Call to action widget for booking appointment online.</p>
-                    <a href="https://easetemplate.com/downloads/physiotherapy-free-website-template-download/" class="btn btn-white btn-lg">Make An Appointment</a>
-                </div>
-
             </div>
             <div class="col-md-4">
                 <div class="widget widget-call-to-action well-secondary">
-                    <h3 class="widget-title">Book Your Appointment</h3>
-                    <p class="text-white">Call to action widget for booking appointment online.</p>
-                    <a href="https://easetemplate.com/downloads/physiotherapy-free-website-template-download/" class="btn btn-white btn-lg">Make An Appointment</a>
+                    <h3 class="widget-title" th:text="#{label.yellowCards}"/>
+                    <th:block th:include="common/statistic/yellowCards"></th:block>
                 </div>
-
             </div>
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-primary">
+                    <h3 class="widget-title" th:text="#{label.skipGame}"/>
+                    <th:block th:include="common/statistic/skipGames"></th:block>
+                </div>
+            </div>
+
         </div></div>
 </div>
 </html>
