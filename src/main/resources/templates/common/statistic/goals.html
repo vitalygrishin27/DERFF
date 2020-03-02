@@ -1,41 +1,73 @@
-<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<div>
-    <table class="table_dark">
-        <tr th:each="game : ${games}">
-            <td>
-                <div>
-                    <label class="input--style-3" th:text="${game.stringDate}"
-                           th:id="${game.id}"/>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<link href="../static/css/widget.css" th:href="@{/css/widget.css}" rel="stylesheet" media="all"/>
+<div class="container">
+    <div class="row">
+        <h2>Call to action for <a href="https://easetemplate.com/downloads/physiotherapy-free-website-template-download/">online booking appointment</a></h2>
+    </div>
+
+    <div class="space">
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-default">
+                    <h3 class="widget-title" th:text="#{label.bombardiers}"/>
+                    <div id="bombardiers">
+                        <table style="border-spacing: 7px 11px;">
+                            <tr th:each="instance : ${bombardiers}">
+                                <td padding: 5px;>
+                                    <div>
+                                        <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <label class="input--style-3" th:text="${instance.value}"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <a onclick="getAllBombardiers()" class="btn btn-white btn-lg" th:text="#{label.showAllBombardiers}"/>
                 </div>
-            </td>
-            <td>
-                <div>
-                    <label class="input--style-3" th:text="${game.masterTeam.teamName}"/>
+
+            </div>
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-primary">
+                    <h3 class="widget-title">Book Your Appointment</h3>
+                    <p class="text-white">Call to action widget for booking appointment online.</p>
+                    <a href="https://easetemplate.com/downloads/physiotherapy-free-website-template-download/" class="btn btn-white btn-lg">Make An Appointment</a>
                 </div>
-            </td>
-            <td>
-                <div>
-                    <label class="input--style-3" th:text="${game.slaveTeam.teamName}"/>
+
+            </div>
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-secondary">
+                    <h3 class="widget-title">Book Your Appointment</h3>
+                    <p class="text-white">Call to action widget for booking appointment online.</p>
+                    <a href="https://easetemplate.com/downloads/physiotherapy-free-website-template-download/" class="btn btn-white btn-lg">Make An Appointment</a>
                 </div>
-            </td>
-            <td>
-                <!--<label th:onclick="|${game.resultSave} ?  resultIsAlreadyExist() : window.location='/administration/resultGame/${game.id}'|"-->
-                <!--style="cursor:pointer;" th:text="#{label.results}"/>-->
-                <label th:onclick="|window.location='/administration/resultGame/${game.id}'|"
-                       style="cursor:pointer;" th:text="#{label.results}"/>
-            </td>
-            <td>
-                <label th:if="${!game.resultSave}" th:onclick="|window.location='/administration/editGame/${game.id}'|" style="cursor:pointer;" th:text="#{label.edit}"/>
-            </td>
-            <td>
-                <div  style="text-align:center;">
-                    <input type="checkbox" class="checkForDelete" th:id="${game.id}">
-                    <label th:onclick="|deleteGames('${game.id}')|"
-                           style="cursor:pointer;" th:text="#{label.delete}"/>
-                </div>
-            </td>
-        </tr>
-    </table>
+
+            </div>
+        </div></div>
 </div>
+<script th:inline="javascript">
+function getAllBombardiers() {
+$.ajax({
+type: 'GET',
+url: "/bombardiers",
+success: function(html) {
+$("#bombardiers").html(html);
+}
+});
+}
+</script>
+
 </html>

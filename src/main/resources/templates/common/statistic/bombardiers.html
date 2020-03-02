@@ -1,0 +1,22 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<table>
+    <tr th:each="instance : ${bombardiers}">
+        <td>
+            <div>
+                <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
+            </div>
+        </td>
+        <td>
+            <div>
+                <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
+            </div>
+        </td>
+        <td>
+            <div>
+                <label class="input--style-3" th:text="${instance.value}"/>
+            </div>
+        </td>
+    </tr>
+</table>
+<a onclick="getAllBombardiers()" class="btn btn-white btn-lg" th:text="#{label.showAllBombardiers}"/>
+</html>
