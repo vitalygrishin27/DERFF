@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href="../static/css/widget.css" th:href="@{/css/widget.css}" rel="stylesheet" media="all"/>
+<div class="container">
+    <div class="space">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-default">
+                    <h3 class="widget-title" th:text="#{label.bombardiers}"/>
+                    <th:block th:include="common/statistic/bombardiers"></th:block>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-secondary">
+                    <h3 class="widget-title" th:text="#{label.yellowCards}"/>
+                    <th:block th:include="common/statistic/yellowCards"></th:block>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="widget widget-call-to-action well-primary">
+                    <h3 class="widget-title" th:text="#{label.skipGame}"/>
+                    <th:block th:include="common/statistic/skipGames"></th:block>
+                </div>
+            </div>
+
+        </div></div>
+</div>
+</html>

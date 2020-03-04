@@ -60,7 +60,7 @@ public class ResultGameController {
 
     @GetMapping(value = "/administration/resultGame/{id}")
     public String firstStepResultsGoalsCount(Model model, @PathVariable("id") long id) {
-        context.clear();
+        context.deleteFromContext("game");
         Game game = gameService.findGameById(id);
         if (game.isResultSave()) {
             model.addAttribute("game", game);

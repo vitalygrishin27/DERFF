@@ -1,0 +1,21 @@
+.space{padding-top:100px; padding-bottom:100px;}
+
+.btn { display: inline-block; padding: 10px 20px; margin-bottom: 0; font-size: 13px; font-weight: 800; letter-spacing: 1px; line-height: 1.42857143; text-align: center; border: none; text-transform: uppercase; border-radius: 0px; }
+.btn-default { color: #fff; background-color: #333; }
+.btn-default:hover { color: #fff; background-color: #019852; border-color: #019852; }
+.btn-default.focus, .btn-default:focus { color: #fff; background-color: #019852; border-color: #019852; }
+.btn-primary { background-color: #474747; color: #333; }
+.btn-primary:hover { background-color: #333; color: #fff; }
+
+.btn-white { color: #333; background-color: #fff; border: 1px solid #fff; }
+.btn-white:hover { background-color: #ddd; border-color: #ddd; color: #333; }
+.btn-white.focus, .btn-white:focus { background-color: #019852; border-color: #019852; color: #fff; }
+
+.widget { margin-bottom: 4px; background-color: #eef4f1; padding: 40px; }
+.widget-title { margin-bottom: 20px; margin-top:0px; }
+.well-default{background-color: #0eb769;}
+.well-primary{background-color: #ff515b;}
+.well-secondary{background-color: #0db2f0;}
+.widget-call-to-action {}
+.widget-call-to-action .widget-title{font-size: 42px; color: #fff; font-weight: 600;}
+.widget-call-to-action p{font-size: 18px; color:#fff; margin-bottom:30px;}

@@ -35,4 +35,8 @@ public class Context {
     public void clear(){
         context.clear();
     }
+
+    public boolean needShowAllBombardiers(){
+    return (boolean)context.get("needShowAllBombardiers");
+    }
 }

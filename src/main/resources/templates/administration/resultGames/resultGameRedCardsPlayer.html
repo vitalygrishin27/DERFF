@@ -15,7 +15,7 @@
         <tr>
             <td colspan="2">
                 <div class="p-t-10" style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:text="#{button.submit}" th:onClick="saveResult()"/>
+                    <a class="btn btn-lg btn-success active" th:text="#{button.save}" th:onClick="saveResult()"/>
                     </button>
                 </div>
             </td>
@@ -66,6 +66,7 @@ $(document).ready(function () {
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
+			sort(s);
 		});
 		masterListRedCards.appendChild(s);
 		if (i+1</*[[${countRedCardsMasterTeam}]]*/){
@@ -81,6 +82,7 @@ $(document).ready(function () {
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
+			sort(s);
 		});
 		slaveListRedCards.appendChild(s);
 		if (i+1</*[[${countRedCardsSlaveTeam}]]*/){

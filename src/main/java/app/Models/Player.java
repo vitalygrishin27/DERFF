@@ -82,12 +82,14 @@ public class Player implements Comparable{
     @Transient
     private int goalsCount;
 
+
   /*  @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "competition_player",
             joinColumns = @JoinColumn(name = "player_id"),
             inverseJoinColumns = @JoinColumn(name = "competition_id"))
     @Fetch(FetchMode.SUBSELECT)
     private List<Competition> competitions = new ArrayList<>();*/
+
 
     @Override
     public String toString() {
@@ -109,3 +111,4 @@ public class Player implements Comparable{
         return result;
     }
 }
+

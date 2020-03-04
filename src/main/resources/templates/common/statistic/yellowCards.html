@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="yellowCards">
+<table>
+    <tr th:each="instance : ${yellowCards}">
+        <td style="padding: 2px;">
+            <div>
+                <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
+            </div>
+        </td>
+        <td style="padding: 2px;">
+            <div>
+                <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
+            </div>
+        </td>
+        <td style="padding: 2px;">
+            <div>
+                <label class="input--style-3" th:text="${instance.value}"/>
+            </div>
+        </td>
+    </tr>
+</table>
+<a th:if="${needShowAllYellowCards}" style="width:100%" onclick="getAllYellowCards()" class="btn btn-white btn-lg" th:text="#{label.showAll}"/>
+<a th:if="${!needShowAllYellowCards}" style="width:100%" onclick="getFirstYellowCards()" class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
+</div>
+<script th:inline="javascript">
+function getFirstYellowCards() {
+    $.ajax({
+    type: 'GET',
+    data: ({
+        show: 'firsts'
+        }),
+    url: "/yellowCards",
+    success: function(html) {
+    $("#yellowCards").html(html);
+    }
+    });
+}
+function getAllYellowCards() {
+    $.ajax({
+        type: 'GET',
+        data: ({
+         show: 'all'
+        }),
+        url: "/yellowCards",
+        success: function(html) {
+    $("#yellowCards").html(html);
+    }
+    });
+}
+</script>
+</html>
