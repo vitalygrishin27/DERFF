@@ -55,6 +55,12 @@ public class CommonController {
         return "administration/mainPage";
     }
 
+    @GetMapping(value = "/clearCache")
+    public String getMainPageWithClearCache(Model model) {
+       context.clear();
+        return "redirect:/";
+    }
+
     @GetMapping(value = "/login")
     public String geLoginPage(Model model) {
         if (messageGenerator.isActive())
@@ -200,8 +206,8 @@ public class CommonController {
             }
         }
 
-
-        context.putToContext("skipGamesAll", resultAll);
+        Collections.reverse(resultAll);
+        context.putToContext("skipGamesAll",resultAll );
         List<SkipGameEntry> resultLastTour = getOnlyForLastTour(resultAll);
         context.putToContext("skipGamesLastTour", resultLastTour);
 

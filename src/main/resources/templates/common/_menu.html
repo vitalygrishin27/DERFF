@@ -12,7 +12,7 @@
             <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.users}">Пользователи</a></li>
             <li class="left-item"><a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}" th:href="@{/administration/configuration?lang=} + ${#request.Locale.getDefault()}" th:utext="#{label.configuration}">Настройки</a></li>
         </ul>
-        <a class="navbar-logo" href="/"><img src="/img/logo_small.png" th:src="@{/images/logo.png}"></a>
+        <a class="navbar-logo" href="/clearCache"><img src="/img/logo_small.png" th:src="@{/images/logo.png}"></a>
         <!-- <a th:utext="${#request.getRemoteUser()}"></a>
        https://docs.oracle.com/javaee/6/api/javax/servlet/http/HttpServletRequest.html -->
     </nav>
