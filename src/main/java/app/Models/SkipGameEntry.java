@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SkipGameEntry {
     private Player player;
     private Game game;
+    private String details;
 }

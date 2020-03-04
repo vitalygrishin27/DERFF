@@ -7,6 +7,7 @@ import app.services.impl.GoalServiceImpl;
 import app.services.impl.OffenseServiceImpl;
 import app.services.impl.TeamServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,9 @@ import java.util.*;
 
 @Controller
 public class CommonController {
+
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
 
     @Autowired
     MessageGenerator messageGenerator;
@@ -35,12 +39,16 @@ public class CommonController {
     @Autowired
     Context context;
 
+    final String DETAILS_4_YELLOW_CARDS = "details.4YellowCards";
+    final String DETAILS_RED_CARD = "details.RedCard";
+
     @GetMapping(value = "/")
     public String getMainPage(Model model) {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("bombardiers", getGoals(5));
         model.addAttribute("yellowCards", getYellowCards(5));
+        model.addAttribute("skipGames", getSkipGameListByYellowCards(1));
         model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers") == null ? Boolean.TRUE : context.getFromContext("needShowAllBombardiers"));
         model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards") == null ? Boolean.TRUE : context.getFromContext("needShowAllYellowCards"));
         model.addAttribute("needShowAllSkipGames", context.getFromContext("needShowAllSkipGames") == null ? Boolean.TRUE : context.getFromContext("needShowAllSkipGames"));
@@ -158,6 +166,7 @@ public class CommonController {
         return getSkipGameListByYellowCards(-1);
     }
 
+
     private List<SkipGameEntry> getSkipGameListByYellowCards(int countTours) {
  /*       if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
             context.putToContext("needShowAllSkipGames", Boolean.FALSE);
@@ -178,10 +187,14 @@ public class CommonController {
                 for (Offense offense : offenses
                 ) {
                     Player currentPlayer = offense.getPlayer();
-                    int countYellowCardsBefore = getCountYellowCardsBeforeCurrentGame(allGames, currentPlayer, i);
-                    // TODO: 04.03.2020 3,7,11,15 should be be continuously. Try (count+1)%4==0
-                    if (countYellowCardsBefore == 3 || countYellowCardsBefore == 7 || countYellowCardsBefore == 11 || countYellowCardsBefore == 15) {
-                        resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2));
+                    if (offense.getType().equals("RED")) {
+                        resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, 1, DETAILS_RED_CARD));
+                    } else {
+                        int countYellowCardsBefore = getCountYellowCardsBeforeCurrentGame(allGames, currentPlayer, i);
+                        // TODO: 04.03.2020 3,7,11,15 should be be continuously. Try (count+1)%4==0
+                        if (countYellowCardsBefore == 3 || countYellowCardsBefore == 7 || countYellowCardsBefore == 11 || countYellowCardsBefore == 15) {
+                            resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2, DETAILS_4_YELLOW_CARDS));
+                        }
                     }
                 }
             }
@@ -218,13 +231,14 @@ public class CommonController {
         return result;
     }
 
-    private List<SkipGameEntry> createSkipEntry(List<Game> allGames, Player player, int indexGame, int countGameToSkip) {
+    private List<SkipGameEntry> createSkipEntry(List<Game> allGames, Player player, int indexGame, int countGameToSkip, String details) {
         List<SkipGameEntry> skipGameEntryList = new LinkedList<>();
         int countAlreadyAddedToSkip = 0;
-        for (int i = indexGame; i < allGames.size(); i++) {
-            Game game = allGames.get(i + 1); //get next game after current
+        for (int i = indexGame + 1; i < allGames.size(); i++) {
+            Game game = allGames.get(i);
             if (game.getMasterTeam().equals(player.getTeam()) || game.getSlaveTeam().equals(player.getTeam())) {
-                skipGameEntryList.add(new SkipGameEntry(player, game));
+                skipGameEntryList.add(new SkipGameEntry(player, game, messageSource.getMessage(details, new Object[]{game.getMasterTeam().getTeamName(),game.getSlaveTeam().getTeamName(),game.getStringDate(),allGames.get(indexGame).getMasterTeam().getTeamName(),allGames.get(indexGame).getSlaveTeam().getTeamName(),allGames.get(indexGame).getStringDate()}, Locale.getDefault())));
+                countAlreadyAddedToSkip++;
             }
             if (countAlreadyAddedToSkip == countGameToSkip) {
                 return skipGameEntryList;
