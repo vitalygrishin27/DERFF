@@ -1,10 +1,8 @@
 package app.controllers.Common;
 
-import app.Models.Context;
-import app.Models.Offense;
-import app.Models.Player;
-import app.Models.User;
+import app.Models.*;
 import app.Utils.MessageGenerator;
+import app.services.impl.GameServiceImpl;
 import app.services.impl.GoalServiceImpl;
 import app.services.impl.OffenseServiceImpl;
 import app.services.impl.TeamServiceImpl;
@@ -32,6 +30,9 @@ public class CommonController {
     OffenseServiceImpl offenseService;
 
     @Autowired
+    GameServiceImpl gameService;
+
+    @Autowired
     Context context;
 
     @GetMapping(value = "/")
@@ -40,8 +41,9 @@ public class CommonController {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         model.addAttribute("bombardiers", getGoals(5));
         model.addAttribute("yellowCards", getYellowCards(5));
-        model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers")==null?Boolean.TRUE:context.getFromContext("needShowAllBombardiers"));
-        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards")==null?Boolean.TRUE:context.getFromContext("needShowAllYellowCards"));
+        model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers") == null ? Boolean.TRUE : context.getFromContext("needShowAllBombardiers"));
+        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards") == null ? Boolean.TRUE : context.getFromContext("needShowAllYellowCards"));
+        model.addAttribute("needShowAllSkipGames", context.getFromContext("needShowAllSkipGames") == null ? Boolean.TRUE : context.getFromContext("needShowAllSkipGames"));
         return "administration/mainPage";
     }
 
@@ -60,7 +62,7 @@ public class CommonController {
         } else {
             model.addAttribute("bombardiers", getGoals(5));
         }
-        model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers")==null?Boolean.TRUE:context.getFromContext("needShowAllBombardiers"));
+        model.addAttribute("needShowAllBombardiers", context.getFromContext("needShowAllBombardiers") == null ? Boolean.TRUE : context.getFromContext("needShowAllBombardiers"));
         return "common/statistic/bombardiers";
     }
 
@@ -71,11 +73,22 @@ public class CommonController {
         } else {
             model.addAttribute("yellowCards", getYellowCards(5));
         }
-        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards")==null?Boolean.TRUE:context.getFromContext("needShowAllYellowCards"));
+        model.addAttribute("needShowAllYellowCards", context.getFromContext("needShowAllYellowCards") == null ? Boolean.TRUE : context.getFromContext("needShowAllYellowCards"));
         return "common/statistic/yellowCards";
     }
 
-    public Map<Player, Integer> getGoals(int count) {
+    @GetMapping(value = "/skipGames")
+    public String getSkipGamesStatistic(Model model, HttpServletRequest request) {
+        if (request.getParameter("show").equals("all")) {
+            model.addAttribute("skipGames", getSkipGameListByYellowCards());
+        } else {
+            model.addAttribute("skipGames", getSkipGameListByYellowCards(1));
+        }
+        model.addAttribute("needShowAllSkipGames", context.getFromContext("needShowAllSkipGames") == null ? Boolean.TRUE : context.getFromContext("needShowAllSkipGames"));
+        return "common/statistic/skipGames";
+    }
+
+    private Map<Player, Integer> getGoals(int count) {
         if (count == -1 && context.getFromContext("bombardiersAll") != null) {
             context.putToContext("needShowAllBombardiers", Boolean.FALSE);
             return (Map<Player, Integer>) context.getFromContext("bombardiersAll");
@@ -104,7 +117,7 @@ public class CommonController {
         return resultSortedFirsts;
     }
 
-    public Map<Player, Integer> getYellowCards(int count) {
+    private Map<Player, Integer> getYellowCards(int count) {
         if (count == -1 && context.getFromContext("yellowCardsAll") != null) {
             context.putToContext("needShowAllYellowCards", Boolean.FALSE);
             return (Map<Player, Integer>) context.getFromContext("yellowCardsAll");
@@ -133,11 +146,108 @@ public class CommonController {
         return resultSortedFirsts;
     }
 
-    public Map<Player, Integer> getGoals() {
+    private Map<Player, Integer> getGoals() {
         return getGoals(-1);
     }
-    public Map<Player, Integer> getYellowCards() {
+
+    private Map<Player, Integer> getYellowCards() {
         return getYellowCards(-1);
+    }
+
+    private List<SkipGameEntry> getSkipGameListByYellowCards() {
+        return getSkipGameListByYellowCards(-1);
+    }
+
+    private List<SkipGameEntry> getSkipGameListByYellowCards(int countTours) {
+ /*       if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
+            context.putToContext("needShowAllSkipGames", Boolean.FALSE);
+            return (List<SkipGameEntry>) context.getFromContext("skipGamesAll");
+        }
+        if (countTours > 0 && context.getFromContext("skipGamesLastTour") != null) {
+            context.putToContext("needShowAllSkipGames", Boolean.TRUE);
+            return (List<SkipGameEntry>) context.getFromContext("skipGamesLastTour");
+        }
+*/
+
+        List<SkipGameEntry> resultAll = new LinkedList<>();
+        List<Game> allGames = gameService.findAllGames();
+        for (int i = 0; i < allGames.size(); i++) {
+            Game currentGame = allGames.get(i);
+            if (currentGame.isResultSave()) {
+                Collection<Offense> offenses = currentGame.getOffenses();
+                for (Offense offense : offenses
+                ) {
+                    Player currentPlayer = offense.getPlayer();
+                    int countYellowCardsBefore = getCountYellowCardsBeforeCurrentGame(allGames, currentPlayer, i);
+                    // TODO: 04.03.2020 3,7,11,15 should be be continuously. Try (count+1)%4==0
+                    if (countYellowCardsBefore == 3 || countYellowCardsBefore == 7 || countYellowCardsBefore == 11 || countYellowCardsBefore == 15) {
+                        resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2));
+                    }
+                }
+            }
+        }
+
+
+        context.putToContext("skipGamesAll", resultAll);
+        List<SkipGameEntry> resultLastTour = getOnlyForLastTour(resultAll);
+        context.putToContext("skipGamesLastTour", resultLastTour);
+
+        if (countTours > resultAll.size()) countTours = -1;
+        if (countTours == -1) {
+            context.putToContext("needShowAllSkipGames", Boolean.FALSE);
+            return resultAll;
+        }
+        context.putToContext("needShowAllSkipGames", Boolean.TRUE);
+        return resultLastTour;
+    }
+
+    private int getCountYellowCardsBeforeCurrentGame(List<Game> allGames, Player player, int gameIndex) {
+        int result = 0;
+        for (int i = 0; i < gameIndex; i++) {
+            Game game = allGames.get(i);
+            if (game.getMasterTeam().equals(player.getTeam()) || game.getSlaveTeam().equals(player.getTeam())) {
+                Collection<Offense> offenses = game.getOffenses();
+                for (Offense offense : offenses
+                ) {
+                    if (offense.getPlayer().equals(player)) {
+                        result++;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<SkipGameEntry> createSkipEntry(List<Game> allGames, Player player, int indexGame, int countGameToSkip) {
+        List<SkipGameEntry> skipGameEntryList = new LinkedList<>();
+        int countAlreadyAddedToSkip = 0;
+        for (int i = indexGame; i < allGames.size(); i++) {
+            Game game = allGames.get(i + 1); //get next game after current
+            if (game.getMasterTeam().equals(player.getTeam()) || game.getSlaveTeam().equals(player.getTeam())) {
+                skipGameEntryList.add(new SkipGameEntry(player, game));
+            }
+            if (countAlreadyAddedToSkip == countGameToSkip) {
+                return skipGameEntryList;
+            }
+        }
+        return skipGameEntryList;
+    }
+
+    private List<SkipGameEntry> getOnlyForLastTour(List<SkipGameEntry> allEntry) {
+        List<SkipGameEntry> result = new LinkedList<>();
+        try {
+            result.add(allEntry.get(allEntry.size() - 1));
+            for (int i = allEntry.size() - 2; i >= 0; i++) {
+                if (allEntry.get(i).getGame().getDate().equals(result.get(0).getGame().getDate())) {
+                    result.add(allEntry.get(i));
+                } else {
+                    return result;
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            return result;
+        }
     }
 
 
