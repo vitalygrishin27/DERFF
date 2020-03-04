@@ -168,7 +168,7 @@ public class CommonController {
 
 
     private List<SkipGameEntry> getSkipGameListByYellowCards(int countTours) {
- /*       if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
+       if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
             context.putToContext("needShowAllSkipGames", Boolean.FALSE);
             return (List<SkipGameEntry>) context.getFromContext("skipGamesAll");
         }
@@ -176,7 +176,7 @@ public class CommonController {
             context.putToContext("needShowAllSkipGames", Boolean.TRUE);
             return (List<SkipGameEntry>) context.getFromContext("skipGamesLastTour");
         }
-*/
+
 
         List<SkipGameEntry> resultAll = new LinkedList<>();
         List<Game> allGames = gameService.findAllGames();

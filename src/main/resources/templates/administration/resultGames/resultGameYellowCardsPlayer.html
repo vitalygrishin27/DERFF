@@ -66,6 +66,7 @@ $(document).ready(function () {
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
+			sort(s);
 		});
 		masterListYellowCards.appendChild(s);
 		if (i+1</*[[${countYellowCardsMasterTeam}]]*/){
@@ -81,6 +82,7 @@ $(document).ready(function () {
 			o.value = key;
 			o.text = value;
 			s.appendChild(o);
+			sort(s);
 		});
 		slaveListYellowCards.appendChild(s);
 		if (i+1</*[[${countYellowCardsSlaveTeam}]]*/){
