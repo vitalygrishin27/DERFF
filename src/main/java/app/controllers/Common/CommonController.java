@@ -256,8 +256,8 @@ public class CommonController {
     private List<SkipGameEntry> getOnlyForLastTour(List<SkipGameEntry> allEntry) {
         List<SkipGameEntry> result = new LinkedList<>();
         try {
-            result.add(allEntry.get(allEntry.size() - 1));
-            for (int i = allEntry.size() - 2; i >= 0; i++) {
+            result.add(allEntry.get(0));
+            for (int i = 1; i < allEntry.size(); i++) {
                 if (allEntry.get(i).getGame().getDate().equals(result.get(0).getGame().getDate())) {
                     result.add(allEntry.get(i));
                 } else {
