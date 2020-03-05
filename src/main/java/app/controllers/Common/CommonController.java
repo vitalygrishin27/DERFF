@@ -42,7 +42,7 @@ public class CommonController {
     final String DETAILS_4_YELLOW_CARDS = "details.4YellowCards";
     final String DETAILS_RED_CARD = "details.RedCard";
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "/start")
     public String getMainPage(Model model) {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
@@ -55,10 +55,15 @@ public class CommonController {
         return "administration/mainPage";
     }
 
+    @GetMapping(value = "/")
+    public String getMainPageWithloadingMessage(Model model) {
+        return "administration/mainPageWithLoadingMessage";
+    }
+
     @GetMapping(value = "/clearCache")
     public String getMainPageWithClearCache(Model model) {
        context.clear();
-        return "redirect:/";
+        return "administration/mainPageWithLoadingMessage";
     }
 
     @GetMapping(value = "/login")
