@@ -3,25 +3,25 @@
     <table class="table_dark">
         <tr th:each="instance : ${bombardiers}">
             <td style="padding: 2px;">
-                <nav class="navbar">
-                    <div>
+
+                    <div style="font-size: 25px; text-align:center;">
                         <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
                     </div>
-                </nav>
+
             </td>
             <td style="padding: 2px;">
-                <nav class="navbar">
-                    <div>
+
+                    <div style="font-size: 15px; text-align:center;">
                         <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
                     </div>
-                </nav>
+
             </td>
             <td style="padding: 2px;">
-                <nav class="navbar">
-                    <div>
+
+                    <div style="font-size: 20px; text-align:center;">
                         <label class="input--style-3" th:text="${instance.value}"/>
                     </div>
-                </nav>
+
             </td>
         </tr>
     </table>

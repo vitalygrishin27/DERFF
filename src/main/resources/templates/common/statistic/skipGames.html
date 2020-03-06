@@ -3,24 +3,24 @@
     <table class="table_dark">
         <tr th:each="instance : ${skipGames}">
             <td style="padding: 2px;">
-                <nav class="navbar">
-                    <div>
+
+                    <div  style="font-size: 25px; text-align:center;">
                         <label class="input--style-3"
                                th:text="${instance.player.lastName+' '+instance.player.firstName}"/>
                     </div>
-                </nav>
+
             </td>
             <td style="padding: 2px;">
-                <nav class="navbar">
-                    <div>
+
+                    <div  style="font-size: 15px; text-align:center;">
                         <label class="input--style-3" th:text="${instance.player.team.teamName}"/>
                     </div>
-                </nav>
+
             </td>
             <td style="padding: 2px;">
                 <nav class="navbar">
                     <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;  font-size: 20px; text-align:center;"
                        th:text="${instance.stringDate}"/>
 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
