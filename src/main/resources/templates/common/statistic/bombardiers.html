@@ -1,26 +1,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div id="bombardiers">
-<table>
-    <tr th:each="instance : ${bombardiers}">
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.value}"/>
-            </div>
-        </td>
-    </tr>
-</table>
-<a th:if="${needShowAllBombardiers}" style="width:100%" onclick="getAllBombardiers()" class="btn btn-white btn-lg" th:text="#{label.showAll}"/>
-<a th:if="${!needShowAllBombardiers}" style="width:100%" onclick="getFirstBombardiers()" class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
+    <table>
+        <tr th:each="instance : ${bombardiers}">
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.value}"/>
+                    </div>
+                </nav>
+            </td>
+        </tr>
+    </table>
+    <a th:if="${needShowAllBombardiers}" style="width:100%" onclick="getAllBombardiers()" class="btn btn-white btn-lg"
+       th:text="#{label.showAll}"/>
+    <a th:if="${!needShowAllBombardiers}" style="width:100%" onclick="getFirstBombardiers()"
+       class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
 </div>
 <script th:inline="javascript">
 function getFirstBombardiers() {
@@ -47,5 +55,7 @@ function getAllBombardiers() {
     }
     });
 }
+
+
 </script>
 </html>

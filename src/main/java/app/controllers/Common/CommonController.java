@@ -248,7 +248,7 @@ public class CommonController {
         for (int i = indexGame + 1; i < allGames.size(); i++) {
             Game game = allGames.get(i);
             if (game.getMasterTeam().equals(player.getTeam()) || game.getSlaveTeam().equals(player.getTeam())) {
-                skipGameEntryList.add(new SkipGameEntry(player, game, messageSource.getMessage(details, new Object[]{game.getMasterTeam().getTeamName(),game.getSlaveTeam().getTeamName(),game.getStringDate(),allGames.get(indexGame).getMasterTeam().getTeamName(),allGames.get(indexGame).getSlaveTeam().getTeamName(),allGames.get(indexGame).getStringDate()}, Locale.getDefault())));
+                skipGameEntryList.add(new SkipGameEntry(player, game, game.getStringDate(),messageSource.getMessage(details, new Object[]{game.getMasterTeam().getTeamName(),game.getSlaveTeam().getTeamName(),game.getStringDate(),allGames.get(indexGame).getMasterTeam().getTeamName(),allGames.get(indexGame).getSlaveTeam().getTeamName(),allGames.get(indexGame).getStringDate()}, Locale.getDefault())));
                 countAlreadyAddedToSkip++;
             }
             if (countAlreadyAddedToSkip == countGameToSkip) {

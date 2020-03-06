@@ -1,26 +1,41 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div id="skipGames">
-<table>
-    <tr th:each="instance : ${skipGames}">
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.player.lastName+' '+instance.player.firstName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.player.team.teamName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.details}"/>
-            </div>
-        </td>
-    </tr>
-</table>
-<a th:if="${needShowAllSkipGames}" style="width:100%" onclick="getAllSkipGames()" class="btn btn-white btn-lg" th:text="#{label.showAll}"/>
-<a th:if="${!needShowAllSkipGames}" style="width:100%" onclick="getLastTourSkipGames()" class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
+    <table>
+        <tr th:each="instance : ${skipGames}">
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3"
+                               th:text="${instance.player.lastName+' '+instance.player.firstName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.player.team.teamName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                       th:text="${instance.stringDate}"/>
+
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <div style="margin: 20px;">
+                            <label class="input--style-3" th:text="${instance.details}"/>
+                        </div>
+                    </div>
+                </nav>
+            </td>
+        </tr>
+    </table>
+    <a th:if="${needShowAllSkipGames}" style="width:100%" onclick="getAllSkipGames()" class="btn btn-white btn-lg"
+       th:text="#{label.showAll}"/>
+    <a th:if="${!needShowAllSkipGames}" style="width:100%" onclick="getLastTourSkipGames()" class="btn btn-white btn-lg"
+       th:text="#{label.showFirst}"/>
 </div>
 <script th:inline="javascript">
 function getLastTourSkipGames() {
@@ -47,5 +62,10 @@ function getAllSkipGames() {
     }
     });
 }
+
+
+
+
+
 </script>
 </html>

@@ -1,26 +1,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div id="yellowCards">
-<table>
-    <tr th:each="instance : ${yellowCards}">
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
-            </div>
-        </td>
-        <td style="padding: 2px;">
-            <div>
-                <label class="input--style-3" th:text="${instance.value}"/>
-            </div>
-        </td>
-    </tr>
-</table>
-<a th:if="${needShowAllYellowCards}" style="width:100%" onclick="getAllYellowCards()" class="btn btn-white btn-lg" th:text="#{label.showAll}"/>
-<a th:if="${!needShowAllYellowCards}" style="width:100%" onclick="getFirstYellowCards()" class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
+    <table>
+        <tr th:each="instance : ${yellowCards}">
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3"
+                               th:text="${instance.key.lastName+' '+instance.key.firstName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.key.team.teamName}"/>
+                    </div>
+                </nav>
+            </td>
+            <td style="padding: 2px;">
+                <nav class="navbar">
+                    <div>
+                        <label class="input--style-3" th:text="${instance.value}"/>
+                    </div>
+                </nav>
+            </td>
+        </tr>
+    </table>
+    <a th:if="${needShowAllYellowCards}" style="width:100%" onclick="getAllYellowCards()" class="btn btn-white btn-lg"
+       th:text="#{label.showAll}"/>
+    <a th:if="${!needShowAllYellowCards}" style="width:100%" onclick="getFirstYellowCards()"
+       class="btn btn-white btn-lg" th:text="#{label.showFirst}"/>
+    <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" title="Click to return on the top page" data-toggle="tooltip" data-placement="left"><span class="glyphicon glyphicon-chevron-up"></span></a>
 </div>
 <script th:inline="javascript">
 function getFirstYellowCards() {
@@ -47,5 +57,9 @@ function getAllYellowCards() {
     }
     });
 }
+
+
+
+
 </script>
 </html>
