@@ -13,9 +13,9 @@
 
 .widget { margin-bottom: 4px; background-color: #eef4f1; padding: 40px; }
 .widget-title { margin-bottom: 20px; margin-top:0px; }
-.well-default{background-color: #0eb769;}
-.well-primary{background-color: #ff515b;}
-.well-secondary{background-color: #0db2f0;}
+.well-default{background: transparent;}
+.well-primary{background: transparent;}
+.well-secondary{background: transparent;}
 .widget-call-to-action {}
 .widget-call-to-action .widget-title{font-size: 42px; color: #fff; font-weight: 600;}
 .widget-call-to-action p{font-size: 18px; color:#fff; margin-bottom:30px;}
