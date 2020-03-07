@@ -35,6 +35,19 @@
     <table class="table_dark">
         <tr>
             <td width="50%">
+                <input type="checkbox" th:utext="#{label.technicalWin}"
+
+                       name="technicalWinMasterTeam" onchange="cancelAnotherCheckBox('technicalWinSlaveTeam');" id="technicalWinMasterTeam">
+            </td>
+            <td width="50%">
+                <input type="checkbox" th:utext="#{label.technicalWin}"
+
+                       name="technicalWinSlaveTeam" onchange="cancelAnotherCheckBox('technicalWinMasterTeam');" id="technicalWinSlaveTeam">
+            </td>
+
+        </tr>
+        <tr>
+            <td width="50%">
                 <input class="input--style-3" type="number" min="0" max="20" step="1"
                        placeholder="defaultGoalsCount"
                        th:placeholder="#{placeholder.defaultGoalsCount}" name="countGoalsMasterTeam"
@@ -63,19 +76,42 @@
 function getSecondStep() {
 var countGoalsMasterTeam= document.getElementById("countGoalsMasterTeam").value;
 var countGoalsSlaveTeam= document.getElementById("countGoalsSlaveTeam").value;
-    $.ajax({
+ if (technicalWinMasterTeam.checked || technicalWinSlaveTeam.checked){
+        $.ajax({
+            type: 'POST',
+            url: "/administration/resultGame",
+            data: ({
+                step: 'goalsCount',
+            countGoalsMasterTeam:countGoalsMasterTeam,
+            countGoalsSlaveTeam:countGoalsSlaveTeam,
+            technicalWinMasterTeam:technicalWinMasterTeam.checked,
+            technicalWinSlaveTeam:technicalWinSlaveTeam.checked
+            }),
+            cache: false,
+            success: function(msg){
+            location.href = "/administration/calendar";
+            }
+        });
+
+ }else{
+     $.ajax({
         type: 'POST',
         url: "/administration/resultGame",
         data: ({
             step: 'goalsCount',
             countGoalsMasterTeam:countGoalsMasterTeam,
-            countGoalsSlaveTeam:countGoalsSlaveTeam
+            countGoalsSlaveTeam:countGoalsSlaveTeam,
+            technicalWinMasterTeam:technicalWinMasterTeam.checked,
+            technicalWinSlaveTeam:technicalWinSlaveTeam.checked
         }),
         cache: false,
         success: function(html) {
             $("#secondStep").html(html);
         }
     });
+
+ }
+
 }
 
 function sort(selElem){
@@ -94,6 +130,11 @@ var tmpAry = new Array();
         selElem.options[i] = op;
     }
     return;
+}
+
+function cancelAnotherCheckBox(checkboxId){
+    var chb= document.getElementById(checkboxId);
+    chb.checked='';
 }
 </script>
 </body>

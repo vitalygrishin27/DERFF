@@ -62,6 +62,12 @@ public class Game {
 
     private Integer slaveGoalsCount;
 
+    @Column(name = "technical_master_team_win", nullable = false)
+    private boolean technicalMasterTeamWin;
+
+    @Column(name = "technical_slave_team_win", nullable = false)
+    private boolean technicalSlaveTeamWin;
+
     public void addGoal(Goal goal){
         goals.add(goal);
     }

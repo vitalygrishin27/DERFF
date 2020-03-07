@@ -211,7 +211,7 @@ public class PlayerController {
             if (player.getId() != 0 && needToReplaceFile) {
                 player.setPhoto(null);
                 player.setPhotoString(null);
-            } else if (!needToReplaceFile) {
+            } else if (player.getId()!=0 && !needToReplaceFile) {
                 player.setPhoto(playerService.findPlayerById(player.getId()).getPhoto());
                 player.setPhotoString(playerService.findPlayerById(player.getId()).getPhotoString());
             }

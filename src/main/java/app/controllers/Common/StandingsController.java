@@ -3,7 +3,6 @@ package app.controllers.Common;
 import app.Models.Game;
 import app.Models.StandingsRow;
 import app.Models.Team;
-import app.exceptions.DerffException;
 import app.services.impl.CompetitionServiceImpl;
 import app.services.impl.GameServiceImpl;
 import app.services.impl.TeamServiceImpl;
@@ -41,9 +40,9 @@ public class StandingsController {
                 if (team.equals(game.getMasterTeam())) {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
                     standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getSlaveGoalsCount());
-                    if (game.getMasterGoalsCount().equals(game.getSlaveGoalsCount())) {
+                    if (game.getMasterGoalsCount().equals(game.getSlaveGoalsCount()) && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
                         standingsRow.setDraws(standingsRow.getDraws() + 1);
-                    } else if (game.getMasterGoalsCount() > game.getSlaveGoalsCount()) {
+                    } else if (game.getMasterGoalsCount() > game.getSlaveGoalsCount() || game.isTechnicalMasterTeamWin()) {
                         standingsRow.setWins(standingsRow.getWins() + 1);
                     } else {
                         standingsRow.setLosses(standingsRow.getLosses() + 1);
@@ -51,9 +50,9 @@ public class StandingsController {
                 } else {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getSlaveGoalsCount());
                     standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getMasterGoalsCount());
-                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())) {
+                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())  && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
                         standingsRow.setDraws(standingsRow.getDraws() + 1);
-                    } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount()) {
+                    } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount() || game.isTechnicalSlaveTeamWin()) {
                         standingsRow.setWins(standingsRow.getWins() + 1);
                     } else {
                         standingsRow.setLosses(standingsRow.getLosses() + 1);

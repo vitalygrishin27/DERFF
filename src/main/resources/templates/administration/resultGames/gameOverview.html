@@ -44,6 +44,14 @@
                 </div>
             </td>
         </tr>
+        <tr th:if="${game.technicalMasterTeamWin || game.technicalSlaveTeamWin}">
+            <td colspan="2">
+                <label th:if="${technicalWinMasterTeam}"  th:utext="#{label.technicalWin}"/>
+            </td>
+            <td colspan="2">
+                <label th:if="${technicalWinSlaveTeam}" th:utext="#{label.technicalWin}"/>
+            </td>
+        </tr>
         <tr th:if="${#lists.size(masterPlayersGoals)>0 || #lists.size(slavePlayersGoals)>0}">
             <td style="align:center;" colspan="4">
                 <div class="input-group"
