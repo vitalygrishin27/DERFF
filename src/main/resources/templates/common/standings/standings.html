@@ -24,14 +24,14 @@
             <th>
                 <label class="input--style-3" th:text="#{standingRow.label.games}"/>
             </th>
-            <th style="background: #328734">
-                <label class="input--style-3" th:text="#{standingRow.label.wins}" style="color: #09008a"/>
+            <th>
+                <label class="input--style-3" th:text="#{standingRow.label.wins}" />
             </th>
-            <th style="background: #e3d432; color: #09008a">
-                <label class="input--style-3" th:text="#{standingRow.label.draws}" style="color: #09008a"/>
+            <th>
+                <label class="input--style-3" th:text="#{standingRow.label.draws}"/>
             </th>
-            <th style="background: #9e1616">
-                <label class="input--style-3" th:text="#{standingRow.label.loses}" style="color: #09008a"/>
+            <th>
+                <label class="input--style-3" th:text="#{standingRow.label.loses}" />
             </th>
             <th>
                 <label class="input--style-3" th:text="#{standingRow.label.ratio}"/>
@@ -43,30 +43,30 @@
 
 
         <tr th:each="standingRow, custStat: ${standings}">
-            <td th:text="${custStat.count}"/>
+            <td th:text="${custStat.count}" style="font-size: 15pt; font-weight: 600;" />
             <td>
                 <div>
-                    <label class="input--style-3" th:text="${standingRow.teamName}"/>
+                    <label class="input--style-3" th:text="${standingRow.teamName}" style="font-size: 15pt; font-weight: 600;"/>
                 </div>
             </td>
             <td style="text-align: center">
                 <div>
-                    <label class="input--style-3" th:text="${standingRow.games}"/>
+                    <label class="input--style-3" th:text="${standingRow.games}" style="font-size: 15pt; font-weight: 600;"/>
                 </div>
             </td>
             <td style="background: #328734; text-align: center">
                 <div>
-                    <label class="input--style-3" th:text="${standingRow.wins}" style="font-weight: 1000; "/>
+                    <label class="input--style-3" th:text="${standingRow.wins}" style="font-size: 15pt; font-weight: 600;"/>
                 </div>
             </td>
             <td style="background: #e3d432; text-align: center">
                 <div>
-                    <label class="input--style-3" th:text="${standingRow.draws}" style="color: #252F48; font-weight: 600;"/>
+                    <label class="input--style-3" th:text="${standingRow.draws}" style="font-size: 15pt; color: #252F48; font-weight: 600;"/>
                 </div>
             </td>
             <td style="background: #9e1616;text-align: center">
                 <div>
-                    <label class="input--style-3" th:text="${standingRow.losses}"/>
+                    <label class="input--style-3" th:text="${standingRow.losses}" style="font-size: 15pt; font-weight: 600;"/>
                 </div>
             </td>
             <td style="text-align: center">
