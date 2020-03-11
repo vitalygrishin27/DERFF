@@ -1,0 +1,32 @@
+package app.Models;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Data
+@Table(name = "manual_skip_games")
+public class ManualSkipGame {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO, generator="native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "id",nullable = false,unique = true)
+    private long id;
+
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_player")
+    private Player player;
+
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_game")
+    private Game StartingFromGame;
+
+    @Column(name = "count_of_skipped_games")
+    private Integer countOfSkippedGames;
+}

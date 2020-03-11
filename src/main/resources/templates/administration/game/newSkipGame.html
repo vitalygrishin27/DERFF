@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.newSkipGame}"></title>
+<th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+    <div class="wrapper wrapper--w780">
+        <div class="card card-3">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <h3 class="title" th:utext="#{titlePage.newSkipGame}"/>
+                <form method="POST" enctype="multipart/form-data" th:object="${game}">
+                    <div class="input-group">
+                        <p th:text="#{placeholder.competition}" style="color:#ffff00"/>
+                        <select id="competition" name="competition" style="width:100%" th:field="*{competition.name}">
+                            <option th:each="competition : ${competitions}"  th:utext="${competition.name}" th:value="${competition.name}"/>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.master}" style="color:#ffff00"/>
+                        <select id="masterTeam" name="masterTeamName" style="width:100%">
+                            <option th:each="team : ${teams}" th:utext="${team.teamName}"/>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.slave}" style="color:#ffff00"/>
+                        <select id="slaveTeam" name="slaveTeamName" style="width:100%">
+                            <option th:each="team : ${teams}" th:utext="${team.teamName}"/>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.shortDate}" style="color:#ffff00"/>
+                        <input type="date" th:name="stringDate" required>
+                    </div>
+                    <div class="p-t-10">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/); });/*]]>*/
+</script>
+</body>
+</html>

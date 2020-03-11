@@ -1,6 +1,7 @@
 package app.controllers.Administration;
 
 import app.Models.*;
+import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -71,16 +73,16 @@ public class GameController {
 
     @PostMapping(value = "/administration/gameUpcomingList")
     public String getUpcomingGames(Model model) throws DerffException {
-        Calendar cal=Calendar.getInstance();
-        cal.add(Calendar.YEAR,1);
-        Date resultDate=cal.getTime();
-        for (Game game:gameService.findAllGames()
-             ) {
-            if(game.getDate().before(resultDate)){
-                resultDate=game.getDate();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, 1);
+        Date resultDate = cal.getTime();
+        for (Game game : gameService.findAllGames()
+        ) {
+            if (game.getDate().before(resultDate)) {
+                resultDate = game.getDate();
             }
         }
-        return getGamesByDate(model,new SimpleDateFormat("yyyy-MM-dd").format(resultDate),"date",-1L);
+        return getGamesByDate(model, new SimpleDateFormat("yyyy-MM-dd").format(resultDate), "date", -1L);
     }
 
     @PostMapping(value = "/administration/gameListByDate")
@@ -101,7 +103,7 @@ public class GameController {
                         break;
                     }
                     if (competitionId == -1) {
-                        games = gameService.findGamesBetweenDates(date,dateTo);
+                        games = gameService.findGamesBetweenDates(date, dateTo);
                     } else {
                         games = gameService.findGamesBetweenDatesAndCompetition(date, dateTo, competitionService.findCompetitionById(competitionId));
                     }
@@ -195,10 +197,10 @@ public class GameController {
         game.setSlaveTeam(teamService.findTeamByName(slaveTeamName));
         game.setStringDate(stringDate);
         try {
-            Date date=new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
-            Calendar cal=Calendar.getInstance();
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+            Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            cal.add(Calendar.HOUR,6);
+            cal.add(Calendar.HOUR, 6);
             game.setDate(cal.getTime());
         } catch (ParseException e) {
             throw new DerffException("date", game);
@@ -237,9 +239,9 @@ public class GameController {
 
     @PostMapping(value = "/administration/editGame/{id}")
     public String saveGameAfterEdit(@ModelAttribute("game") Game game,
-                                      @ModelAttribute("masterTeamName") String masterTeamName,
-                                      @ModelAttribute("slaveTeamName") String slaveTeamName,
-                                      @ModelAttribute("stringDate") String stringDate
+                                    @ModelAttribute("masterTeamName") String masterTeamName,
+                                    @ModelAttribute("slaveTeamName") String slaveTeamName,
+                                    @ModelAttribute("stringDate") String stringDate
     ) throws DerffException {
 
         validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
@@ -293,4 +295,18 @@ public class GameController {
 
     }
 
+    @GetMapping(value = "/administration/manualSkipGames")
+    public String getFormForSkipGamesManually(Model model) {
+        return "administration/game/skipGamesManually";
+    }
+
+    @PostMapping(value = "/administration/manualSkipGames/{teamId}/{id}")
+    // TODO: 10.03.2020 NOT IMPLEMENTED
+    public String skipGamesManually(@ModelAttribute("command") String command,
+                                    @PathVariable("teamId") long teamId,
+                                    @PathVariable("id") long playerId,
+                                    HttpServletRequest request) {
+        System.out.println(command);
+        return "administration/game/skipGamesManually";
+    }
 }
