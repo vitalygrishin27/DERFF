@@ -10,7 +10,7 @@
         <tr>
             <td>
                 <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:onclick="gotoCreatingSkipGames()"
+                    <a class="btn btn-lg btn-success active" th:onclick="window.location='/administration/newPlayer/'+selectedId;"
                        th:text="#{label.addSkipGamesManual}"/>
                 </div>
             </td>
@@ -43,7 +43,7 @@
 show();
 });/*]]>*/
 
-function gotoCreatingPlayer(){
+function gotoCreatingSkipGames(){
     var s = document.querySelector('select');
     var indexSelected = s.selectedIndex;
     option = s.querySelectorAll('option')[indexSelected];

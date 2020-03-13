@@ -295,10 +295,16 @@ public class GameController {
 
     }
 
-    @GetMapping(value = "/administration/manualSkipGames")
+    @GetMapping(value = "/administration/listSkipGames")
     public String getFormForSkipGamesManually(Model model) {
         return "administration/game/skipGamesManually";
     }
+
+    @GetMapping(value = "/administration/newManualSkipGames")
+    public String getFormForNewSkipGamesManually(Model model) {
+        return "administration/game/newManualSkipGames";
+    }
+
 
     @PostMapping(value = "/administration/manualSkipGames/{teamId}/{id}")
     // TODO: 10.03.2020 NOT IMPLEMENTED
