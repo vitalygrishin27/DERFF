@@ -38,7 +38,7 @@
        th:text="#{label.showFirst}"/>
     <br/>
     <a th:if="${#request.userPrincipal != null and #request.userPrincipal.getAuthorities().iterator().next().getAuthority() == 'ADMINISTRATOR'}"
-       style="width:100%" onclick="getLastTourSkipGames()" class="btn btn-white btn-lg" th:text="#{label.addSkipGamesManual}" th:href="|/administration/manualSkipGames|"/>
+       style="width:100%" onclick="getLastTourSkipGames()" class="btn btn-white btn-lg" th:text="#{label.addSkipGamesManual}" th:href="|/administration/newManualSkipGame|"/>
 </div>
 <script th:inline="javascript">
 function getLastTourSkipGames() {

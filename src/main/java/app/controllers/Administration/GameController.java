@@ -300,9 +300,11 @@ public class GameController {
         return "administration/game/skipGamesManually";
     }
 
-    @GetMapping(value = "/administration/newManualSkipGames")
+    @GetMapping(value = "/administration/newManualSkipGame")
     public String getFormForNewSkipGamesManually(Model model) {
-        return "administration/game/newManualSkipGames";
+       model.addAttribute("manualSkipGame", new ManualSkipGame());
+       model.addAttribute("teams", teamService.findAllTeams());
+        return "administration/game/newManualSkipGame";
     }
 
 

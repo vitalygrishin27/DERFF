@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,10 +24,18 @@ public class ManualSkipGame {
     @JoinColumn(name = "id_player")
     private Player player;
 
-    @ManyToOne (optional = false)
-    @JoinColumn(name = "id_game")
-    private Game StartingFromGame;
+    @Column(name = "start_date")
+    private Date startDate;
 
-    @Column(name = "count_of_skipped_games")
-    private Integer countOfSkippedGames;
+    @Column(name="string_start_date")
+    private String stringStartDate;
+
+    @Column(name = "end_date")
+    private Date endDate;
+
+    @Column(name="string_end_date")
+    private String stringEndDate;
+
+    @Column(name="description")
+    private String description;
 }

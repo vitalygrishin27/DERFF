@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.newSkipGame}"></title>
+<th:block th:include="common/common"></th:block>
+<link href="../static/css/main.css" th:href="@{/css/main.css}" rel="stylesheet" media="all"/>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+    <div class="wrapper wrapper--w780">
+        <div class="card card-3">
+            <div class="card-heading"></div>
+            <div class="card-body">
+                <h3 class="title" th:utext="#{titlePage.newSkipGame}"/>
+                <form method="POST" enctype="multipart/form-data" th:object="${manualSkipGame}">
+                    <div class="input-group">
+                        <p th:text="#{placeholder.team}" style="color:#ffff00"/>
+                        <select id="team" name="teamName" style="width:100%" th:onChange="updatePlayerList()">
+                            <option th:each="team : ${teams}" th:utext="${team.teamName}" th:id="${team.id}"/>
+                        </select>
+                    </div>
+                    <div id="playerList">
+                        <div class="input-group">
+                            <p th:text="#{placeholder.player}" style="color:#ffff00"/>
+                            <select id="player" name="player" style="width:100%">
+                                <option/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.startDate}" style="color:#ffff00"/>
+                        <input type="date" th:name="stringStartDate" required>
+                    </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.endDate}" style="color:#ffff00"/>
+                        <input type="date" th:name="stringEndDate" required>
+                    </div>
+                    <div class="p-t-10">
+                        <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/ $(document).ready(function () {
+     updatePlayerList();
+    loadMessage( /*[[${message}]]*/); });
+
+function updatePlayerList() {
+    var t = document.getElementById('team');
+    t.disabled=true;
+    var indexSelected = t.selectedIndex;
+    option = t.querySelectorAll('option')[indexSelected];
+    var selectedId = option.getAttribute('id');
+    $.ajax({
+        type: 'POST',
+        url: "/administration/playerListByTeamInSelectBox/"+selectedId,
+        data: ({
+            teamId: selectedId
+        }),
+        cache: false,
+        success: function(html) {
+           $("#playerList").html(html);
+               t.disabled=false;
+        }
+    });
+}
+</script>
+</body>
+</html>

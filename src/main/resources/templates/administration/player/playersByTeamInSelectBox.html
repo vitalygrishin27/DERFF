@@ -1,0 +1,9 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="input-group">
+    <p th:text="#{placeholder.player}" style="color:#ffff00"/>
+    <select id="player" name="player" style="width:100%">
+        <option th:each="player : ${players}" th:utext="${player.lastName}" th:id="${player.id}"/>
+    </select>
+</div>
+</html>

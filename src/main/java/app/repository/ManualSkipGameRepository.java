@@ -1,6 +1,5 @@
 package app.repository;
 
-
 import app.Models.ManualSkipGame;
 import org.springframework.data.jpa.repository.JpaRepository;
 

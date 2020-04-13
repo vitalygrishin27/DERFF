@@ -81,6 +81,14 @@ public class PlayerController {
         return "administration/player/playersByTeam";
     }
 
+    @PostMapping(value = "/administration/playerListByTeamInSelectBox/{id}")
+    public String playerListByTeamInSelectBox(Model model, @PathVariable("id") long id) {
+        List players = playerService.findAllActivePlayersInTeam(teamService.findTeamById(id));
+        Collections.sort(players);
+        model.addAttribute("players", players);
+        return "administration/player/playersByTeamInSelectBox";
+    }
+
     @GetMapping(value = "/administration/newPlayer/{id}")
     public String getFormforNewPlayer(Model model, @PathVariable("id") long id) {
         Player player = new Player();
@@ -211,7 +219,7 @@ public class PlayerController {
             if (player.getId() != 0 && needToReplaceFile) {
                 player.setPhoto(null);
                 player.setPhotoString(null);
-            } else if (player.getId()!=0 && !needToReplaceFile) {
+            } else if (player.getId() != 0 && !needToReplaceFile) {
                 player.setPhoto(playerService.findPlayerById(player.getId()).getPhoto());
                 player.setPhotoString(playerService.findPlayerById(player.getId()).getPhotoString());
             }

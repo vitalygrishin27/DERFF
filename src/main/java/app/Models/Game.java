@@ -26,7 +26,6 @@ public class Game {
     @Column(name = "id", nullable = false, unique = true)
     private long id;
 
-
     @Column(name = "date")
     private Date date;
 
