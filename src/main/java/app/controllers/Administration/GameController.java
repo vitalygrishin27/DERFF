@@ -1,6 +1,7 @@
 package app.controllers.Administration;
 
 import app.Models.*;
+import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -47,6 +49,9 @@ public class GameController {
     GoalServiceImpl goalService;
 
     @Autowired
+    ManualSkipGameServiceImpl manualSkipGameService;
+
+    @Autowired
     ReloadableResourceBundleMessageSource messageSource;
 
     private static final Logger logger = Logger.getLogger(GameController.class);
@@ -71,16 +76,16 @@ public class GameController {
 
     @PostMapping(value = "/administration/gameUpcomingList")
     public String getUpcomingGames(Model model) throws DerffException {
-        Calendar cal=Calendar.getInstance();
-        cal.add(Calendar.YEAR,1);
-        Date resultDate=cal.getTime();
-        for (Game game:gameService.findAllGames()
-             ) {
-            if(game.getDate().before(resultDate)){
-                resultDate=game.getDate();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, 1);
+        Date resultDate = cal.getTime();
+        for (Game game : gameService.findAllGames()
+        ) {
+            if (game.getDate().before(resultDate)) {
+                resultDate = game.getDate();
             }
         }
-        return getGamesByDate(model,new SimpleDateFormat("yyyy-MM-dd").format(resultDate),"date",-1L);
+        return getGamesByDate(model, new SimpleDateFormat("yyyy-MM-dd").format(resultDate), "date", -1L);
     }
 
     @PostMapping(value = "/administration/gameListByDate")
@@ -101,7 +106,7 @@ public class GameController {
                         break;
                     }
                     if (competitionId == -1) {
-                        games = gameService.findGamesBetweenDates(date,dateTo);
+                        games = gameService.findGamesBetweenDates(date, dateTo);
                     } else {
                         games = gameService.findGamesBetweenDatesAndCompetition(date, dateTo, competitionService.findCompetitionById(competitionId));
                     }
@@ -195,10 +200,10 @@ public class GameController {
         game.setSlaveTeam(teamService.findTeamByName(slaveTeamName));
         game.setStringDate(stringDate);
         try {
-            Date date=new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
-            Calendar cal=Calendar.getInstance();
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(stringDate);
+            Calendar cal = Calendar.getInstance();
             cal.setTime(date);
-            cal.add(Calendar.HOUR,6);
+            cal.add(Calendar.HOUR, 6);
             game.setDate(cal.getTime());
         } catch (ParseException e) {
             throw new DerffException("date", game);
@@ -237,9 +242,9 @@ public class GameController {
 
     @PostMapping(value = "/administration/editGame/{id}")
     public String saveGameAfterEdit(@ModelAttribute("game") Game game,
-                                      @ModelAttribute("masterTeamName") String masterTeamName,
-                                      @ModelAttribute("slaveTeamName") String slaveTeamName,
-                                      @ModelAttribute("stringDate") String stringDate
+                                    @ModelAttribute("masterTeamName") String masterTeamName,
+                                    @ModelAttribute("slaveTeamName") String slaveTeamName,
+                                    @ModelAttribute("stringDate") String stringDate
     ) throws DerffException {
 
         validateGameInformation(game, masterTeamName, slaveTeamName, stringDate);
@@ -291,6 +296,38 @@ public class GameController {
             throw new DerffException("database", game, new Object[]{e.getMessage()});
         }
 
+    }
+
+    @GetMapping(value = "/administration/listSkipGames")
+    public String getFormForSkipGamesManually(Model model) {
+        return "administration/game/skipGamesManually";
+    }
+
+    @GetMapping(value = "/administration/newManualSkipGame")
+    public String getFormForNewSkipGamesManually(Model model) {
+        model.addAttribute("manualSkipGame", new ManualSkipGame());
+        model.addAttribute("teams", teamService.findAllTeams());
+        return "administration/game/newManualSkipGame";
+    }
+
+    @PostMapping(value = "/administration/newManualSkipGame")
+    public String setNewManualSkipGame(@ModelAttribute("manualSkipGame") ManualSkipGame manualSkipGame) throws ParseException {
+        setDate(manualSkipGame);
+        manualSkipGameService.save(manualSkipGame);
+        return "redirect:/";
+    }
+
+    private void setDate(ManualSkipGame manualSkipGame) throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(manualSkipGame.getStringStartDate());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, 6);
+        manualSkipGame.setStartDate(cal.getTime());
+
+       date = new SimpleDateFormat("yyyy-MM-dd").parse(manualSkipGame.getStringEndDate());
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, 6);
+        manualSkipGame.setEndDate(cal.getTime());
     }
 
 }

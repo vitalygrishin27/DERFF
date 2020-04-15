@@ -2,10 +2,7 @@ package app.controllers.Common;
 
 import app.Models.*;
 import app.Utils.MessageGenerator;
-import app.services.impl.GameServiceImpl;
-import app.services.impl.GoalServiceImpl;
-import app.services.impl.OffenseServiceImpl;
-import app.services.impl.TeamServiceImpl;
+import app.services.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -37,10 +34,14 @@ public class CommonController {
     GameServiceImpl gameService;
 
     @Autowired
+    ManualSkipGameServiceImpl manualSkipGameService;
+
+    @Autowired
     Context context;
 
     final String DETAILS_4_YELLOW_CARDS = "details.4YellowCards";
     final String DETAILS_RED_CARD = "details.RedCard";
+    final String DETAILS_MANUAL_RED_CARD = "details.ManualRedCard";
 
     @GetMapping(value = "/start")
     public String getMainPage(Model model) {
@@ -56,13 +57,13 @@ public class CommonController {
     }
 
     @GetMapping(value = "/")
-    public String getMainPageWithloadingMessage(Model model) {
+    public String getMainPageWithLoadingMessage(Model model) {
         return "administration/mainPageWithLoadingMessage";
     }
 
     @GetMapping(value = "/clearCache")
     public String getMainPageWithClearCache(Model model) {
-       context.clear();
+        context.clear();
         return "administration/mainPageWithLoadingMessage";
     }
 
@@ -179,7 +180,7 @@ public class CommonController {
 
 
     private List<SkipGameEntry> getSkipGameListByYellowCards(int countTours) {
-       if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
+        if (countTours == -1 && context.getFromContext("skipGamesAll") != null) {
             context.putToContext("needShowAllSkipGames", Boolean.FALSE);
             return (List<SkipGameEntry>) context.getFromContext("skipGamesAll");
         }
@@ -193,18 +194,25 @@ public class CommonController {
         List<Game> allGames = gameService.findAllGames();
         for (int i = 0; i < allGames.size(); i++) {
             Game currentGame = allGames.get(i);
+            for (ManualSkipGame manualSkipGame : manualSkipGameService.findByGame(currentGame)
+            ) {
+                if (manualSkipGame.getPlayer().getTeam().equals(currentGame.getMasterTeam()) ||
+                        manualSkipGame.getPlayer().getTeam().equals(currentGame.getSlaveTeam())) {
+                    resultAll.addAll(createSkipEntry(allGames, manualSkipGame.getPlayer(), i-1, 1, DETAILS_MANUAL_RED_CARD, manualSkipGame.getDescription()));
+                }
+            }
             if (currentGame.isResultSave()) {
                 Collection<Offense> offenses = currentGame.getOffenses();
                 for (Offense offense : offenses
                 ) {
                     Player currentPlayer = offense.getPlayer();
                     if (offense.getType().equals("RED")) {
-                        resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, 1, DETAILS_RED_CARD));
+                        resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, 1, DETAILS_RED_CARD, null));
                     } else {
                         int countYellowCardsBefore = getCountYellowCardsBeforeCurrentGame(allGames, currentPlayer, i);
                         // TODO: 04.03.2020 3,7,11,15 should be be continuously. Try (count+1)%4==0
                         if (countYellowCardsBefore == 3 || countYellowCardsBefore == 7 || countYellowCardsBefore == 11 || countYellowCardsBefore == 15) {
-                            resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2, DETAILS_4_YELLOW_CARDS));
+                            resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2, DETAILS_4_YELLOW_CARDS, null));
                         }
                     }
                 }
@@ -212,7 +220,7 @@ public class CommonController {
         }
 
         Collections.reverse(resultAll);
-        context.putToContext("skipGamesAll",resultAll );
+        context.putToContext("skipGamesAll", resultAll);
         List<SkipGameEntry> resultLastTour = getOnlyForLastTour(resultAll);
         context.putToContext("skipGamesLastTour", resultLastTour);
 
@@ -242,13 +250,13 @@ public class CommonController {
         return result;
     }
 
-    private List<SkipGameEntry> createSkipEntry(List<Game> allGames, Player player, int indexGame, int countGameToSkip, String details) {
+    private List<SkipGameEntry> createSkipEntry(List<Game> allGames, Player player, int indexGame, int countGameToSkip, String details, String additionalInformation) {
         List<SkipGameEntry> skipGameEntryList = new LinkedList<>();
         int countAlreadyAddedToSkip = 0;
         for (int i = indexGame + 1; i < allGames.size(); i++) {
             Game game = allGames.get(i);
             if (game.getMasterTeam().equals(player.getTeam()) || game.getSlaveTeam().equals(player.getTeam())) {
-                skipGameEntryList.add(new SkipGameEntry(player, game, game.getStringDate(),messageSource.getMessage(details, new Object[]{game.getMasterTeam().getTeamName(),game.getSlaveTeam().getTeamName(),game.getStringDate(),allGames.get(indexGame).getMasterTeam().getTeamName(),allGames.get(indexGame).getSlaveTeam().getTeamName(),allGames.get(indexGame).getStringDate()}, Locale.getDefault())));
+                skipGameEntryList.add(new SkipGameEntry(player, game, game.getStringDate(), messageSource.getMessage(details, new Object[]{game.getMasterTeam().getTeamName(), game.getSlaveTeam().getTeamName(), game.getStringDate(), allGames.get(indexGame).getMasterTeam().getTeamName(), allGames.get(indexGame).getSlaveTeam().getTeamName(), allGames.get(indexGame).getStringDate(), additionalInformation}, Locale.getDefault())));
                 countAlreadyAddedToSkip++;
             }
             if (countAlreadyAddedToSkip == countGameToSkip) {
@@ -259,11 +267,19 @@ public class CommonController {
     }
 
     private List<SkipGameEntry> getOnlyForLastTour(List<SkipGameEntry> allEntry) {
+        //Determine last tour by game which not have results
+        int startIndex = 0;
+        for (int i = 0; i < allEntry.size(); i++) {
+            if (allEntry.get(i).getGame().isResultSave()) {
+                startIndex = i == 0 ? 0 : i - 1;
+                break;
+            }
+        }
         List<SkipGameEntry> result = new LinkedList<>();
         try {
-            result.add(allEntry.get(0));
-            for (int i = 1; i < allEntry.size(); i++) {
-                if (allEntry.get(i).getGame().getDate().equals(result.get(0).getGame().getDate())) {
+           // result.add(allEntry.get(startIndex));
+            for (int i = startIndex; i < allEntry.size(); i++) {
+                if (allEntry.get(i).getGame().getDate().equals(allEntry.get(startIndex).getGame().getDate())) {
                     result.add(allEntry.get(i));
                 } else {
                     return result;
@@ -274,6 +290,5 @@ public class CommonController {
             return result;
         }
     }
-
 
 }

@@ -37,12 +37,14 @@
             <td width="50%">
                 <input type="checkbox" th:utext="#{label.technicalWin}"
 
-                       name="technicalWinMasterTeam" onchange="cancelAnotherCheckBox('technicalWinSlaveTeam');" id="technicalWinMasterTeam">
+                       th:name="technicalWinMasterTeam" th:onchange="cancelAnotherCheckBox('technicalWinSlaveTeam');"
+                       th:id="technicalWinMasterTeam">
             </td>
             <td width="50%">
                 <input type="checkbox" th:utext="#{label.technicalWin}"
 
-                       name="technicalWinSlaveTeam" onchange="cancelAnotherCheckBox('technicalWinMasterTeam');" id="technicalWinSlaveTeam">
+                       th:name="technicalWinSlaveTeam" th:onchange="cancelAnotherCheckBox('technicalWinMasterTeam');"
+                       th:id="technicalWinSlaveTeam">
             </td>
 
         </tr>
@@ -136,6 +138,7 @@ function cancelAnotherCheckBox(checkboxId){
     var chb= document.getElementById(checkboxId);
     chb.checked='';
 }
+
 </script>
 </body>
 </html>

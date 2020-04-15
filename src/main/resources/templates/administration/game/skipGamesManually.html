@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<title th:utext="#{titlePage.players}"></title>
+<th:block th:include="common/common"></th:block>
+<body>
+<th:block th:include="common/_menu"></th:block>
+<div th:insert="common/message :: message"></div>
+<div>
+    <table class="table_dark">
+        <tr>
+            <td>
+                <div style="text-align:center;">
+                    <a class="btn btn-lg btn-success active" th:onclick="window.location='/administration/newPlayer/'+selectedId;"
+                       th:text="#{label.addSkipGamesManual}"/>
+                </div>
+            </td>
+        </tr>
+        <tr th:each="player, custStat : ${players}">
+            <td th:text="${custStat.count}"/>
+            <td>
+                <div>
+                    <label class="input--style-3"
+                           th:text="${player.lastName}+' '+${player.firstName}+' '+${player.secondName}"
+                           th:id="${player.id}"/>
+                </div>
+            </td>
+            <td>
+                <label th:text="#{label.edit}"
+                       th:onclick="|gotoRedirectPage('edit',${player.team.id},${player.id})|"
+                       style="cursor:pointer;"/>
+            </td>
+            <td>
+                <a th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
+                   th:onclick="return confirm('[[#{label.confirmation.player}]]')" style="cursor:pointer;"/>
+            </td>
+        </tr>
+    </table>
+    <div id="block"/>
+</div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);
+show();
+});/*]]>*/
+
+function gotoCreatingSkipGames(){
+    var s = document.querySelector('select');
+    var indexSelected = s.selectedIndex;
+    option = s.querySelectorAll('option')[indexSelected];
+    var selectedId = option.getAttribute('id');
+    window.location='/administration/newPlayer/'+selectedId;
+}
+
+function gotoRedirectPage(command,teamId,playerId) {
+    //window.location='/administration/manualSkipGames/${player.team.id}/${player.id})'|
+
+    $.ajax({
+        type: 'POST',
+        url: "/administration/manualSkipGames/"+teamId+"/"+playerId,
+        data: ({
+            command: command
+        }),
+        cache: false
+    });
+}
+
+</script>
+</body>
+</html>

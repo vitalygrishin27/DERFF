@@ -73,8 +73,6 @@ public class ResultGameController {
             model.addAttribute("slavePlayersWithYellowCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("YELLOW")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("masterPlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getMasterTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
             model.addAttribute("slavePlayersWithRedCards", game.getOffenses().stream().filter(offense -> offense.getPlayer().getTeam().equals(game.getSlaveTeam()) && offense.getType().equals("RED")).map(Offense::getPlayer).collect(Collectors.toList()));
-            model.addAttribute("technicalWinMasterTeam", game.isTechnicalMasterTeamWin());
-            model.addAttribute("technicalWinSlaveTeam", game.isTechnicalSlaveTeamWin());
             return "administration/resultGames/gameOverview";
 
         }
@@ -83,8 +81,6 @@ public class ResultGameController {
         model.addAttribute("slaveTeamName", game.getSlaveTeam().getTeamName());
         model.addAttribute("countGoalsMasterTeam", 0);
         model.addAttribute("countGoalsSlaveTeam", 0);
-        model.addAttribute("technicalWinMasterTeam", false);
-        model.addAttribute("technicalWinSlaveTeam", false);
         return "administration/resultGames/resultGame";
     }
 
@@ -97,9 +93,11 @@ public class ResultGameController {
                                     @ModelAttribute("countYellowCardsSlaveTeam") String countYellowCardsSlaveTeam,
                                     @ModelAttribute("countRedCardsMasterTeam") String countRedCardsMasterTeam,
                                     @ModelAttribute("countRedCardsSlaveTeam") String countRedCardsSlaveTeam,
-                                    @ModelAttribute("technicalWinMasterTeam") Boolean technicalWinMasterTeam,
-                                    @ModelAttribute("technicalWinSlaveTeam") Boolean technicalWinSlaveTeam
+                                    @ModelAttribute("technicalWinMasterTeam") String technicalWinMasterTeamString,
+                                    @ModelAttribute("technicalWinSlaveTeam") String technicalWinSlaveTeamString
     ) throws DerffException {
+        Boolean technicalWinMasterTeam = technicalWinMasterTeamString.equals("true")?Boolean.TRUE:Boolean.FALSE;
+        Boolean technicalWinSlaveTeam = technicalWinSlaveTeamString.equals("true")?Boolean.TRUE:Boolean.FALSE;
         Game game = (Game) context.getFromContext("game");
         if (step.equals("goalsCount") && (technicalWinMasterTeam || technicalWinSlaveTeam)){
             game.setGoals(new ArrayList<>());
