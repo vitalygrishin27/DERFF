@@ -35,6 +35,10 @@
                         <p th:text="#{placeholder.endDate}" style="color:#ffff00"/>
                         <input type="date" th:name="stringEndDate" required>
                     </div>
+                    <div class="input-group">
+                        <p th:text="#{placeholder.description}" style="color:#ffff00"/>
+                        <input type="text" th:name="description" required>
+                    </div>
                     <div class="p-t-10">
                         <button class="btn btn--pill btn--green" type="submit" th:text="#{button.submit}"/>
                     </div>

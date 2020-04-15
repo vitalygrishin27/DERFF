@@ -49,6 +49,9 @@ public class GameController {
     GoalServiceImpl goalService;
 
     @Autowired
+    ManualSkipGameServiceImpl manualSkipGameService;
+
+    @Autowired
     ReloadableResourceBundleMessageSource messageSource;
 
     private static final Logger logger = Logger.getLogger(GameController.class);
@@ -302,19 +305,29 @@ public class GameController {
 
     @GetMapping(value = "/administration/newManualSkipGame")
     public String getFormForNewSkipGamesManually(Model model) {
-       model.addAttribute("manualSkipGame", new ManualSkipGame());
-       model.addAttribute("teams", teamService.findAllTeams());
+        model.addAttribute("manualSkipGame", new ManualSkipGame());
+        model.addAttribute("teams", teamService.findAllTeams());
         return "administration/game/newManualSkipGame";
     }
 
-
-    @PostMapping(value = "/administration/manualSkipGames/{teamId}/{id}")
-    // TODO: 10.03.2020 NOT IMPLEMENTED
-    public String skipGamesManually(@ModelAttribute("command") String command,
-                                    @PathVariable("teamId") long teamId,
-                                    @PathVariable("id") long playerId,
-                                    HttpServletRequest request) {
-        System.out.println(command);
-        return "administration/game/skipGamesManually";
+    @PostMapping(value = "/administration/newManualSkipGame")
+    public String setNewManualSkipGame(@ModelAttribute("manualSkipGame") ManualSkipGame manualSkipGame) throws ParseException {
+        setDate(manualSkipGame);
+        manualSkipGameService.save(manualSkipGame);
+        return "redirect:/";
     }
+
+    private void setDate(ManualSkipGame manualSkipGame) throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(manualSkipGame.getStringStartDate());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, 6);
+        manualSkipGame.setStartDate(cal.getTime());
+
+       date = new SimpleDateFormat("yyyy-MM-dd").parse(manualSkipGame.getStringEndDate());
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, 6);
+        manualSkipGame.setEndDate(cal.getTime());
+    }
+
 }
