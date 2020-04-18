@@ -17,6 +17,8 @@ public interface PlayerService {
 
     List<Player> findAllPlayersInTeam(Team team);
 
+    List<Player> findAllInactivePlayers();
+
     List<Player> findAllActivePlayersInTeam(Team team);
 
     List<Player> findAllActivePlayersInTeamByRole(Team team, PlayerRole playerRole);
