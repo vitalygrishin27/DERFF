@@ -1,14 +1,12 @@
 package app.controllers.Administration;
 
-import app.Models.Context;
-import app.Models.Player;
-import app.Models.PlayerRole;
-import app.Models.Team;
+import app.Models.*;
 import app.Utils.BooleanWrapper;
 import app.Utils.MessageGenerator;
 import app.exceptions.DerffException;
 import app.services.impl.PlayerServiceImpl;
 import app.services.impl.TeamServiceImpl;
+import app.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -23,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -55,6 +54,9 @@ public class PlayerController {
     @Autowired
     PlayerServiceImpl playerService;
 
+    @Autowired
+    UserServiceImpl userService;
+
     @GetMapping(value = "/administration/players/{id}")
     public String getListContainerWithId(Model model, @PathVariable("id") long id) {
         if (messageGenerator.isActive())
@@ -80,7 +82,7 @@ public class PlayerController {
     }
 
     @PostMapping(value = "/administration/playerListByTeam/{id}")
-    public String getPlayersByTeam(Model model, @PathVariable("id") long id) {
+    public String getPlayersByTeam(Model model, @PathVariable("id") long id, Principal principal) {
         List<Player> players = new ArrayList();
         if (id == -1) {
             players = playerService.findAllInactivePlayers();
@@ -89,6 +91,12 @@ public class PlayerController {
         }
         Collections.sort(players);
         model.addAttribute("players", players);
+        User user = new User();
+        if (principal != null) {
+            user = userService.findUserByLogin(principal.getName());
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("team", teamService.findTeamById(id));
         return "administration/player/playersByTeam";
     }
 

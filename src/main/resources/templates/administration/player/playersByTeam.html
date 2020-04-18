@@ -1,6 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <table class="table_dark">
+    <tr>
+        <td colspan="4">
+            <div style="text-align:center;">
+                <a th:if="|${user.hasResponsibility(team)}|"  class="btn btn-lg btn-success active" th:onclick="gotoCreatingPlayer()"
+                   th:text="#{label.addPlayer}"/>
+            </div>
+        </td>
+    </tr>
     <tr th:each="player, custStat : ${players}">
         <td th:text="${custStat.count}"/>
         <td>
@@ -10,13 +18,13 @@
                        th:id="${player.id}"/>
             </div>
         </td>
-        <td>
+        <td th:if="|${user.hasResponsibility(team)}|">
             <label th:text="#{label.edit}"
                    th:onclick="|window.location='/administration/editPlayer/${player.team.id}/${player.id}'|"
                    style="cursor:pointer;"/>
         </td>
-        <td>
-            <a th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
+        <td th:if="|${user.hasResponsibility(team)}|">
+            <a  th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
                th:onclick="return confirm('[[#{label.confirmation.player}]]')" style="cursor:pointer;"/>
         </td>
     </tr>

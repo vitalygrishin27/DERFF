@@ -62,5 +62,7 @@ public class User {
         if(re)
         return false;*/
     }
-
+    public boolean hasResponsibility(String teamId) {
+        return false;
+    }
 }

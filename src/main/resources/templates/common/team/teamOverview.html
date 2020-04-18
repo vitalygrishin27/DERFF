@@ -9,6 +9,21 @@
     <br>
     <h4 style="text-align:center; color: #ffffff;" th:text="${team.teamName}"/>
     <br>
+    <div th:if="|${user.hasResponsibility(team)}|" class="col-md-4">
+        <div class="card rounded">
+            <div class="card-image">
+                <img class="img-fluid" th:src="@{/images/new-player.jpg}"/>
+            </div>
+            <div class="card-body text-center">
+                <div class="ad-title1 m-auto">
+                    <h5 th:text="#{label.newPlayerShort}"/>
+                </div>
+                <a class="ad-btn1" th:href="|/administration/newPlayer/${team.id}|"
+                   th:text="#{label.add}"/>
+            </div>
+        </div>
+        <br/>
+    </div>
     <div th:if="${#lists.size(goalkeepers)>0}" style="min-width: 100%; position: relative;">
         <br>
         <h4 style="text-align:center; color: #ffffff;" th:text="#{label.goalkeepers}"/>
