@@ -300,6 +300,7 @@ public class GameController {
 
     @GetMapping(value = "/administration/listSkipGames")
     public String getFormForSkipGamesManually(Model model) {
+        model.addAttribute("manualSkipGames", manualSkipGameService.findAll());
         return "administration/game/skipGamesManually";
     }
 
@@ -314,7 +315,13 @@ public class GameController {
     public String setNewManualSkipGame(@ModelAttribute("manualSkipGame") ManualSkipGame manualSkipGame) throws ParseException {
         setDate(manualSkipGame);
         manualSkipGameService.save(manualSkipGame);
-        return "redirect:/";
+        return "redirect:/administration/listSkipGames";
+    }
+
+    @GetMapping(value = "/administration/deleteSkipGame/{id}")
+    public String deleteSkipGame(@PathVariable("id") long id, HttpServletRequest request) throws DerffException {
+        manualSkipGameService.delete(manualSkipGameService.findById(id));
+        return "redirect:/administration/listSkipGames";
     }
 
     private void setDate(ManualSkipGame manualSkipGame) throws ParseException {
