@@ -46,6 +46,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public List<Player> findAllInactivePlayers() {
+        return repository.findAllInactivePlayers();
+    }
+
+    @Override
     public List<Player> findAllActivePlayersInTeam(Team team){
         return repository.findAllActivePlayersInTeam(team, Boolean.FALSE);
     }

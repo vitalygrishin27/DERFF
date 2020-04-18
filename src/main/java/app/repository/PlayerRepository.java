@@ -30,6 +30,9 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
                                                            @Param("forward") String forward,
                                                            @Param("isNotActive") Boolean isNotActive);
 
+    @Query("Select p from Player p where p.isNotActive = true")
+    List<Player> findAllInactivePlayers();
+
     @Query("Select p from Player p where p.idCard =:idCard")
     Player findByIdCard(@Param("idCard") int idCard);
 

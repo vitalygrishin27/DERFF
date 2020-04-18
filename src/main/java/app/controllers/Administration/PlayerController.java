@@ -59,7 +59,13 @@ public class PlayerController {
     public String getListContainerWithId(Model model, @PathVariable("id") long id) {
         if (messageGenerator.isActive())
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
-        model.addAttribute("teams", teamService.findAllTeams());
+        List<Team> teams = teamService.findAllTeams();
+        Team teamForUnregisteredPlayers = new Team();
+        teamForUnregisteredPlayers.setId(-1L);
+        teamForUnregisteredPlayers.setTeamName(messageSource
+                .getMessage("label.unregisteredPlayer", null, Locale.getDefault()));
+        teams.add(teamForUnregisteredPlayers);
+        model.addAttribute("teams", teams);
         model.addAttribute("activeTeamId", id);
         return "administration/player/players";
     }
@@ -75,7 +81,12 @@ public class PlayerController {
 
     @PostMapping(value = "/administration/playerListByTeam/{id}")
     public String getPlayersByTeam(Model model, @PathVariable("id") long id) {
-        List players = playerService.findAllActivePlayersInTeam(teamService.findTeamById(id));
+        List<Player> players = new ArrayList();
+        if (id == -1) {
+            players = playerService.findAllInactivePlayers();
+        } else {
+            players = playerService.findAllActivePlayersInTeam(teamService.findTeamById(id));
+        }
         Collections.sort(players);
         model.addAttribute("players", players);
         return "administration/player/playersByTeam";
