@@ -12,5 +12,11 @@ public interface ManualSkipGameService {
     List<Player> findPlayersWhichManualSkipGame(Game game);
 
     List<ManualSkipGame> findByGame(Game game);
+
+    List<ManualSkipGame> findAll();
+
+    ManualSkipGame findById(long id);
+
+    void delete(ManualSkipGame manualSkipGame);
 }
 

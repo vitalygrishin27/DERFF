@@ -32,4 +32,19 @@ public class ManualSkipGameServiceImpl implements ManualSkipGameService {
     public List<ManualSkipGame> findByGame(Game game) {
         return repository.findByDate(game.getDate());
     }
+
+    @Override
+    public List<ManualSkipGame> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public ManualSkipGame findById(long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void delete(ManualSkipGame manualSkipGame) {
+        repository.delete(manualSkipGame);
+    }
 }

@@ -8,30 +8,43 @@
 <div>
     <table class="table_dark">
         <tr>
-            <td>
+            <td colspan="5">
                 <div style="text-align:center;">
-                    <a class="btn btn-lg btn-success active" th:onclick="window.location='/administration/newPlayer/'+selectedId;"
+                    <a class="btn btn-lg btn-success active" th:onclick="window.location='/administration/newManualSkipGame'"
                        th:text="#{label.addSkipGamesManual}"/>
                 </div>
             </td>
         </tr>
-        <tr th:each="player, custStat : ${players}">
+        <tr th:each="manualSkipGame, custStat : ${manualSkipGames}">
             <td th:text="${custStat.count}"/>
             <td>
                 <div>
                     <label class="input--style-3"
-                           th:text="${player.lastName}+' '+${player.firstName}+' '+${player.secondName}"
-                           th:id="${player.id}"/>
+                           th:text="${manualSkipGame.player.lastName}+' '+${manualSkipGame.player.firstName}+' '+${manualSkipGame.player.secondName}"
+                           th:id="${manualSkipGame.id}"/>
                 </div>
             </td>
             <td>
+                <div>
+                    <label class="input--style-3"
+                           th:text="${manualSkipGame.player.team.teamName}"/>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <label class="input--style-3"
+                           th:text="${manualSkipGame.stringStartDate}+' '+${manualSkipGame.stringEndDate}"/>
+                </div>
+            </td>
+
+  <!--          <td>
                 <label th:text="#{label.edit}"
                        th:onclick="|gotoRedirectPage('edit',${player.team.id},${player.id})|"
                        style="cursor:pointer;"/>
-            </td>
+            </td>  -->
             <td>
-                <a th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
-                   th:onclick="return confirm('[[#{label.confirmation.player}]]')" style="cursor:pointer;"/>
+                <a th:text="#{label.delete}" th:href="|/administration/deleteSkipGame/${manualSkipGame.id}|"
+                   th:onclick="return confirm('[[#{label.confirmation.skipGame}]]')" style="cursor:pointer;"/>
             </td>
         </tr>
     </table>
@@ -40,29 +53,8 @@
 
 <script th:inline="javascript">
 /*<![CDATA[*/ $(document).ready(function () {loadMessage( /*[[${message}]]*/);
-show();
+
 });/*]]>*/
-
-function gotoCreatingSkipGames(){
-    var s = document.querySelector('select');
-    var indexSelected = s.selectedIndex;
-    option = s.querySelectorAll('option')[indexSelected];
-    var selectedId = option.getAttribute('id');
-    window.location='/administration/newPlayer/'+selectedId;
-}
-
-function gotoRedirectPage(command,teamId,playerId) {
-    //window.location='/administration/manualSkipGames/${player.team.id}/${player.id})'|
-
-    $.ajax({
-        type: 'POST',
-        url: "/administration/manualSkipGames/"+teamId+"/"+playerId,
-        data: ({
-            command: command
-        }),
-        cache: false
-    });
-}
 
 </script>
 </body>
