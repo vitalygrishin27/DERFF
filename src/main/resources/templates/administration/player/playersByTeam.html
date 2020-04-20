@@ -18,12 +18,12 @@
                        th:id="${player.id}"/>
             </div>
         </td>
-        <td>
+        <td th:if="|${user.hasResponsibility(team)}|">
             <label th:text="#{label.edit}"
                    th:onclick="|window.location='/administration/editPlayer/${player.team.id}/${player.id}'|"
                    style="cursor:pointer;"/>
         </td>
-        <td>
+        <td th:if="|${user.hasResponsibility(team)}|">
             <a  th:text="#{label.delete}" th:href="|/administration/deletePlayer/${player.team.id}/${player.id}|"
                th:onclick="return confirm('[[#{label.confirmation.player}]]')" style="cursor:pointer;"/>
         </td>
