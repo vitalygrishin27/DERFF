@@ -18,25 +18,35 @@ import java.util.Map;
 @Component()
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Context {
-    private Map<String, Object> context=new HashMap<>();
+    private Map<String, Object> context = new HashMap<>();
 
     public Object getFromContext(String key) {
         return this.context.get(key);
     }
 
-    public void putToContext(String key, Object object){
-        this.context.put(key,object);
+    public void putToContext(String key, Object object) {
+        this.context.put(key, object);
     }
 
-    public void deleteFromContext(String key){
+    public void deleteFromContext(String key) {
         this.context.remove(key);
     }
 
-    public void clear(){
+    public void clear() {
         context.clear();
     }
 
-    public boolean needShowAllBombardiers(){
-    return (boolean)context.get("needShowAllBombardiers");
+    public boolean needShowAllBombardiers() {
+        return (boolean) context.get("needShowAllBombardiers");
+    }
+
+    public boolean isStatisticReady() {
+        return !context.isEmpty() &&
+                context.get("bombardiers") != null &&
+                context.get("yellowCards") != null &&
+                context.get("skipGames") != null &&
+                context.get("skipGamesLastTour") != null &&
+                context.get("yellowCardsFirsts") != null &&
+                context.get("bombardiersFirsts") != null;
     }
 }

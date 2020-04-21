@@ -6,9 +6,18 @@
 
 </div>
 <script th:inline="javascript">
+/*<![CDATA[*/
 $(document).ready(function () {
-location.href = '/start';
+setInterval( tryToStart, 5 * 1000 );
 });
+/*]]>*/
+
+function tryToStart(){
+location.href = '/';
+}
 </script>
+<!--
+var isStatisticReady = /*[[${isStatisticReady}]]*/ ;
+alert(isStatisticReady);-->
 </html>
 
