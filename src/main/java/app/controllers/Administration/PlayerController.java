@@ -84,10 +84,11 @@ public class PlayerController {
     @PostMapping(value = "/administration/playerListByTeam/{id}")
     public String getPlayersByTeam(Model model, @PathVariable("id") long id, Principal principal) {
         List<Player> players = new ArrayList();
+        Team team = teamService.findTeamById(id);
         if (id == -1) {
             players = playerService.findAllInactivePlayers();
         } else {
-            players = playerService.findAllActivePlayersInTeam(teamService.findTeamById(id));
+            players = playerService.findAllActivePlayersInTeam(team);
         }
         Collections.sort(players);
         model.addAttribute("players", players);
@@ -95,8 +96,9 @@ public class PlayerController {
         if (principal != null) {
             user = userService.findUserByLogin(principal.getName());
         }
+        model.addAttribute("hasResponsibility",user.hasResponsibility(team));
         model.addAttribute("user",user);
-        model.addAttribute("team", teamService.findTeamById(id));
+        model.addAttribute("team", team);
         return "administration/player/playersByTeam";
     }
 
