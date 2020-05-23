@@ -30,6 +30,8 @@ public class Team {
     @Column(name = "boss")
     private String boss;
 
+    @Column(name = "village")
+    private String village;
 
     @Column(name = "phone")
     private String phone;
