@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +19,17 @@ public class TeamCrud {
     @Autowired
     TeamService teamService;
 
-    @RequestMapping("/teamNames")
+    @RequestMapping("/ui/teams")
     public ResponseEntity<Collection<Team>> getAllTeamNames() {
         List<Team> list = teamService.findAllTeams();
         list.forEach(team -> team.setPlayers(null));
         list.forEach(team -> team.setSymbol(null));
         //list.forEach(team -> team.setSymbolString(null));
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PostMapping("/ui/team")
+    public ResponseEntity<String> saveNewTeam() {
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 }
