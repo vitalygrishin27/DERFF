@@ -22,7 +22,7 @@ public class TeamCrud {
     public ResponseEntity<Collection<Team>> getAllTeamNames() {
         List<Team> list = teamService.findAllTeams();
         list.forEach(team -> team.setPlayers(null));
-        //list.forEach(team -> team.setSymbol(null));
+        list.forEach(team -> team.setSymbol(null));
         //list.forEach(team -> team.setSymbolString(null));
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
