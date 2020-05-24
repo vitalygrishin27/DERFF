@@ -1,6 +1,8 @@
 package app.controllers.Crud.Service;
 
 import app.Models.Team;
+import app.exceptions.DerffException;
+import app.services.GameService;
 import app.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+import java.util.Locale;
 
 @Service
 public class TeamCrudService {
@@ -24,6 +28,9 @@ public class TeamCrudService {
 
     @Autowired
     TeamService teamService;
+
+    @Autowired
+    GameService gameService;
 
     public HttpStatus saveTeamFlow(Team team, MultipartFile file) {
         //validate Team name
@@ -66,6 +73,19 @@ public class TeamCrudService {
             return HttpStatus.OK;
         } catch (Exception e) {
             return HttpStatus.PRECONDITION_FAILED;
+        }
+    }
+
+    public HttpStatus deleteTeamFlow(Long teamId) {
+        Team team = teamService.findTeamById(teamId);
+        if (!gameService.findGameWithTeam(team).isEmpty()) {
+            return HttpStatus.PRECONDITION_FAILED;
+        }
+        try {
+            teamService.delete(team);
+            return HttpStatus.OK;
+        } catch (Exception e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
 

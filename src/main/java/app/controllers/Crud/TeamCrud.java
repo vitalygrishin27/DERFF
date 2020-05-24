@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -38,15 +39,23 @@ public class TeamCrud {
     @ApiResponses({
             @ApiResponse(code = 200, message = "Team saved successfully"),
             @ApiResponse(code = 412, message = "Precondition Failed"),
-           // @ApiResponse(code = 501, message = "SLA's not found"),
-          //  @ApiResponse(code = 403, message = "SLA's update not possible"),
-         //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
+            // @ApiResponse(code = 501, message = "SLA's not found"),
+            //  @ApiResponse(code = 403, message = "SLA's update not possible"),
+            //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
     })
-    public ResponseEntity saveNewTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file)  {
-        return ResponseEntity.status(teamCrudService.saveTeamFlow(team,file)).build();
+    public ResponseEntity saveNewTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file) {
+        return ResponseEntity.status(teamCrudService.saveTeamFlow(team, file)).build();
     }
 
+    @DeleteMapping("/ui/team/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Team saved successfully"),
+            @ApiResponse(code = 412, message = "Team has game in DB"),
+            @ApiResponse(code = 500, message = "DataBase error")
 
-
+    })
+    public ResponseEntity deleteTeam(@PathVariable Long id) {
+        return ResponseEntity.status(teamCrudService.deleteTeamFlow(id)).build();
+    }
 
 }
