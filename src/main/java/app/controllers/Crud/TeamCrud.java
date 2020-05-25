@@ -45,6 +45,18 @@ public class TeamCrud {
         return ResponseEntity.status(teamCrudService.saveTeamFlow(team, file)).build();
     }
 
+    @PutMapping("/ui/team")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Team updated successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed"),
+            @ApiResponse(code = 404, message = "Team not found"),
+            //  @ApiResponse(code = 403, message = "SLA's update not possible"),
+            //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
+    })
+    public ResponseEntity updateTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file) {
+        return ResponseEntity.status(teamCrudService.updateTeamFlow(team, file)).build();
+    }
+
     @DeleteMapping("/ui/team/{id}")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Team saved successfully"),

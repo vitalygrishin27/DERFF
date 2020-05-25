@@ -1,5 +1,6 @@
 package app.controllers.Crud.Service;
 
+import app.Models.Player;
 import app.Models.Team;
 import app.services.GameService;
 import app.services.TeamService;
@@ -11,7 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
 
 @Service
 public class TeamCrudService {
@@ -55,17 +62,15 @@ public class TeamCrudService {
             }
             //Set byte[] to Team
             try {
-                if (team.getSymbolString() == null) {
-                    byte[] bytes = file.getBytes();
-                    team.setSymbolString("data:image/jpeg;base64, " + Base64Utils.encodeToString(bytes));
-                    team.setSymbol(bytes);
-                } else if (team.getId() != 0) {
-                    team.setSymbol(teamService.findTeamById(team.getId()).getSymbol());
-                    team.setSymbolString(teamService.findTeamById(team.getId()).getSymbolString());
-                }
+                byte[] bytes = file.getBytes();
+                team.setSymbolString("data:image/jpeg;base64, " + Base64Utils.encodeToString(bytes));
+                team.setSymbol(bytes);
             } catch (IOException e) {
                 return HttpStatus.PRECONDITION_FAILED;
             }
+        } else {
+            team.setSymbolString(null);
+            team.setSymbol(null);
         }
         try {
             teamService.save(team);
@@ -73,6 +78,19 @@ public class TeamCrudService {
         } catch (Exception e) {
             return HttpStatus.PRECONDITION_FAILED;
         }
+    }
+
+    public HttpStatus updateTeamFlow(Team team, MultipartFile file) {
+        Team teamFromDB = teamService.findTeamById(team.getId());
+        if (teamFromDB == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+        teamFromDB.setTeamName(team.getTeamName());
+        teamFromDB.setDate(team.getDate());
+        teamFromDB.setBoss(team.getBoss());
+        teamFromDB.setVillage(team.getVillage());
+        teamFromDB.setPhone(team.getPhone());
+        return saveTeamFlow(teamFromDB, file);
     }
 
     public HttpStatus deleteTeamFlow(Long teamId) {
