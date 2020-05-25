@@ -1,9 +1,9 @@
 package app.controllers.Crud.Service;
 
 import app.Models.Team;
-import app.exceptions.DerffException;
 import app.services.GameService;
 import app.services.TeamService;
+import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Locale;
 
 @Service
 public class TeamCrudService {

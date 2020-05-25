@@ -1,13 +1,11 @@
 package app.controllers.Crud;
 
 import app.Models.Team;
-import app.Utils.MessageGenerator;
 import app.controllers.Crud.Service.TeamCrudService;
 import app.services.TeamService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,4 +56,16 @@ public class TeamCrud {
         return ResponseEntity.status(teamCrudService.deleteTeamFlow(id)).build();
     }
 
+    @GetMapping("/ui/team/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Team find successfully"),
+            @ApiResponse(code = 404, message = "Team not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<Team> getTeamById(@PathVariable Long id) {
+        Team team =teamService.findTeamById(id);
+        team.setPlayers(null);
+        return new ResponseEntity<>(teamService.findTeamById(id), HttpStatus.OK);
+    }
 }
