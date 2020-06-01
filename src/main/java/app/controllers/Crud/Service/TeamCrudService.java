@@ -38,7 +38,7 @@ public class TeamCrudService {
     @Autowired
     GameService gameService;
 
-    public HttpStatus saveTeamFlow(Team team, MultipartFile file) {
+    public HttpStatus saveTeamFlow(Team team, MultipartFile file, boolean replaceFile) {
         //validate Team name
         if (teamService.findTeamByName(team.getTeamName()) != null && team.getId() == 0) {
             return HttpStatus.PRECONDITION_FAILED;
@@ -68,7 +68,7 @@ public class TeamCrudService {
             } catch (IOException e) {
                 return HttpStatus.PRECONDITION_FAILED;
             }
-        } else {
+        } else if (replaceFile) {
             team.setSymbolString(null);
             team.setSymbol(null);
         }
@@ -81,6 +81,7 @@ public class TeamCrudService {
     }
 
     public HttpStatus updateTeamFlow(Team team, MultipartFile file) {
+        boolean replaceFile = true;
         Team teamFromDB = teamService.findTeamById(team.getId());
         if (teamFromDB == null) {
             return HttpStatus.NOT_FOUND;
@@ -90,8 +91,20 @@ public class TeamCrudService {
         teamFromDB.setBoss(team.getBoss());
         teamFromDB.setVillage(team.getVillage());
         teamFromDB.setPhone(team.getPhone());
-        return saveTeamFlow(teamFromDB, file);
+        teamFromDB.setSeason(team.getSeason());
+        if (file == null && team.getSymbolString() != null) {
+            replaceFile = false;
+        }
+        return saveTeamFlow(teamFromDB, file, replaceFile);
     }
+
+    public HttpStatus deleteTeamFromSeasonFlow(Long teamId) {
+        Team team = teamService.findTeamById(teamId);
+        team.setSeason(null);
+        teamService.save(team);
+        return HttpStatus.OK;
+    }
+
 
     public HttpStatus deleteTeamFlow(Long teamId) {
         Team team = teamService.findTeamById(teamId);

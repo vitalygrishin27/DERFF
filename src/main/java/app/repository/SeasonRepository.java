@@ -9,15 +9,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TeamRepository extends JpaRepository<Team,Long> {
+public interface SeasonRepository extends JpaRepository<Season,Long> {
 
-    @Query("Select t from Team t where t.teamName = :teamName")
+    Season findByYear(Integer year);
+ /*   @Query("Select t from Team t where t.teamName = :teamName")
     Team findTeamByName(@Param("teamName") String teamName);
 
     @Query("Select t from Team t where t.id = :id")
-    Team findTeamById(@Param("id") Long id);
+    Team findTeamById(@Param("id") Long id);*/
 
- //  @Query("Select t from Team t where t.season =:season")
+ /*  @Query("Select t from Team t where t.season =:season")
     List<Team> findBySeason(@Param("season") Season season);
 /*
     @Query("Select t from Team t where t.region =:region")

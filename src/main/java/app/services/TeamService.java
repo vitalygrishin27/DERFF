@@ -2,6 +2,7 @@ package app.services;
 
 
 
+import app.Models.Season;
 import app.Models.Team;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface TeamService {
 
     void delete(Team team);
 
-/*    List<Team> findAllTeamsInCompetition(Competition competition);
+   List<Team> findBySeason(Season season);
 
-    List<Team> findAllTeamsByRegion(Region region);*/
+   // List<Team> findAllTeamsByRegion(Region region);*/
 }

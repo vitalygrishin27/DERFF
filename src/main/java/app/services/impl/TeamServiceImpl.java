@@ -1,6 +1,7 @@
 package app.services.impl;
 
 
+import app.Models.Season;
 import app.Models.Team;
 import app.repository.TeamRepository;
 import app.services.TeamService;
@@ -39,6 +40,11 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void delete(Team team){
         repository.delete(team);
+    }
+
+    @Override
+    public List<Team> findBySeason(Season season) {
+        return repository.findBySeason(season);
     }
 /*    @Override
     public List<Team> findAllTeamsInCompetition(Competition competition) {

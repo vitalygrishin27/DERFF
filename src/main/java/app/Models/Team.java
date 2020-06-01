@@ -47,6 +47,10 @@ public class Team {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private Collection<Player> players;
 
+    @ManyToOne (optional = true)
+    @JoinColumn(name = "id_season")
+    private Season season;
+
  /*     @ManyToOne(optional = false)
     @JoinColumn(name = "id_region")
     private Region region;
