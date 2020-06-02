@@ -116,6 +116,7 @@ public class TeamCrud {
     public ResponseEntity<Team> getTeamById(@PathVariable Long id) {
         Team team =teamService.findTeamById(id);
         team.setPlayers(null);
+        team.setSeason(null);
         return new ResponseEntity<>(teamService.findTeamById(id), HttpStatus.OK);
     }
 }
