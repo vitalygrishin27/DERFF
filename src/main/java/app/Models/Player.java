@@ -35,7 +35,7 @@ public class Player implements Comparable{
     private String stringBirthday;
 
     @Column(name = "id_card", unique = true)
-    private Integer idCard;
+    private String idCard;
 
     @Column(name = "is_legionary")
     private Boolean isLegionary;
@@ -60,7 +60,7 @@ public class Player implements Comparable{
     @Column(name = "photoString")
     private String photoString;
 
-    @ManyToOne (optional = false)
+    @ManyToOne (optional = true)
     @JoinColumn(name = "id_team")
     private Team team;
 

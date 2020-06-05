@@ -11,7 +11,7 @@ public interface PlayerService {
 
     Player findPlayerById(long id);
 
-    Player getPlayerByIdCard(int id);
+    Player getPlayerByIdCard(String id);
 
     List<Player> findAllPlayers();
 

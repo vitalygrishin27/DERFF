@@ -34,7 +34,7 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     List<Player> findAllInactivePlayers();
 
     @Query("Select p from Player p where p.idCard =:idCard")
-    Player findByIdCard(@Param("idCard") int idCard);
+    Player findByIdCard(@Param("idCard") String idCard);
 
     @Query("Select p from Player p where p.id =:id")
     Player findPlayerById(@Param("id") long id);

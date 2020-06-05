@@ -1,8 +1,10 @@
 package app.controllers.Crud;
 
+import app.Models.Player;
 import app.Models.Season;
 import app.Models.Team;
 import app.controllers.Crud.Service.TeamCrudService;
+import app.services.PlayerService;
 import app.services.SeasonService;
 import app.services.TeamService;
 import io.swagger.annotations.ApiResponse;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,9 @@ public class TeamCrud {
 
     @Autowired
     TeamService teamService;
+
+    @Autowired
+    PlayerService playerService;
 
     @Autowired
     TeamCrudService teamCrudService;
@@ -43,7 +49,6 @@ public class TeamCrud {
 
     @RequestMapping("/ui/unRegisteredTeams")
     public ResponseEntity<Collection<Team>> getUnregisteredTeams() {
-        int CURRENT_SEASON_YEAR = 2020;
         List<Team> list = teamService.findAllTeams().stream().filter(team -> team.getSeason() == null || team.getSeason().getYear() != CURRENT_SEASON_YEAR).collect(Collectors.toList());
         list.forEach(team -> team.setPlayers(null));
         list.forEach(team -> team.setSymbol(null));
@@ -51,6 +56,14 @@ public class TeamCrud {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+
+    @RequestMapping("/ui/unRegisteredPlayers")
+    public ResponseEntity<Collection<Player>> getUnregisteredPlayers() {
+        // TODO: 03.06.2020 create List
+        List<Player> result = playerService.findAllInactivePlayers();
+        result.forEach(player -> {player.setSeason(null); player.setTeam(null);});
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @RequestMapping("/ui/currentSeason")
     public ResponseEntity<Integer> getCurrentSeasonYear() {
@@ -114,9 +127,77 @@ public class TeamCrud {
 
     })
     public ResponseEntity<Team> getTeamById(@PathVariable Long id) {
-        Team team =teamService.findTeamById(id);
+        Team team = teamService.findTeamById(id);
         team.setPlayers(null);
         team.setSeason(null);
-        return new ResponseEntity<>(teamService.findTeamById(id), HttpStatus.OK);
+        return new ResponseEntity<>(team, HttpStatus.OK);
     }
+
+    @GetMapping("/ui/seasons/{year}/teams/{teamId}/players")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Players find successfully"),
+            @ApiResponse(code = 404, message = "Players not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<List<Player>> getPlayersBySeasonAndTeam(@PathVariable String year, @PathVariable String teamId) {
+        Team team = teamService.findTeamById(Integer.parseInt(teamId));
+        List<Player> result = team.getPlayers().stream().filter(player -> player.getSeason() != null && player.getSeason().getYear() == Integer.parseInt(year)).collect(Collectors.toList());
+        result.forEach(player -> {player.setSeason(null);player.setTeam(null);});
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/ui/players/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Player find successfully"),
+            @ApiResponse(code = 404, message = "Player not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<Player> getPlayerById(@PathVariable Long id) {
+        Player player = playerService.findPlayerById(id);
+        player.setTeam(null);
+        player.setSeason(null);
+        player.setGoals(null);
+        player.setOffenses(null);
+        return new ResponseEntity<>(player, HttpStatus.OK);
+    }
+
+    @PostMapping("/ui/player")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Player saved successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
+    })
+    public ResponseEntity saveNewPlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value="teamId", required = true) String teamId) {
+        // TODO: 01.06.2020 Set current season year from settings
+        Team team = teamService.findTeamById(Long.parseLong(teamId));
+        player.setTeam(team);
+        player.setIsNotActive(false);
+        player.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
+        return ResponseEntity.status(teamCrudService.savePlayerFlow(player, file, true)).build();
+    }
+
+    @PutMapping("/ui/player")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Player updated successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed"),
+            @ApiResponse(code = 404, message = "Player not found")
+    })
+    public ResponseEntity updatePlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value="teamId")  String teamId) {
+        // TODO: 01.06.2020 Set current season year from settings
+        Team team = teamService.findTeamById(Long.parseLong(teamId));
+        player.setTeam(team);
+        player.setIsNotActive(false);
+        player.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
+        return ResponseEntity.status(teamCrudService.updatePlayerFlow(player, file)).build();
+    }
+
+    @DeleteMapping("/ui/players/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Player deleted from season successfully")
+    })
+    public ResponseEntity deletePlayerFromSeason(@PathVariable Long id) {
+        return ResponseEntity.status(teamCrudService.deletePlayerFromSeasonFlow(id)).build();
+    }
+
 }

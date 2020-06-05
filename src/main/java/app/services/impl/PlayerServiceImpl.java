@@ -31,7 +31,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Player getPlayerByIdCard(int id) {
+    public Player getPlayerByIdCard(String id) {
         return repository.findByIdCard(id);
     }
 
