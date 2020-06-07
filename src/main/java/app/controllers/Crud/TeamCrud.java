@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class TeamCrud {
         List<Team> list = teamService.findAllTeams().stream().filter(team -> team.getSeason() == null || team.getSeason().getYear() != CURRENT_SEASON_YEAR).collect(Collectors.toList());
         list.forEach(team -> team.setPlayers(null));
         list.forEach(team -> team.setSymbol(null));
+        //Collections.sort(list);
         //list.forEach(team -> team.setSymbolString(null));
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
@@ -62,6 +64,7 @@ public class TeamCrud {
         // TODO: 03.06.2020 create List
         List<Player> result = playerService.findAllInactivePlayers();
         result.forEach(player -> {player.setSeason(null); player.setTeam(null);});
+        Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -144,6 +147,7 @@ public class TeamCrud {
         Team team = teamService.findTeamById(Integer.parseInt(teamId));
         List<Player> result = team.getPlayers().stream().filter(player -> player.getSeason() != null && player.getSeason().getYear() == Integer.parseInt(year)).collect(Collectors.toList());
         result.forEach(player -> {player.setSeason(null);player.setTeam(null);});
+        Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
