@@ -102,11 +102,11 @@ public class Player implements Comparable{
 
     @Override
     public int compareTo(Object o) {
-        if (this.getLastName().startsWith("І")) this.setLastName(this.getLastName().replace("І", "И"));
-        if (this.getLastName().startsWith("Є")) this.setLastName(this.getLastName().replace("Є", "Э"));
+      //  if (this.getLastName().startsWith("І")) this.setLastName(this.getLastName().replace("І", "И"));
+      //  if (this.getLastName().startsWith("Є")) this.setLastName(this.getLastName().replace("Є", "Э"));
         int result = this.getLastName().compareTo(((Player) o).getLastName());
-        if (this.getLastName().startsWith("И")) this.setLastName(this.getLastName().replace("И", "І"));
-        if (this.getLastName().startsWith("Э")) this.setLastName(this.getLastName().replace("Э", "Є"));
+        //  if (this.getLastName().startsWith("И")) this.setLastName(this.getLastName().replace("И", "І"));
+      //  if (this.getLastName().startsWith("Э")) this.setLastName(this.getLastName().replace("Э", "Є"));
         return result;
     }
 }
