@@ -1,17 +1,14 @@
 package app.controllers.Crud;
 
-import app.Models.Player;
-import app.Models.Season;
-import app.Models.Team;
+import app.Models.*;
 import app.controllers.Crud.Service.TeamCrudService;
-import app.services.PlayerService;
-import app.services.SeasonService;
-import app.services.TeamService;
+import app.services.*;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +33,12 @@ public class TeamCrud {
 
     @Autowired
     SeasonService seasonService;
+
+    @Autowired
+    GameService gameService;
+
+    @Autowired
+    CompetitionService competitionService;
 
     int CURRENT_SEASON_YEAR = 2020;
 
@@ -213,5 +216,58 @@ public class TeamCrud {
     public ResponseEntity deletePlayerFromSeason(@PathVariable Long id) {
         return ResponseEntity.status(teamCrudService.deletePlayerFromSeasonFlow(id)).build();
     }
+
+
+    @GetMapping(value = "/ui/standings")
+    public ResponseEntity<List<StandingsRow>> getStandings(Model model) {
+        List<StandingsRow> standingsRows = new ArrayList<>();
+        for (Team team : teamService.findAllTeams()
+        ) {
+            StandingsRow standingsRow = new StandingsRow();
+            standingsRow.setTeamName(team.getTeamName());
+            // TODO: 13.02.2020 refactor hardcode for 'findCompetitionById(1)'. This value should be set in Configuration
+            for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competitionService.findCompetitionById(1), true)
+            ) {
+                standingsRow.setGames(standingsRow.getGames() + 1);
+                if (team.equals(game.getMasterTeam())) {
+                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
+                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getSlaveGoalsCount());
+                    if (game.getMasterGoalsCount().equals(game.getSlaveGoalsCount()) && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
+                        standingsRow.setDraws(standingsRow.getDraws() + 1);
+                    } else if (game.getMasterGoalsCount() > game.getSlaveGoalsCount() || game.isTechnicalMasterTeamWin()) {
+                        standingsRow.setWins(standingsRow.getWins() + 1);
+                    } else {
+                        standingsRow.setLosses(standingsRow.getLosses() + 1);
+                    }
+                } else {
+                    standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getSlaveGoalsCount());
+                    standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getMasterGoalsCount());
+                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())  && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
+                        standingsRow.setDraws(standingsRow.getDraws() + 1);
+                    } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount() || game.isTechnicalSlaveTeamWin()) {
+                        standingsRow.setWins(standingsRow.getWins() + 1);
+                    } else {
+                        standingsRow.setLosses(standingsRow.getLosses() + 1);
+                    }
+                }
+            }
+            standingsRow.setRatioGoals(standingsRow.getScoredGoals() - standingsRow.getConcededGoals());
+            standingsRow.setPoints(standingsRow.getWins() * 3 + standingsRow.getDraws());
+            standingsRows.add(standingsRow);
+        }
+        sortStandings(standingsRows);
+   //     model.addAttribute("standings", standingsRows);
+        return new ResponseEntity<>(standingsRows, HttpStatus.OK);
+    }
+
+    private void sortStandings(List<StandingsRow> standingsRows) {
+        standingsRows.sort(StandingsRow.COMPARE_BY_POINTS);
+        Collections.reverse(standingsRows);
+        for (int i = 0; i < standingsRows.size(); i++) {
+            standingsRows.get(i).setNumber(i + 1);
+        }
+    }
+
+
 
 }
