@@ -5,6 +5,7 @@ import app.controllers.Crud.Service.TeamCrudService;
 import app.services.*;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,6 +34,9 @@ public class TeamCrud {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    Statistic statistic;
 
     @Autowired
     CompetitionService competitionService;
@@ -242,7 +243,7 @@ public class TeamCrud {
                 } else {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getSlaveGoalsCount());
                     standingsRow.setConcededGoals(standingsRow.getConcededGoals() + game.getMasterGoalsCount());
-                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount())  && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
+                    if (game.getSlaveGoalsCount().equals(game.getMasterGoalsCount()) && !game.isTechnicalMasterTeamWin() && !game.isTechnicalSlaveTeamWin()) {
                         standingsRow.setDraws(standingsRow.getDraws() + 1);
                     } else if (game.getSlaveGoalsCount() > game.getMasterGoalsCount() || game.isTechnicalSlaveTeamWin()) {
                         standingsRow.setWins(standingsRow.getWins() + 1);
@@ -256,7 +257,7 @@ public class TeamCrud {
             standingsRows.add(standingsRow);
         }
         sortStandings(standingsRows);
-   //     model.addAttribute("standings", standingsRows);
+        //     model.addAttribute("standings", standingsRows);
         return new ResponseEntity<>(standingsRows, HttpStatus.OK);
     }
 
@@ -268,6 +269,35 @@ public class TeamCrud {
         }
     }
 
+    @GetMapping(value = "/ui/statistic/{command}")
+    public ResponseEntity<List<PlayersForStatistic>> getStatisticForBombardiers(@PathVariable String command) {
+        command += "All";
+        HashMap<Player, Integer> map = new HashMap<>();
+        if (statistic.isStatisticReady()) {
+            if (statistic.getContext() != null) {
+                map = (HashMap<Player, Integer>) statistic.getContext().getFromContext(command);
+            }
+        } else {
+            Thread threadForStatistic = new Thread(statistic);
+            threadForStatistic.start();
+            return new ResponseEntity<>(null, HttpStatus.CONTINUE);
+        }
+        List<PlayersForStatistic> result = convertToPlayerForStatistic(map);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
+    private List<PlayersForStatistic> convertToPlayerForStatistic(Map<Player, Integer> map) {
+        List<PlayersForStatistic> result = new LinkedList<>();
+        map.forEach((player, value) -> {
+            PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName());
+            playersForStatistic.setPhotoString(player.getPhotoString());
+            playersForStatistic.setTeamName(player.getTeam().getTeamName());
+            playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
+            playersForStatistic.setValue(value);
+            result.add(playersForStatistic);
+        });
+        return result;
+    }
 
 }

@@ -1,28 +1,18 @@
 package app.controllers.Crud.Service;
 
 import app.Models.Player;
+import app.Models.Statistic;
 import app.Models.Team;
-import app.exceptions.DerffException;
 import app.services.GameService;
 import app.services.PlayerService;
 import app.services.TeamService;
-import app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
 
 @Service
 public class TeamCrudService {
