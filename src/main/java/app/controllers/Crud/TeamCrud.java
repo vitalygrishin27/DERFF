@@ -63,7 +63,12 @@ public class TeamCrud {
     public ResponseEntity<Collection<Player>> getUnregisteredPlayers() {
         // TODO: 03.06.2020 create List
         List<Player> result = playerService.findAllInactivePlayers();
-        result.forEach(player -> {player.setSeason(null); player.setTeam(null);});
+        result.forEach(player -> {
+            player.setSeason(null);
+            player.setTeam(null);
+            player.setOffenses(null);
+            player.setGoals(null);
+        });
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -146,7 +151,12 @@ public class TeamCrud {
     public ResponseEntity<List<Player>> getPlayersBySeasonAndTeam(@PathVariable String year, @PathVariable String teamId) {
         Team team = teamService.findTeamById(Integer.parseInt(teamId));
         List<Player> result = team.getPlayers().stream().filter(player -> player.getSeason() != null && player.getSeason().getYear() == Integer.parseInt(year)).collect(Collectors.toList());
-        result.forEach(player -> {player.setSeason(null);player.setTeam(null);});
+        result.forEach(player -> {
+            player.setSeason(null);
+            player.setTeam(null);
+            player.setGoals(null);
+            player.setOffenses(null);
+        });
         Collections.sort(result);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -172,7 +182,7 @@ public class TeamCrud {
             @ApiResponse(code = 200, message = "Player saved successfully"),
             @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public ResponseEntity saveNewPlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value="teamId", required = true) String teamId) {
+    public ResponseEntity saveNewPlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId", required = true) String teamId) {
         // TODO: 01.06.2020 Set current season year from settings
         Team team = teamService.findTeamById(Long.parseLong(teamId));
         player.setTeam(team);
@@ -187,7 +197,7 @@ public class TeamCrud {
             @ApiResponse(code = 412, message = "Precondition Failed"),
             @ApiResponse(code = 404, message = "Player not found")
     })
-    public ResponseEntity updatePlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value="teamId")  String teamId) {
+    public ResponseEntity updatePlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId") String teamId) {
         // TODO: 01.06.2020 Set current season year from settings
         Team team = teamService.findTeamById(Long.parseLong(teamId));
         player.setTeam(team);
