@@ -4,6 +4,7 @@ import app.Models.*;
 import app.Utils.EncryptedPasswordUtil;
 import app.controllers.Crud.Service.TeamCrudService;
 import app.services.*;
+import app.services.impl.DBLogServiceImpl;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class TeamCrud {
     UserService userService;
 
     @Autowired
-    DBLogService dbLogService;
+    DBLogServiceImpl dbLogService;
 
     int CURRENT_SEASON_YEAR = 2020;
 
@@ -76,7 +77,7 @@ public class TeamCrud {
         user.getResponsibility().stream().forEach(team -> {
             authenticatedUser.getTeamsIds().add((int) team.getId());
         });
-        user.setEncryptedPassword(null);
+       // user.setEncryptedPassword(null);
         dbLog.setDescription(dbLog.getDescription() + "SUCCESFULLY");
         dbLogService.save(dbLog);
         return new ResponseEntity<>(authenticatedUser, HttpStatus.OK);
