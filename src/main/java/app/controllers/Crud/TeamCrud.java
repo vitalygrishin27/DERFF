@@ -147,7 +147,7 @@ public class TeamCrud {
         dbLog.setLocalDate(LocalDate.now());
         dbLog.setUserName(login);
         dbLog.setOperation("SAVE NEW TEAM");
-        dbLog.setDescription("User with login=" + " attempts to save new team (" + team + ")");
+        dbLog.setDescription("User with login=" + login + " attempts to save new team (" + team + ")");
         dbLogService.save(dbLog);
         // TODO: 01.06.2020 Set current season year from settings
         team.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
@@ -168,7 +168,7 @@ public class TeamCrud {
         dbLog.setLocalDate(LocalDate.now());
         dbLog.setUserName(login);
         dbLog.setOperation("UPDATE TEAM");
-        dbLog.setDescription("User with login=" + " attempts to update team (" + team + ")");
+        dbLog.setDescription("User with login=" + login + " attempts to update team (" + team + ")");
         dbLogService.save(dbLog);
         team.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
         return ResponseEntity.status(teamCrudService.updateTeamFlow(team, file)).build();
@@ -250,7 +250,7 @@ public class TeamCrud {
         dbLog.setLocalDate(LocalDate.now());
         dbLog.setUserName(login);
         dbLog.setOperation("CREATE NEW PLAYER");
-        dbLog.setDescription("User with login=" + " attempts to create new player (" + player + ") for team " + (team != null ? team.getId() : "null"));
+        dbLog.setDescription("User with login=" + login + " attempts to create new player (" + player + ") for team " + (team != null ? team.getId() : "null"));
         dbLogService.save(dbLog);
         player.setTeam(team);
         player.setIsNotActive(false);
@@ -271,7 +271,7 @@ public class TeamCrud {
         dbLog.setLocalDate(LocalDate.now());
         dbLog.setUserName(login);
         dbLog.setOperation("UPDATE PLAYER");
-        dbLog.setDescription("User with login=" + " attempts to update player (" + player + ") for team " + (team != null ? team.getId() : "null"));
+        dbLog.setDescription("User with login=" + login + " attempts to update player (" + player + ") for team " + (team != null ? team.getId() : "null"));
         dbLogService.save(dbLog);
         player.setTeam(team);
         player.setIsNotActive(false);
