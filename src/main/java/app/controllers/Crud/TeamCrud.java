@@ -212,6 +212,7 @@ public class TeamCrud {
     public ResponseEntity<List<Player>> getPlayersBySeasonAndTeam(@PathVariable String year, @PathVariable String teamId) {
         Team team = teamService.findTeamById(Integer.parseInt(teamId));
         List<Player> result = team.getPlayers().stream().filter(player -> player.getSeason() != null && player.getSeason().getYear() == Integer.parseInt(year)).collect(Collectors.toList());
+        fillStatisticForPlayers(result);
         result.forEach(player -> {
             player.setSeason(null);
             player.setTeam(null);
@@ -374,5 +375,20 @@ public class TeamCrud {
         });
         return result;
     }
+
+    private void fillStatisticForPlayers(List<Player> players) {
+        players.stream().forEach(player -> {
+            player.setGoalsCount(player.getGoals().size());
+            player.getOffenses().stream().forEach(offense -> {
+                if (offense.getType().equals("YELLOW")) {
+                    player.setYellowCardCount(player.getYellowCardCount() + 1);
+                } else {
+                    player.setRedCardCount(player.getRedCardCount() + 1);
+                }
+            });
+        });
+    }
+
+    ;
 
 }
