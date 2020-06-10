@@ -1,18 +1,20 @@
 package app.controllers.Crud;
 
 import app.Models.*;
+import app.Utils.EncryptedPasswordUtil;
 import app.controllers.Crud.Service.TeamCrudService;
 import app.services.*;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,44 @@ public class TeamCrud {
     @Autowired
     CompetitionService competitionService;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    DBLogService dbLogService;
+
     int CURRENT_SEASON_YEAR = 2020;
+
+    @PostMapping("/ui/users/authenticate")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "User exists"),
+            @ApiResponse(code = 404, message = "No user present")
+    })
+    public ResponseEntity getUser(@RequestParam(value = "login") String login, @RequestParam(value = "pass") String pass) {
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName(login);
+        dbLog.setOperation("Attempt to login");
+        dbLog.setDescription("User with login=" + login + " with password=" + pass + " attempts to logIn with status=");
+        User user = userService.findUserByLogin(login);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        // encoder.matches()
+        if (user == null || !encoder.matches(pass, user.getEncryptedPassword())) {
+            dbLog.setDescription(dbLog.getDescription() + "unsuccessful");
+            dbLogService.save(dbLog);
+            return new ResponseEntity<>("User" + login + " not found.", HttpStatus.NOT_FOUND);
+        }
+        AuthenticatedUser authenticatedUser = new AuthenticatedUser();
+        authenticatedUser.setUserName(user.getLogin());
+        authenticatedUser.setRole(user.getRole());
+        user.getResponsibility().stream().forEach(team -> {
+            authenticatedUser.getTeamsIds().add((int) team.getId());
+        });
+        user.setEncryptedPassword(null);
+        dbLog.setDescription(dbLog.getDescription() + "SUCCESFULLY");
+        dbLogService.save(dbLog);
+        return new ResponseEntity<>(authenticatedUser, HttpStatus.OK);
+    }
 
     @RequestMapping("/ui/teams")
     public ResponseEntity<Collection<Team>> getAllTeam() {
@@ -103,7 +142,13 @@ public class TeamCrud {
             //  @ApiResponse(code = 403, message = "SLA's update not possible"),
             //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
     })
-    public ResponseEntity saveNewTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity saveNewTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "userName") String login) {
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName(login);
+        dbLog.setOperation("SAVE NEW TEAM");
+        dbLog.setDescription("User with login=" + " attempts to save new team (" + team + ")");
+        dbLogService.save(dbLog);
         // TODO: 01.06.2020 Set current season year from settings
         team.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
         return ResponseEntity.status(teamCrudService.saveTeamFlow(team, file, true)).build();
@@ -117,8 +162,14 @@ public class TeamCrud {
             //  @ApiResponse(code = 403, message = "SLA's update not possible"),
             //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
     })
-    public ResponseEntity updateTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file) {
+    public ResponseEntity updateTeam(@ModelAttribute Team team, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "userName") String login) {
         // TODO: 01.06.2020 Set current season year from settings
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName(login);
+        dbLog.setOperation("UPDATE TEAM");
+        dbLog.setDescription("User with login=" + " attempts to update team (" + team + ")");
+        dbLogService.save(dbLog);
         team.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
         return ResponseEntity.status(teamCrudService.updateTeamFlow(team, file)).build();
     }
@@ -128,6 +179,12 @@ public class TeamCrud {
             @ApiResponse(code = 200, message = "Team deleted from season successfully")
     })
     public ResponseEntity deleteTeamFromSeason(@PathVariable Long id) {
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName("UNDEFINED");
+        dbLog.setOperation("DELETE TEAM FROM SEASON");
+        dbLog.setDescription("User attempts to delete team with id=" + id + " from season");
+        dbLogService.save(dbLog);
         return ResponseEntity.status(teamCrudService.deleteTeamFromSeasonFlow(id)).build();
     }
 
@@ -186,9 +243,15 @@ public class TeamCrud {
             @ApiResponse(code = 200, message = "Player saved successfully"),
             @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public ResponseEntity saveNewPlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId", required = true) String teamId) {
+    public ResponseEntity saveNewPlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId", required = true) String teamId, @RequestParam(value = "userName") String login) {
         // TODO: 01.06.2020 Set current season year from settings
         Team team = teamService.findTeamById(Long.parseLong(teamId));
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName(login);
+        dbLog.setOperation("CREATE NEW PLAYER");
+        dbLog.setDescription("User with login=" + " attempts to create new player (" + player + ") for team " + (team != null ? team.getId() : "null"));
+        dbLogService.save(dbLog);
         player.setTeam(team);
         player.setIsNotActive(false);
         player.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
@@ -201,9 +264,15 @@ public class TeamCrud {
             @ApiResponse(code = 412, message = "Precondition Failed"),
             @ApiResponse(code = 404, message = "Player not found")
     })
-    public ResponseEntity updatePlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId") String teamId) {
+    public ResponseEntity updatePlayer(@ModelAttribute Player player, @RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "teamId") String teamId, @RequestParam(value = "userName") String login) {
         // TODO: 01.06.2020 Set current season year from settings
         Team team = teamService.findTeamById(Long.parseLong(teamId));
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName(login);
+        dbLog.setOperation("UPDATE PLAYER");
+        dbLog.setDescription("User with login=" + " attempts to update player (" + player + ") for team " + (team != null ? team.getId() : "null"));
+        dbLogService.save(dbLog);
         player.setTeam(team);
         player.setIsNotActive(false);
         player.setSeason(seasonService.findByYear(CURRENT_SEASON_YEAR));
@@ -215,6 +284,12 @@ public class TeamCrud {
             @ApiResponse(code = 200, message = "Player deleted from season successfully")
     })
     public ResponseEntity deletePlayerFromSeason(@PathVariable Long id) {
+        DBLog dbLog = new DBLog();
+        dbLog.setLocalDate(LocalDate.now());
+        dbLog.setUserName("UNDEFINED");
+        dbLog.setOperation("DELETE PLAYER FROM SEASON");
+        dbLog.setDescription("User attempts to delete player with id=" + id + " from season");
+        dbLogService.save(dbLog);
         return ResponseEntity.status(teamCrudService.deletePlayerFromSeasonFlow(id)).build();
     }
 
@@ -270,7 +345,7 @@ public class TeamCrud {
     }
 
     @GetMapping(value = "/ui/statistic/{command}")
-    public ResponseEntity<List<PlayersForStatistic>> getStatisticForBombardiers(@PathVariable String command) {
+    public ResponseEntity<List<PlayersForStatistic>> getStatistic(@PathVariable String command) {
         command += "All";
         HashMap<Player, Integer> map = new HashMap<>();
         if (statistic.isStatisticReady()) {

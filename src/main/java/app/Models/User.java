@@ -1,15 +1,11 @@
 package app.Models;
 
-import app.services.impl.TeamServiceImpl;
-import app.services.impl.UserServiceImpl;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
