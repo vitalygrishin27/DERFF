@@ -77,7 +77,7 @@ public class TeamCrud {
         user.getResponsibility().stream().forEach(team -> {
             authenticatedUser.getTeamsIds().add((int) team.getId());
         });
-       // user.setEncryptedPassword(null);
+        // user.setEncryptedPassword(null);
         dbLog.setDescription(dbLog.getDescription() + "SUCCESFULLY");
         dbLogService.save(dbLog);
         return new ResponseEntity<>(authenticatedUser, HttpStatus.OK);
@@ -357,7 +357,7 @@ public class TeamCrud {
         } else {
             Thread threadForStatistic = new Thread(statistic);
             threadForStatistic.start();
-            return new ResponseEntity<>(null, HttpStatus.CONTINUE);
+            return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.CONTINUE);
         }
         List<PlayersForStatistic> result = convertToPlayerForStatistic(map);
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -390,6 +390,12 @@ public class TeamCrud {
         });
     }
 
-    ;
+    @GetMapping(value = "/ui/tours")
+    public ResponseEntity<Set<String>> getTours() {
+        Set<String> result = new HashSet<>();
+        gameService.findAllGames().forEach(game -> result.add(game.getTour()));
+        result.remove(null);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }

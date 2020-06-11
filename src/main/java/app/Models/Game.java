@@ -78,6 +78,9 @@ public class Game {
     @Column(name = "is_result_save", nullable = false)
     private boolean resultSave;
 
+    @Column(name = "tour")
+    private String tour;
+
     @Override
     public String toString() {
         return "Game{" +
