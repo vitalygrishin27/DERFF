@@ -78,8 +78,9 @@ public class Game {
     @Column(name = "is_result_save", nullable = false)
     private boolean resultSave;
 
-    @Column(name = "tour")
-    private String tour;
+    @ManyToOne
+    @JoinColumn(name = "id_tour")
+    private Tour tour;
 
     @Override
     public String toString() {

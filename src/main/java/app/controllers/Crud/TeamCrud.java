@@ -1,7 +1,6 @@
 package app.controllers.Crud;
 
 import app.Models.*;
-import app.Utils.EncryptedPasswordUtil;
 import app.controllers.Crud.Service.TeamCrudService;
 import app.services.*;
 import app.services.impl.DBLogServiceImpl;
@@ -37,6 +36,9 @@ public class TeamCrud {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    TourService tourService;
 
     @Autowired
     Statistic statistic;
@@ -411,11 +413,37 @@ public class TeamCrud {
     }
 
     @GetMapping(value = "/ui/tours")
-    public ResponseEntity<Set<String>> getTours() {
-        Set<String> result = new HashSet<>();
-        gameService.findAllGames().forEach(game -> result.add(game.getTour()));
-        result.remove(null);
+    public ResponseEntity<List<Tour>> getTours() {
+        List<Tour> result = tourService.findAll();
+        result.forEach(tour -> tour.setGames(null));
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/ui/tours/{tourName}")
+    public ResponseEntity<List<GameForCalendar>> getGamesInTours(@PathVariable String tourName) {
+        List<Game> games = tourService.findByTourName(tourName).getGames();
+        return new ResponseEntity<>(convertToGamesForCalendar(games), HttpStatus.OK);
+    }
+
+    private List<GameForCalendar> convertToGamesForCalendar(List<Game> list) {
+        List<GameForCalendar> result = new LinkedList<>();
+        list.forEach(game -> {
+            GameForCalendar gameForCalendar = new GameForCalendar();
+            gameForCalendar.setId(game.getId());
+            gameForCalendar.setDate(game.getDate());
+            gameForCalendar.setStringDate(game.getStringDate());
+            gameForCalendar.setMasterGoalsCount(game.getMasterGoalsCount());
+            gameForCalendar.setSlaveGoalsCount(game.getSlaveGoalsCount());
+            gameForCalendar.setMasterTeamName(game.getMasterTeam().getTeamName());
+            gameForCalendar.setSlaveTeamName(game.getSlaveTeam().getTeamName());
+            gameForCalendar.setMasterTeamSymbolString(game.getMasterTeam().getSymbolString());
+            gameForCalendar.setSlaveTeamSymbolString(game.getSlaveTeam().getSymbolString());
+            gameForCalendar.setResultSave(game.isResultSave());
+            gameForCalendar.setTechnicalMasterTeamWin(game.isTechnicalMasterTeamWin());
+            gameForCalendar.setTechnicalSlaveTeamWin(game.isTechnicalSlaveTeamWin());
+            result.add(gameForCalendar);
+        });
+        return result;
     }
 
 }
