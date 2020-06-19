@@ -350,16 +350,21 @@ public class TeamCrud {
     public ResponseEntity<List<PlayersForStatistic>> getStatistic(@PathVariable String command) {
         command += "All";
         HashMap<Player, Integer> map = new HashMap<>();
+        List<SkipGameEntry> list = new LinkedList<>();
         if (statistic.isStatisticReady()) {
             if (statistic.getContext() != null) {
-                map = (HashMap<Player, Integer>) statistic.getContext().getFromContext(command);
+                if (command.equals("skipGamesAll")) {
+                    list = (List) statistic.getContext().getFromContext(command);
+                } else {
+                    map = (HashMap<Player, Integer>) statistic.getContext().getFromContext(command);
+                }
             }
         } else {
             Thread threadForStatistic = new Thread(statistic);
             threadForStatistic.start();
             return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.CONTINUE);
         }
-        List<PlayersForStatistic> result = convertToPlayerForStatistic(map);
+        List<PlayersForStatistic> result = command.equals("skipGamesAll") ? convertToPlayerForStatistic(list) : convertToPlayerForStatistic(map);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -372,6 +377,21 @@ public class TeamCrud {
             playersForStatistic.setTeamName(player.getTeam().getTeamName());
             playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
             playersForStatistic.setValue(value);
+            result.add(playersForStatistic);
+        });
+        return result;
+    }
+
+    private List<PlayersForStatistic> convertToPlayerForStatistic(List<SkipGameEntry> list) {
+        List<PlayersForStatistic> result = new LinkedList<>();
+        list.forEach(skipGameEntry -> {
+            PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setPlayerName(skipGameEntry.getPlayer().getLastName() + " " + skipGameEntry.getPlayer().getFirstName());
+            playersForStatistic.setPhotoString(skipGameEntry.getPlayer().getPhotoString());
+            playersForStatistic.setTeamName(skipGameEntry.getPlayer().getTeam().getTeamName());
+            playersForStatistic.setSymbolString(skipGameEntry.getPlayer().getTeam().getSymbolString());
+            playersForStatistic.setStringDate(skipGameEntry.getStringDate());
+            playersForStatistic.setDetails(skipGameEntry.getDetails());
             result.add(playersForStatistic);
         });
         return result;

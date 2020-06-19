@@ -14,4 +14,6 @@ public class PlayersForStatistic {
     private String teamName;
     private String symbolString;
     private Integer value;
+    private String details;
+    private String stringDate;
 }
