@@ -300,6 +300,7 @@ public class TeamCrud {
 
     @GetMapping(value = "/ui/standings")
     public ResponseEntity<List<StandingsRow>> getStandings(Model model) {
+        Map<String, String> resultGames = new LinkedHashMap<>();
         List<StandingsRow> standingsRows = new ArrayList<>();
         for (Team team : teamService.findAllTeams()
         ) {
@@ -308,6 +309,7 @@ public class TeamCrud {
             // TODO: 13.02.2020 refactor hardcode for 'findCompetitionById(1)'. This value should be set in Configuration
             for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competitionService.findCompetitionById(1), true)
             ) {
+                resultGames.put(team.getTeamName() + "-" + (game.getMasterTeam().equals(team) ? game.getSlaveTeam().getTeamName() : game.getMasterTeam().getTeamName()), game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + " : " + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + " : " + game.getMasterGoalsCount());
                 standingsRow.setGames(standingsRow.getGames() + 1);
                 if (team.equals(game.getMasterTeam())) {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
@@ -337,6 +339,14 @@ public class TeamCrud {
         }
         sortStandings(standingsRows);
         //     model.addAttribute("standings", standingsRows);
+             standingsRows.forEach(standingsRow -> {
+                 LinkedList<String> gameResults = new LinkedList<>();
+                 standingsRows.forEach(standingsRow1 -> {
+                     gameResults.add(resultGames.getOrDefault(standingsRow.getTeamName() + "-" + standingsRow1.getTeamName(), "-"));
+                 });
+                 standingsRow.setGameResults(gameResults);
+             });
+
         return new ResponseEntity<>(standingsRows, HttpStatus.OK);
     }
 

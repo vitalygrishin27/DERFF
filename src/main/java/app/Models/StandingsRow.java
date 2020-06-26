@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +25,7 @@ public class StandingsRow {
     private int ratioGoals;
     private int points;
     private String stringRatioGoals;
+    private LinkedList<String> gameResults = new LinkedList<>();
 
     public String getStringRatioGoals() {
         return scoredGoals+" : "+concededGoals;
