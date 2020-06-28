@@ -124,7 +124,6 @@ public class TeamCrud {
         return new ResponseEntity<>(CURRENT_SEASON_YEAR, HttpStatus.OK);
     }
 
-
     @RequestMapping("/ui/teamsInSeason/{year}")
     public ResponseEntity<Collection<Team>> getAllTeamBySeason(@PathVariable String year) {
         // TODO: 01.06.2020 Error processed when year is not integer
@@ -380,6 +379,20 @@ public class TeamCrud {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    private List<PlayersForStatistic> convertToPlayerForList(List<Player> input) {
+        List<PlayersForStatistic> result = new LinkedList<>();
+        input.forEach((player) -> {
+            PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName() + " " +player.getSecondName());
+           // playersForStatistic.setPhotoString(player.getPhotoString());
+          //  playersForStatistic.setTeamName(player.getTeam().getTeamName());
+         //   playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
+          //  playersForStatistic.setValue(value);
+            result.add(playersForStatistic);
+        });
+        return result;
+    }
+
     private List<PlayersForStatistic> convertToPlayerForStatistic(Map<Player, Integer> map) {
         List<PlayersForStatistic> result = new LinkedList<>();
         map.forEach((player, value) -> {
@@ -454,6 +467,29 @@ public class TeamCrud {
             result.add(gameForCalendar);
         });
         return result;
+    }
+
+    @GetMapping("/ui/games/{gameId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Players find successfully"),
+            @ApiResponse(code = 404, message = "Players not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<List<List<PlayersForStatistic>>> getPlayersByGame(@PathVariable String gameId) {
+        Game game = gameService.findGameById(Integer.parseInt(gameId));
+        List<Player> masterResult = playerService.findAllActivePlayersInTeam(game.getMasterTeam());
+           //     (List) game.getMasterTeam().getPlayers();
+        Collections.sort(masterResult);
+        List<Player> slaveResult = playerService.findAllActivePlayersInTeam(game.getSlaveTeam());
+                // (List) game.getSlaveTeam().getPlayers();
+        Collections.sort(slaveResult);
+        List<List<PlayersForStatistic>> result =new ArrayList<>();
+
+        result.add(convertToPlayerForList(masterResult));
+        result.add(convertToPlayerForList(slaveResult));
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }
