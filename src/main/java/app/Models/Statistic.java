@@ -167,7 +167,7 @@ public class Statistic implements Runnable {
                         int countYellowCardsBefore = getCountYellowCardsBeforeCurrentGame(allGames, currentPlayer, i);
                         // TODO: 04.03.2020 3,7,11,15 should be be continuously. Try (count+1)%4==0
                         if (countYellowCardsBefore == 3 || countYellowCardsBefore == 7 || countYellowCardsBefore == 11 || countYellowCardsBefore == 15) {
-                            resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 2, DETAILS_4_YELLOW_CARDS, null));
+                            resultAll.addAll(createSkipEntry(allGames, currentPlayer, i, (countYellowCardsBefore + 1) / 4, DETAILS_4_YELLOW_CARDS, null));
                         }
                     }
                 }
