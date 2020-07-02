@@ -383,6 +383,7 @@ public class TeamCrud {
         List<PlayersForStatistic> result = new LinkedList<>();
         input.forEach((player) -> {
             PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setId(player.getId());
             playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName() + " " +player.getSecondName());
            // playersForStatistic.setPhotoString(player.getPhotoString());
           //  playersForStatistic.setTeamName(player.getTeam().getTeamName());
@@ -397,6 +398,7 @@ public class TeamCrud {
         List<PlayersForStatistic> result = new LinkedList<>();
         map.forEach((player, value) -> {
             PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setId(player.getId());
             playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName());
             playersForStatistic.setPhotoString(player.getPhotoString());
             playersForStatistic.setTeamName(player.getTeam().getTeamName());
@@ -411,6 +413,7 @@ public class TeamCrud {
         List<PlayersForStatistic> result = new LinkedList<>();
         list.forEach(skipGameEntry -> {
             PlayersForStatistic playersForStatistic = new PlayersForStatistic();
+            playersForStatistic.setId(skipGameEntry.getPlayer().getId());
             playersForStatistic.setPlayerName(skipGameEntry.getPlayer().getLastName() + " " + skipGameEntry.getPlayer().getFirstName());
             playersForStatistic.setPhotoString(skipGameEntry.getPlayer().getPhotoString());
             playersForStatistic.setTeamName(skipGameEntry.getPlayer().getTeam().getTeamName());

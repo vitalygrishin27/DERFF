@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PlayersForStatistic {
-
+    private long id;
     private String playerName;
     private String photoString;
     private String teamName;
