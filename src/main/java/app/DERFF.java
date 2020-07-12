@@ -8,12 +8,6 @@ import java.util.Locale;
 
 @SpringBootApplication
 public class DERFF {
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        return factory.createMultipartConfig();
-    }
-
     public static void main(String[] args) {
    //     ApplicationContext context=new AnnotationConfigApplicationContext(Context.class);
      //   https://stackoverflow.com/questions/32650536/using-thymeleaf-variable-in-onclick-attribute

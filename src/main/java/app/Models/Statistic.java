@@ -78,7 +78,9 @@ public class Statistic implements Runnable {
         Map<Player, Integer> resultSorted = new LinkedHashMap<>();
         goalService.findAll().forEach(goal -> result.put(goal.getPlayer(), result.containsKey(goal.getPlayer()) ? result.get(goal.getPlayer()) + 1 : 1));
         // TODO: 02.03.2020 create method or constant of AUTOGOAL instead below code
-        result.remove(teamService.findTeamByName("AUTOGOAL").getPlayers().toArray()[0]);
+        if (teamService.findTeamByName("AUTOGOAL") != null) {
+            result.remove(teamService.findTeamByName("AUTOGOAL").getPlayers().toArray()[0]);
+        }
         result.entrySet().stream().sorted(Map.Entry.<Player, Integer>comparingByValue().reversed()).forEach(e -> resultSorted.put(e.getKey(), e.getValue()));
         Map<Player, Integer> resultSortedFirsts = resultSorted.entrySet().stream().limit(count).collect(LinkedHashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
         context.putToContext("bombardiersAll", resultSorted);
