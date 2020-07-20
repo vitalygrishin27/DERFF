@@ -198,7 +198,7 @@ public class Statistic implements Runnable {
                 Collection<Offense> offenses = game.getOffenses();
                 for (Offense offense : offenses
                 ) {
-                    if (offense.getPlayer().equals(player)) {
+                    if (offense.getPlayer().equals(player) && offense.getType().equals("YELLOW")) {
                         result++;
                     }
                 }
