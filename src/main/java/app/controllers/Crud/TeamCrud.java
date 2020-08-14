@@ -678,14 +678,14 @@ public class TeamCrud {
 //Save to DB
         for (Goal goal : game.getGoals()
         ) {
-            //        goalService.save(goal);
+            goalService.save(goal);
         }
         for (Offense offense : game.getOffenses()
         ) {
-            //       offenseService.save(offense);
+            offenseService.save(offense);
         }
         game.setResultSave(true);
-        //   gameService.save(game);
+        gameService.save(game);
         return ResponseEntity.status(200).build();
     }
 }
