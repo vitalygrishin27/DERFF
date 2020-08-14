@@ -316,7 +316,7 @@ public class TeamCrud {
             for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competitionService.findCompetitionById(1), true)
             ) {
                 String key = team.getTeamName() + "-" + (game.getMasterTeam().equals(team) ? game.getSlaveTeam().getTeamName() : game.getMasterTeam().getTeamName());
-                resultGames.put(key, resultGames.containsKey(key) ? resultGames.get(key) + ", " : "" + (game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + ":" + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + ":" + game.getMasterGoalsCount()));
+                resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + ":" + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + ":" + game.getMasterGoalsCount()));
                 standingsRow.setGames(standingsRow.getGames() + 1);
                 if (team.equals(game.getMasterTeam())) {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
