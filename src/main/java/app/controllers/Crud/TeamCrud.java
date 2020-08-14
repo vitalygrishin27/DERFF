@@ -2,6 +2,7 @@ package app.controllers.Crud;
 
 import app.Models.*;
 import app.controllers.Crud.Service.TeamCrudService;
+import app.exceptions.DerffException;
 import app.services.*;
 import app.services.impl.DBLogServiceImpl;
 import io.swagger.annotations.ApiResponse;
@@ -36,6 +37,12 @@ public class TeamCrud {
 
     @Autowired
     GameService gameService;
+
+    @Autowired
+    GoalService goalService;
+
+    @Autowired
+    OffenseService offenseService;
 
     @Autowired
     TourService tourService;
@@ -338,13 +345,13 @@ public class TeamCrud {
         }
         sortStandings(standingsRows);
         //     model.addAttribute("standings", standingsRows);
-             standingsRows.forEach(standingsRow -> {
-                 LinkedList<String> gameResults = new LinkedList<>();
-                 standingsRows.forEach(standingsRow1 -> {
-                     gameResults.add(resultGames.getOrDefault(standingsRow.getTeamName() + "-" + standingsRow1.getTeamName(), "-"));
-                 });
-                 standingsRow.setGameResults(gameResults);
-             });
+        standingsRows.forEach(standingsRow -> {
+            LinkedList<String> gameResults = new LinkedList<>();
+            standingsRows.forEach(standingsRow1 -> {
+                gameResults.add(resultGames.getOrDefault(standingsRow.getTeamName() + "-" + standingsRow1.getTeamName(), "-"));
+            });
+            standingsRow.setGameResults(gameResults);
+        });
 
         return new ResponseEntity<>(standingsRows, HttpStatus.OK);
     }
@@ -384,11 +391,11 @@ public class TeamCrud {
         input.forEach((player) -> {
             PlayersForStatistic playersForStatistic = new PlayersForStatistic();
             playersForStatistic.setId(player.getId());
-            playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName() + " " +player.getSecondName());
-           // playersForStatistic.setPhotoString(player.getPhotoString());
-          //  playersForStatistic.setTeamName(player.getTeam().getTeamName());
-         //   playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
-          //  playersForStatistic.setValue(value);
+            playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName() + " " + player.getSecondName());
+            // playersForStatistic.setPhotoString(player.getPhotoString());
+            //  playersForStatistic.setTeamName(player.getTeam().getTeamName());
+            //   playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
+            //  playersForStatistic.setValue(value);
             result.add(playersForStatistic);
         });
         return result;
@@ -472,7 +479,66 @@ public class TeamCrud {
         return result;
     }
 
-    @GetMapping("/ui/games/{gameId}")
+    private GameForResultPage convertToGameForResultPage(Game game) {
+        GameForResultPage result = new GameForResultPage();
+        result.setId(game.getId());
+        result.setDate(game.getDate());
+        result.setStringDate(game.getStringDate());
+        result.setMasterGoalsCount(game.getMasterGoalsCount());
+        result.setSlaveGoalsCount(game.getSlaveGoalsCount());
+        result.setMasterTeamName(game.getMasterTeam().getTeamName());
+        result.setSlaveTeamName(game.getSlaveTeam().getTeamName());
+        result.setMasterTeamSymbolString(game.getMasterTeam().getSymbolString());
+        result.setSlaveTeamSymbolString(game.getSlaveTeam().getSymbolString());
+        result.setResultSave(game.isResultSave());
+        result.setTechnicalMasterTeamWin(game.isTechnicalMasterTeamWin());
+        result.setTechnicalSlaveTeamWin(game.isTechnicalSlaveTeamWin());
+
+        List<Long> idsMasterPlayersGoals = new LinkedList<>();
+        List<Long> idsSlavePlayersGoals = new LinkedList<>();
+        List<Long> idsMasterPlayersYellowCards = new LinkedList<>();
+        List<Long> idsSlavePlayersYellowCards = new LinkedList<>();
+        List<Long> idsMasterPlayersRedCards = new LinkedList<>();
+        List<Long> idsSlavePlayersRedCards = new LinkedList<>();
+        for (Goal goal : game.getGoals()
+        ) {
+            if (goal.getTeam().equals(game.getMasterTeam())) {
+                idsMasterPlayersGoals.add(goal.getPlayer().getId());
+            } else {
+                idsSlavePlayersGoals.add(goal.getPlayer().getId());
+            }
+        }
+        for (Offense offense : game.getOffenses()
+        ) {
+            if (offense.getPlayer().getTeam().equals(game.getMasterTeam())) {
+                if (offense.getType().equals("YELLOW")) {
+                    idsMasterPlayersYellowCards.add(offense.getPlayer().getId());
+                } else {
+                    idsMasterPlayersRedCards.add(offense.getPlayer().getId());
+                }
+            } else {
+                if (offense.getType().equals("YELLOW")) {
+                    idsSlavePlayersYellowCards.add(offense.getPlayer().getId());
+                } else {
+                    idsSlavePlayersRedCards.add(offense.getPlayer().getId());
+                }
+            }
+        }
+        result.setIdsMasterPlayersGoals(idsMasterPlayersGoals);
+        result.setIdsSlavePlayersGoals(idsSlavePlayersGoals);
+        result.setIdsMasterPlayersYellowCards(idsMasterPlayersYellowCards);
+        result.setIdsSlavePlayersYellowCards(idsSlavePlayersYellowCards);
+        result.setIdsMasterPlayersRedCards(idsMasterPlayersRedCards);
+        result.setIdsSlavePlayersRedCards(idsSlavePlayersRedCards);
+
+        result.setMasterYellowCardsCount(idsMasterPlayersYellowCards.size());
+        result.setSlaveYellowCardsCount(idsSlavePlayersYellowCards.size());
+        result.setMasterRedCardsCount(idsMasterPlayersRedCards.size());
+        result.setSlaveRedCardsCount(idsSlavePlayersRedCards.size());
+        return result;
+    }
+
+    @GetMapping("/ui/games/{gameId}/players")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Players find successfully"),
             @ApiResponse(code = 404, message = "Players not found"),
@@ -482,12 +548,15 @@ public class TeamCrud {
     public ResponseEntity<List<List<PlayersForStatistic>>> getPlayersByGame(@PathVariable String gameId) {
         Game game = gameService.findGameById(Integer.parseInt(gameId));
         List<Player> masterResult = playerService.findAllActivePlayersInTeam(game.getMasterTeam());
-           //     (List) game.getMasterTeam().getPlayers();
+        teamCrudService.checkAvailableAutogoalInDB();
+        masterResult.add(playerService.findPlayerByRegistration("AUTOGOAL"));
+        //     (List) game.getMasterTeam().getPlayers();
         Collections.sort(masterResult);
         List<Player> slaveResult = playerService.findAllActivePlayersInTeam(game.getSlaveTeam());
-                // (List) game.getSlaveTeam().getPlayers();
+        // (List) game.getSlaveTeam().getPlayers();
+        slaveResult.add(playerService.findPlayerByRegistration("AUTOGOAL"));
         Collections.sort(slaveResult);
-        List<List<PlayersForStatistic>> result =new ArrayList<>();
+        List<List<PlayersForStatistic>> result = new ArrayList<>();
 
         result.add(convertToPlayerForList(masterResult));
         result.add(convertToPlayerForList(slaveResult));
@@ -495,4 +564,128 @@ public class TeamCrud {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/ui/games/{gameId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Game find successfully"),
+            @ApiResponse(code = 404, message = "Game not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<GameForResultPage> getGameResult(@PathVariable String gameId) {
+        Game game = gameService.findGameById(Integer.parseInt(gameId));
+        return new ResponseEntity<>(convertToGameForResultPage(game), HttpStatus.OK);
+    }
+
+    @PostMapping("/ui/gameResult/{gameId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Game result was saved successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
+    })
+    public ResponseEntity saveGameResult(@RequestParam(value = "gameId") Long gameId,
+                                         @RequestParam(value = "masterTeamName") String masterTeamName,
+                                         @RequestParam(value = "slaveTeamName") String slaveTeamName,
+                                         @RequestParam(value = "countMasterGoals") Integer countMasterGoals,
+                                         @RequestParam(value = "countSlaveGoals") Integer countSlaveGoals,
+                                         @RequestParam(value = "masterPlayersGoals") List<Integer> masterPlayersGoals,
+                                         @RequestParam(value = "slavePlayersGoals") List<Integer> slavePlayersGoals,
+                                         @RequestParam(value = "countMasterYellowCards") Integer countMasterYellowCards,
+                                         @RequestParam(value = "countSlaveYellowCards") Integer countSlaveYellowCards,
+                                         @RequestParam(value = "masterPlayersYellowCards") List<Integer> masterPlayersYellowCards,
+                                         @RequestParam(value = "slavePlayersYellowCards") List<Integer> slavePlayersYellowCards,
+                                         @RequestParam(value = "countMasterRedCards") Integer countMasterRedCards,
+                                         @RequestParam(value = "countSlaveRedCards") Integer countSlaveRedCards,
+                                         @RequestParam(value = "masterPlayersRedCards") List<Integer> masterPlayersRedCards,
+                                         @RequestParam(value = "slavePlayersRedCards") List<Integer> slavePlayersRedCards,
+                                         @RequestParam(value = "isMasterTechnicalWin") Boolean isMasterTechnicalWin,
+                                         @RequestParam(value = "isSlaveTechnicalWin") Boolean isSlaveTechnicalWin) {
+
+        Game game = gameService.findGameById(gameId);
+        if (game.isResultSave()) {
+            return ResponseEntity.status(412).build();
+        }
+
+        if (isMasterTechnicalWin || isSlaveTechnicalWin) {
+            game.setGoals(new ArrayList<>());
+            game.setMasterGoalsCount(0);
+            game.setSlaveGoalsCount(0);
+            game.setOffenses(new ArrayList<>());
+            if (isMasterTechnicalWin) {
+                game.setTechnicalMasterTeamWin(true);
+            } else {
+                game.setTechnicalSlaveTeamWin(true);
+            }
+        }
+//Set goals counts
+        game.setMasterGoalsCount(countMasterGoals);
+        game.setSlaveGoalsCount(countSlaveGoals);
+// Set players goals
+        List<Goal> goals = new ArrayList<>();
+        for (int id : masterPlayersGoals
+        ) {
+            Goal goal = new Goal();
+            goal.setTeam(game.getMasterTeam());
+            goal.setGame(game);
+            goal.setPlayer(playerService.findPlayerById(id));
+            goals.add(goal);
+        }
+        for (int id : slavePlayersGoals
+        ) {
+            Goal goal = new Goal();
+            goal.setTeam(game.getSlaveTeam());
+            goal.setGame(game);
+            goal.setPlayer(playerService.findPlayerById(id));
+            goals.add(goal);
+        }
+        game.setGoals(goals);
+// Set yellow cards
+        List<Offense> offenses = new ArrayList<>();
+        for (int id : masterPlayersYellowCards
+        ) {
+            Offense offense = new Offense();
+            offense.setGame(game);
+            offense.setType("YELLOW");
+            offense.setPlayer(playerService.findPlayerById(id));
+            offenses.add(offense);
+        }
+        for (int id : slavePlayersYellowCards
+        ) {
+            Offense offense = new Offense();
+            offense.setGame(game);
+            offense.setType("YELLOW");
+            offense.setPlayer(playerService.findPlayerById(id));
+            offenses.add(offense);
+        }
+        game.setOffenses(offenses);
+//Set red cards
+        List<Offense> offensesRed = new ArrayList<>();
+        for (int id : masterPlayersRedCards
+        ) {
+            Offense offense = new Offense();
+            offense.setGame(game);
+            offense.setType("RED");
+            offense.setPlayer(playerService.findPlayerById(id));
+            offensesRed.add(offense);
+        }
+        for (int id : slavePlayersRedCards
+        ) {
+            Offense offense = new Offense();
+            offense.setGame(game);
+            offense.setType("RED");
+            offense.setPlayer(playerService.findPlayerById(id));
+            offensesRed.add(offense);
+        }
+        game.getOffenses().addAll(offensesRed);
+//Save to DB
+        for (Goal goal : game.getGoals()
+        ) {
+            //        goalService.save(goal);
+        }
+        for (Offense offense : game.getOffenses()
+        ) {
+            //       offenseService.save(offense);
+        }
+        game.setResultSave(true);
+        //   gameService.save(game);
+        return ResponseEntity.status(200).build();
+    }
 }

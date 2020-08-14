@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.util.Locale;
 
 @Service
 public class TeamCrudService {
@@ -208,6 +209,23 @@ public class TeamCrudService {
         player.setTeam(null);
         playerService.save(player);
         return HttpStatus.OK;
+    }
+
+    public void checkAvailableAutogoalInDB() {
+        if (teamService.findTeamByName("AUTOGOAL") == null) {
+            Team team = new Team();
+            team.setTeamName("AUTOGOAL");
+            teamService.save(team);
+        }
+        if (playerService.findPlayerByRegistration("AUTOGOAL") == null) {
+            Player player = new Player();
+            player.setFirstName("Автогол");
+            player.setLastName("соперника");
+            player.setSecondName("*");
+            player.setRegistration("AUTOGOAL");
+            player.setTeam(teamService.findTeamByName("AUTOGOAL"));
+            playerService.save(player);
+        }
     }
 
 }
