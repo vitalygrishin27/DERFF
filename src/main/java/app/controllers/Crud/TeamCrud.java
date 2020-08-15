@@ -565,7 +565,7 @@ public class TeamCrud {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/ui/games/result/{gameId}")
+    @GetMapping("/ui/games/{gameId}")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Game find successfully"),
             @ApiResponse(code = 404, message = "Game not found"),
