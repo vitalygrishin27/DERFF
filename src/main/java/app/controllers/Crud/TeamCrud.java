@@ -409,8 +409,8 @@ public class TeamCrud {
             playersForStatistic.setId(player.getId());
             playersForStatistic.setPlayerName(player.getLastName() + " " + player.getFirstName());
             playersForStatistic.setPhotoString(player.getPhotoString());
-            playersForStatistic.setTeamName(player.getTeam().getTeamName());
-            playersForStatistic.setSymbolString(player.getTeam().getSymbolString());
+            playersForStatistic.setTeamName(player.getTeam() != null ? player.getTeam().getTeamName() : "Відзаявлений");
+            playersForStatistic.setSymbolString(player.getTeam() != null ? player.getTeam().getSymbolString() : "");
             playersForStatistic.setValue(value);
             result.add(playersForStatistic);
         });
@@ -565,7 +565,7 @@ public class TeamCrud {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/ui/games/{gameId}")
+    @GetMapping("/ui/games/result/{gameId}")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Game find successfully"),
             @ApiResponse(code = 404, message = "Game not found"),
