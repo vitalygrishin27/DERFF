@@ -206,7 +206,7 @@ public class TeamCrudService {
         Player player = playerService.findPlayerById(playerId);
         player.setSeason(null);
         player.setIsNotActive(true);
-        player.setTeam(null);
+      //  player.setTeam(null);
         playerService.save(player);
         return HttpStatus.OK;
     }

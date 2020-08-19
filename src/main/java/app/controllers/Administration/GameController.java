@@ -63,7 +63,7 @@ public class GameController {
             model.addAttribute("message", messageGenerator.getMessageWithSetNotActive());
         }
         List<Competition> competitions = competitionService.findAllCompetition();
-        competitions.add(new Competition(-1, messageSource.getMessage("label.competitions.all", null, Locale.getDefault()), null));
+        competitions.add(new Competition(-1, messageSource.getMessage("label.competitions.all", null, Locale.getDefault()), null,null));
         Map<Long, String> comp = new HashMap<>();
         for (Competition competition : competitions
         ) {

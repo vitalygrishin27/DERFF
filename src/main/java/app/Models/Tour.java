@@ -1,10 +1,10 @@
 package app.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +29,11 @@ public class Tour {
 
     @OneToMany(mappedBy = "tour", fetch = FetchType.LAZY)
     private List<Game> games;
+
+    @JsonIgnore
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_competition")
+    private Competition competition;
 
     @Override
     public String toString() {

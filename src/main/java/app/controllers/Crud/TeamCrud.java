@@ -2,7 +2,6 @@ package app.controllers.Crud;
 
 import app.Models.*;
 import app.controllers.Crud.Service.TeamCrudService;
-import app.exceptions.DerffException;
 import app.services.*;
 import app.services.impl.DBLogServiceImpl;
 import io.swagger.annotations.ApiResponse;
@@ -15,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,12 +94,69 @@ public class TeamCrud {
     }
 
     @RequestMapping("/ui/teams")
-    public ResponseEntity<Collection<Team>> getAllTeam() {
+    public ResponseEntity<List<Team>> getAllTeam() {
         List<Team> list = teamService.findAllTeams();
         list.forEach(team -> team.setPlayers(null));
         list.forEach(team -> team.setSymbol(null));
         //list.forEach(team -> team.setSymbolString(null));
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @RequestMapping("/ui/competitions")
+    public ResponseEntity<List<CompetitionForUI>> getAllCompetitions() {
+        List<Competition> list = competitionService.findAllCompetition();
+        //  list.forEach(team -> team.setPlayers(null));
+        //   list.forEach(team -> team.setSymbol(null));
+        //list.forEach(team -> team.setSymbolString(null));
+        return new ResponseEntity<>(convertToCompetitionForUI(list), HttpStatus.OK);
+    }
+
+    @RequestMapping("/ui/competition/{competitionId}/tours")
+    public ResponseEntity<List<TourForUI>> getAllToursInCompetition(@PathVariable Long competitionId) {
+        List<Tour> list = tourService.findAll();
+        List<Tour> result = list.stream().filter(tour -> tour.getCompetition().getId() == competitionId).collect(Collectors.toList());
+
+        //  list.forEach(team -> team.setPlayers(null));
+        //   list.forEach(team -> team.setSymbol(null));
+        //list.forEach(team -> team.setSymbolString(null));
+        return new ResponseEntity<>(convertToTourForUI(result), HttpStatus.OK);
+    }
+
+    @RequestMapping("/ui/competition/tours/{tourId}")
+    public ResponseEntity<TourForUI> getTourById(@PathVariable Long tourId) {
+        Tour tour = tourService.findById(tourId);
+
+        //  list.forEach(team -> team.setPlayers(null));
+        //   list.forEach(team -> team.setSymbol(null));
+        //list.forEach(team -> team.setSymbolString(null));
+        return new ResponseEntity<>(convertToTourForUI(tour), HttpStatus.OK);
+    }
+
+    private List<CompetitionForUI> convertToCompetitionForUI(List<Competition> list) {
+        List<CompetitionForUI> result = new ArrayList<>();
+        list.forEach(competition -> {
+            CompetitionForUI competitionForUI = new CompetitionForUI();
+            competitionForUI.setId(competition.getId());
+            competitionForUI.setName(competition.getName());
+            result.add(competitionForUI);
+        });
+        return result;
+    }
+
+    private List<TourForUI> convertToTourForUI(List<Tour> list) {
+        List<TourForUI> result = new ArrayList<>();
+        list.forEach(tour -> {
+            result.add(convertToTourForUI(tour));
+        });
+        return result;
+    }
+
+    private TourForUI convertToTourForUI(Tour tour) {
+        TourForUI tourForUI = new TourForUI();
+        tourForUI.setId(tour.getId());
+        tourForUI.setName(tour.getTourName());
+        tourForUI.setDate(tour.getDate());
+        return tourForUI;
     }
 
     @RequestMapping("/ui/unRegisteredTeams")
@@ -480,6 +538,16 @@ public class TeamCrud {
         return result;
     }
 
+    private GameForEditing convertToGameForEditing(Game game){
+        GameForEditing result = new GameForEditing();
+        result.setMasterTeamId(game.getMasterTeam().getId());
+        result.setSlaveTeamId(game.getSlaveTeam().getId());
+        result.setMasterTeamName(game.getMasterTeam().getTeamName());
+        result.setSlaveTeamName(game.getSlaveTeam().getTeamName());
+        result.setResultSave(game.isResultSave());
+        return result;
+    }
+
     private GameForResultPage convertToGameForResultPage(Game game) {
         GameForResultPage result = new GameForResultPage();
         result.setId(game.getId());
@@ -575,6 +643,18 @@ public class TeamCrud {
     public ResponseEntity<GameForResultPage> getGameResult(@PathVariable String gameId) {
         Game game = gameService.findGameById(Integer.parseInt(gameId));
         return new ResponseEntity<>(convertToGameForResultPage(game), HttpStatus.OK);
+    }
+
+    @GetMapping("/ui/games/{gameId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Game find successfully"),
+            @ApiResponse(code = 404, message = "Game not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<GameForEditing> getGameResult(@PathVariable Long gameId) {
+        Game game = gameService.findGameById(gameId);
+        return new ResponseEntity<>(convertToGameForEditing(game), HttpStatus.OK);
     }
 
     @PostMapping("/ui/gameResult/{gameId}")
@@ -689,4 +769,88 @@ public class TeamCrud {
         gameService.save(game);
         return ResponseEntity.status(200).build();
     }
+
+    @GetMapping("/ui/teamsList")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Teams find successfully"),
+            @ApiResponse(code = 404, message = "Teams not found"),
+            @ApiResponse(code = 500, message = "DataBase error")
+
+    })
+    public ResponseEntity<List<TeamsForCreatingGame>> getTeamsForCreatingGame() {
+        return new ResponseEntity<>(convertToTeamsForCreatingGame(teamService.findAllTeams()), HttpStatus.OK);
+    }
+
+    private List<TeamsForCreatingGame> convertToTeamsForCreatingGame(List<Team> teams) {
+        List<TeamsForCreatingGame> result = new ArrayList<>();
+        teams.forEach(team -> {
+            TeamsForCreatingGame teamsForCreatingGame = new TeamsForCreatingGame();
+            teamsForCreatingGame.setId(team.getId());
+            teamsForCreatingGame.setTeamName(team.getTeamName());
+            result.add(teamsForCreatingGame);
+        });
+        return result;
+    }
+
+    @PostMapping("/ui/tours/{tourId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Tour saved successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
+    })
+    public ResponseEntity saveTour(@RequestParam(value = "tourId") Long id,
+                                   @RequestParam(value = "tourName") String tourName,
+                                   @RequestParam(value = "competitionId") Long competitionId,
+                                   @RequestParam(value = "tourDate") Date date) {
+        Tour tour;
+        if (id != 0) {
+            tour = tourService.findById(id);
+        } else {
+            tour = new Tour();
+            tour.setGames(new ArrayList<>());
+            tour.setCompetition(competitionService.findCompetitionById(competitionId));
+        }
+        tour.setTourName(tourName);
+        tour.setDate(date);
+        tourService.save(tour);
+        return ResponseEntity.status(200).build();
+    }
+
+    @PostMapping("/ui/games/{gameId}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Game was saved successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
+    })
+    public ResponseEntity saveGame(@RequestParam(value = "gameId") Long gameId,
+                                   @RequestParam(value = "tourId") Long tourId,
+                                   @RequestParam(value = "masterTeamId") Long masterTeamId,
+                                   @RequestParam(value = "slaveTeamId") Long slaveTeamId
+    ) {
+
+        Tour tour = tourService.findById(tourId);
+        Game game;
+        if (gameId != -1) {
+            game = gameService.findGameById(gameId);
+        } else {
+            game = new Game();
+            game.setTour(tour);
+            game.setCompetition(tour.getCompetition());
+            game.setDate(tour.getDate());
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+            String strDate = dateFormat.format(tour.getDate());
+            game.setStringDate(strDate);
+            game.setGoals(new ArrayList<>());
+            game.setOffenses(new ArrayList<>());
+            game.setMasterGoalsCount(0);
+            game.setSlaveGoalsCount(0);
+            game.setTechnicalMasterTeamWin(false);
+            game.setTechnicalSlaveTeamWin(false);
+            game.setResultSave(false);
+        }
+        game.setMasterTeam(teamService.findTeamById(masterTeamId));
+        game.setSlaveTeam(teamService.findTeamById(slaveTeamId));
+
+        gameService.save(game);
+        return ResponseEntity.status(200).build();
+    }
+
 }

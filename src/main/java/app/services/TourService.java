@@ -10,6 +10,7 @@ public interface TourService {
 
     List<Tour> findAll();
 
+    Tour findById(Long tourId);
     Tour findByTourName(String tourName);
 }
 

@@ -27,4 +27,7 @@ public class Competition {
 
     @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
     private Collection<Game> games;
+
+    @OneToMany(mappedBy = "competition", fetch = FetchType.LAZY)
+    private Collection<Tour> tours;
 }

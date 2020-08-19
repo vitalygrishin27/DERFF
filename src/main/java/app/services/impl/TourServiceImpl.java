@@ -29,6 +29,11 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
+    public Tour findById(Long tourId) {
+        return repository.findById(tourId).get();
+    }
+
+    @Override
     public Tour findByTourName(String tourName) {
         return repository.findByTourName(tourName);
     }
