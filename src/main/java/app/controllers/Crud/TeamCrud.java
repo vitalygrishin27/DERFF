@@ -802,7 +802,7 @@ public class TeamCrud {
                                    @RequestParam(value = "competitionId") Long competitionId,
                                    @RequestParam(value = "tourDate") Date date) {
         Tour tour;
-        if (id != 0) {
+        if (id != -1) {
             tour = tourService.findById(id);
         } else {
             tour = new Tour();
