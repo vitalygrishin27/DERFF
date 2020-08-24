@@ -682,7 +682,15 @@ public class TeamCrud {
 
         Game game = gameService.findGameById(gameId);
         if (game.isResultSave()) {
-            return ResponseEntity.status(412).build();
+            for (Goal goal:game.getGoals()
+                 ) {
+                goalService.delete(goal);
+            }
+            for (Offense offence:game.getOffenses()
+                 ) {
+                offenseService.delete(offence);
+            }
+            //return ResponseEntity.status(412).build();
         }
 
         if (isMasterTechnicalWin || isSlaveTechnicalWin) {
