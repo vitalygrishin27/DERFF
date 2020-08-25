@@ -125,6 +125,13 @@ public class TeamCrud {
         return new ResponseEntity<>(convertToTourForUI(result), HttpStatus.OK);
     }
 
+    @RequestMapping("/ui/competition/{competitionId}")
+    public ResponseEntity<CompetitionForUI> getCompetition(@PathVariable Long competitionId) {
+        Competition competition=competitionService.findCompetitionById(competitionId);
+
+        return new ResponseEntity<>(convertToCompetitionForUI(competition), HttpStatus.OK);
+    }
+
     @RequestMapping("/ui/competition/tours/{tourId}")
     public ResponseEntity<TourForUI> getTourById(@PathVariable Long tourId) {
         Tour tour = tourService.findById(tourId);
@@ -135,15 +142,19 @@ public class TeamCrud {
         return new ResponseEntity<>(convertToTourForUI(tour), HttpStatus.OK);
     }
 
+    private CompetitionForUI convertToCompetitionForUI (Competition competition){
+        int competitionIdForStandings = settingsService.findByKey("competitionIdForStandings") != null ? Integer.parseInt(settingsService.findByKey("competitionIdForStandings").getValue()) : -1;
+        CompetitionForUI competitionForUI = new CompetitionForUI();
+        competitionForUI.setId(competition.getId());
+        competitionForUI.setName(competition.getName());
+        competitionForUI.setForStandings(competitionIdForStandings == competition.getId());
+        return competitionForUI;
+    }
+
     private List<CompetitionForUI> convertToCompetitionForUI(List<Competition> list) {
         List<CompetitionForUI> result = new ArrayList<>();
-        int competitionIdForStandings = settingsService.findByKey("competitionIdForStandings") != null ? Integer.parseInt(settingsService.findByKey("competitionIdForStandings").getValue()) : -1;
         list.forEach(competition -> {
-            CompetitionForUI competitionForUI = new CompetitionForUI();
-            competitionForUI.setId(competition.getId());
-            competitionForUI.setName(competition.getName());
-            competitionForUI.setForStandings(competitionIdForStandings == competition.getId());
-            result.add(competitionForUI);
+            result.add(convertToCompetitionForUI(competition));
         });
         return result;
     }
