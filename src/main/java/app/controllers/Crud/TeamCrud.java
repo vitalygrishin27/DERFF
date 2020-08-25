@@ -843,7 +843,7 @@ public class TeamCrud {
             game.setTour(tour);
             game.setCompetition(tour.getCompetition());
             game.setDate(tour.getDate());
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = dateFormat.format(tour.getDate());
             game.setStringDate(strDate);
             game.setGoals(new ArrayList<>());
