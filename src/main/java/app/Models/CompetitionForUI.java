@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CompetitionForUI {
     private long id;
     private String name;
+    private boolean forStandings;
 }

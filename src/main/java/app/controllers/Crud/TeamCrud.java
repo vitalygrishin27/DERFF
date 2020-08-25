@@ -43,6 +43,9 @@ public class TeamCrud {
     GoalService goalService;
 
     @Autowired
+    SettingsService settingsService;
+
+    @Autowired
     OffenseService offenseService;
 
     @Autowired
@@ -134,10 +137,12 @@ public class TeamCrud {
 
     private List<CompetitionForUI> convertToCompetitionForUI(List<Competition> list) {
         List<CompetitionForUI> result = new ArrayList<>();
+        int competitionIdForStandings = settingsService.findByKey("competitionIdForStandings") != null ? Integer.parseInt(settingsService.findByKey("competitionIdForStandings").getValue()) : -1;
         list.forEach(competition -> {
             CompetitionForUI competitionForUI = new CompetitionForUI();
             competitionForUI.setId(competition.getId());
             competitionForUI.setName(competition.getName());
+            competitionForUI.setForStandings(competitionIdForStandings == competition.getId());
             result.add(competitionForUI);
         });
         return result;
@@ -364,14 +369,18 @@ public class TeamCrud {
 
     @GetMapping(value = "/ui/standings")
     public ResponseEntity<List<StandingsRow>> getStandings(Model model) {
+        int competitionIdForStandings = settingsService.findByKey("competitionIdForStandings") != null ? Integer.parseInt(settingsService.findByKey("competitionIdForStandings").getValue()) : -1;
+        Competition competition = competitionService.findCompetitionById(competitionIdForStandings);
+        if (competition == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         Map<String, String> resultGames = new LinkedHashMap<>();
         List<StandingsRow> standingsRows = new ArrayList<>();
         for (Team team : teamService.findAllTeams()
         ) {
             StandingsRow standingsRow = new StandingsRow();
             standingsRow.setTeamName(team.getTeamName());
-            // TODO: 13.02.2020 refactor hardcode for 'findCompetitionById(1)'. This value should be set in Configuration
-            for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competitionService.findCompetitionById(1), true)
+            for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competition, true)
             ) {
                 String key = team.getTeamName() + "-" + (game.getMasterTeam().equals(team) ? game.getSlaveTeam().getTeamName() : game.getMasterTeam().getTeamName());
                 resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + ":" + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + ":" + game.getMasterGoalsCount()));
@@ -538,7 +547,7 @@ public class TeamCrud {
         return result;
     }
 
-    private GameForEditing convertToGameForEditing(Game game){
+    private GameForEditing convertToGameForEditing(Game game) {
         GameForEditing result = new GameForEditing();
         result.setMasterTeamId(game.getMasterTeam().getId());
         result.setSlaveTeamId(game.getSlaveTeam().getId());
@@ -682,12 +691,12 @@ public class TeamCrud {
 
         Game game = gameService.findGameById(gameId);
         if (game.isResultSave()) {
-            for (Goal goal:game.getGoals()
-                 ) {
+            for (Goal goal : game.getGoals()
+            ) {
                 goalService.delete(goal);
             }
-            for (Offense offence:game.getOffenses()
-                 ) {
+            for (Offense offence : game.getOffenses()
+            ) {
                 offenseService.delete(offence);
             }
             //return ResponseEntity.status(412).build();
@@ -859,6 +868,38 @@ public class TeamCrud {
 
         gameService.save(game);
         return ResponseEntity.status(200).build();
+    }
+
+    @PostMapping("/ui/competition")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Competition saved successfully"),
+            @ApiResponse(code = 412, message = "Precondition Failed"),
+            // @ApiResponse(code = 501, message = "SLA's not found"),
+            //  @ApiResponse(code = 403, message = "SLA's update not possible"),
+            //   @ApiResponse(code = 406, message = "Incorrect SLA's Times definition"),
+    })
+    public ResponseEntity saveCompetition(@ModelAttribute CompetitionForUI competitionForUI) {
+        Competition competition = new Competition();
+        if (competitionForUI.getId() != -1) {
+            competition = competitionService.findCompetitionById(competitionForUI.getId());
+        }
+        competition.setName(competitionForUI.getName());
+
+        if (competitionForUI.isForStandings()) {
+            Settings settings = settingsService.findByKey("competitionIdForStandings");
+            if (settings == null) {
+                settings = new Settings();
+                settings.setKey("competitionIdForStandings");
+            }
+            if (competitionForUI.getId() == -1) {
+                competitionService.save(competition);
+                competition = competitionService.findCompetitionByName(competition.getName());
+            }
+            settings.setValue(String.valueOf(competition.getId()));
+            settingsService.save(settings);
+        }
+        competitionService.save(competition);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
