@@ -54,14 +54,14 @@ public class POIService {
     private void fillInTeamPlayers(Collection<Player> source, String columnName) {
         ArrayList<Player> list = new ArrayList<>(source);
         Collections.sort(list);
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < (Math.min(list.size(), 20)); i++) {
             CellReference cr = new CellReference(columnName + (i + 13));
             Row row = sheet.getRow(cr.getRow());
             Cell cell = row.getCell(cr.getCol());
             cell.setCellStyle(cellStyleMap.get("number"));
             //  cell.setCellValue((double) (i + 1));
             cell = row.getCell(cr.getCol() + 1);
-            cell.setCellValue(list.get(i).getLastName() + " " + list.get(i).getFirstName());
+            cell.setCellValue(i < 19 ? list.get(i).getLastName() + " " + list.get(i).getFirstName() : list.get(i).getLastName() + " " + list.get(i).getFirstName() + " +" + (list.size() - 20));
         }
     }
 
