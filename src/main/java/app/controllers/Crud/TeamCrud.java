@@ -4,16 +4,23 @@ import app.Models.*;
 import app.controllers.Crud.Service.TeamCrudService;
 import app.services.*;
 import app.services.impl.DBLogServiceImpl;
+import com.ibm.icu.text.Transliterator;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -62,6 +69,9 @@ public class TeamCrud {
 
     @Autowired
     DBLogServiceImpl dbLogService;
+
+    @Autowired
+    POIService poiService;
 
     int CURRENT_SEASON_YEAR = 2020;
 
@@ -127,7 +137,7 @@ public class TeamCrud {
 
     @RequestMapping("/ui/competition/{competitionId}")
     public ResponseEntity<CompetitionForUI> getCompetition(@PathVariable Long competitionId) {
-        Competition competition=competitionService.findCompetitionById(competitionId);
+        Competition competition = competitionService.findCompetitionById(competitionId);
 
         return new ResponseEntity<>(convertToCompetitionForUI(competition), HttpStatus.OK);
     }
@@ -142,7 +152,7 @@ public class TeamCrud {
         return new ResponseEntity<>(convertToTourForUI(tour), HttpStatus.OK);
     }
 
-    private CompetitionForUI convertToCompetitionForUI (Competition competition){
+    private CompetitionForUI convertToCompetitionForUI(Competition competition) {
         int competitionIdForStandings = settingsService.findByKey("competitionIdForStandings") != null ? Integer.parseInt(settingsService.findByKey("competitionIdForStandings").getValue()) : -1;
         CompetitionForUI competitionForUI = new CompetitionForUI();
         competitionForUI.setId(competition.getId());
@@ -913,4 +923,19 @@ public class TeamCrud {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Transactional
+    @RequestMapping(value = "/ui/report/{gameId}", method = RequestMethod.GET)
+    public void createStatement(HttpServletResponse response, @PathVariable Long gameId) throws IOException {
+        poiService.fillInReport(gameService.findGameById(gameId));
+
+        ServletOutputStream out = response.getOutputStream();
+        byte[] byteArray = Files.readAllBytes(Paths.get("src/main/resources/static/Report+.xls"));
+        response.setContentType("application/vnd.ms-excel");
+        String filename = Transliterator.getInstance("Russian-Latin/BGN").transliterate("Шахтер-Легион");
+        response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        out.write(byteArray);
+        out.flush();
+        out.close();
+    }
 }
