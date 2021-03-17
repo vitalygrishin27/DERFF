@@ -26,6 +26,9 @@ public class Statistic implements Runnable {
     TeamServiceImpl teamService;
 
     @Autowired
+    PlayerServiceImpl playerService;
+
+    @Autowired
     OffenseServiceImpl offenseService;
 
     @Autowired
@@ -65,6 +68,29 @@ public class Statistic implements Runnable {
     }
 
     private Map<Player, Integer> getGoals(int count) {
+    /*    Map<String, Integer> rrr = new HashMap<>();
+        Map<String, Integer> yellow = new HashMap<>();
+        Map<String, Integer> red = new HashMap<>();
+        teamService.findAllTeams().forEach(team -> {
+            rrr.put(team.getTeamName(), 0);
+            yellow.put(team.getTeamName(), 0);
+            red.put(team.getTeamName(), 0);
+        });
+
+        for (Offense offence : offenseService.findAll()
+        ) {
+            int newValue = 0;
+            if (offence.getType().equals("YELLOW")) {
+                yellow.put(offence.getPlayer().getTeam().getTeamName(), yellow.get(offence.getPlayer().getTeam().getTeamName()) + 1);
+                newValue = rrr.getOrDefault(offence.getPlayer().getTeam().getTeamName(), 0) + 1;
+            } else {
+                red.put(offence.getPlayer().getTeam().getTeamName(), red.get(offence.getPlayer().getTeam().getTeamName()) + 1);
+                newValue = rrr.getOrDefault(offence.getPlayer().getTeam().getTeamName(), 0) + 3;
+            }
+            rrr.put(offence.getPlayer().getTeam().getTeamName(), newValue);
+        }*/
+
+
         if (count == -1 && context.getFromContext("bombardiersAll") != null) {
             context.putToContext("needShowAllBombardiers", Boolean.FALSE);
             return (Map<Player, Integer>) context.getFromContext("bombardiersAll");

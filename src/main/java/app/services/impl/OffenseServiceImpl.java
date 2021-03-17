@@ -20,6 +20,10 @@ public class OffenseServiceImpl implements OffenseService {
 
     }
 
+    public List<Offense> findAll() {
+        return repository.findAll();
+    }
+
     @Override
     public void delete(Offense offense) {
         repository.delete(offense);

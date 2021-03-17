@@ -459,7 +459,7 @@ public class TeamCrud {
         } else {
             Thread threadForStatistic = new Thread(statistic);
             threadForStatistic.start();
-            return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.CONTINUE);
+            return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.OK);
         }
         List<PlayersForStatistic> result = command.equals("skipGamesAll") ? convertToPlayerForStatistic(list) : convertToPlayerForStatistic(map);
         return new ResponseEntity<>(result, HttpStatus.OK);
