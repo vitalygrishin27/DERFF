@@ -110,7 +110,6 @@ public class POIService {
                 cell.setCellValue(1d);
                 row = sheet.getRow(cr.getRow() + count);
                 cell = row.getCell(cr.getCol());
-                count++;
             } else if (count == 6) {
                 cr = new CellReference("H45");
                 row = sheet.getRow(cr.getRow());
@@ -120,7 +119,7 @@ public class POIService {
             } else {
                 cell.setCellValue(cell.getStringCellValue() + ", " + player.getLastName() + " " + player.getFirstName() + " (" + player.getTeam().getTeamName() + ")");
             }
-
+            count++;
         }
     }
 
