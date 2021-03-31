@@ -3,6 +3,7 @@ package app.controllers.Common;
 import app.Models.Game;
 import app.Models.StandingsRow;
 import app.Models.Team;
+import app.services.SeasonService;
 import app.services.impl.CompetitionServiceImpl;
 import app.services.impl.GameServiceImpl;
 import app.services.impl.TeamServiceImpl;
@@ -26,10 +27,13 @@ public class StandingsController {
     @Autowired
     CompetitionServiceImpl competitionService;
 
+    @Autowired
+    SeasonService seasonService;
+
     @GetMapping(value = "/standings")
     public String getStandings(Model model) {
         List<StandingsRow> standingsRows = new ArrayList<>();
-        for (Team team : teamService.findAllTeams()
+        for (Team team : teamService.findBySeason(seasonService.findByYear(2021))
         ) {
             StandingsRow standingsRow = new StandingsRow();
             standingsRow.setTeamName(team.getTeamName());
