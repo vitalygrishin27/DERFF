@@ -73,7 +73,7 @@ public class TeamCrud {
     @Autowired
     POIService poiService;
 
-    int CURRENT_SEASON_YEAR = 2020;
+    int CURRENT_SEASON_YEAR = 2021;
 
     @PostMapping("/ui/users/authenticate")
     @ApiResponses({
