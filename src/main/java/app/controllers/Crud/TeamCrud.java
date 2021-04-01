@@ -397,7 +397,7 @@ public class TeamCrud {
         }
         Map<String, String> resultGames = new LinkedHashMap<>();
         List<StandingsRow> standingsRows = new ArrayList<>();
-        for (Team team : teamService.findAllTeams()
+        for (Team team : teamService.findBySeason(seasonService.findByYear(2021))
         ) {
             StandingsRow standingsRow = new StandingsRow();
             standingsRow.setTeamName(team.getTeamName());
