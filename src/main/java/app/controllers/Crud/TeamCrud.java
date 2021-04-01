@@ -196,10 +196,9 @@ public class TeamCrud {
     }
 
 
-    @RequestMapping("/ui/unRegisteredPlayers")
-    public ResponseEntity<Collection<Player>> getUnregisteredPlayers() {
-        // TODO: 03.06.2020 create List
-        List<Player> result = playerService.findAllInactivePlayers();
+    @RequestMapping("/ui/unRegisteredPlayers/{letter}")
+    public ResponseEntity<Collection<Player>> getUnregisteredPlayers(@PathVariable String letter) {
+        List<Player> result = playerService.findInactivePlayersByLastnameStartsWith(letter);
         result.forEach(player -> {
             player.setSeason(null);
             player.setTeam(null);

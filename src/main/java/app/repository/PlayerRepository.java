@@ -33,6 +33,9 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     @Query("Select p from Player p where p.isNotActive = true")
     List<Player> findAllInactivePlayers();
 
+    @Query("Select p from Player p where p.isNotActive = true and p.lastName like :letter")
+    List<Player> findInactivePlayersByLastnameStartsWith(@Param("letter") String letter);
+
     @Query("Select p from Player p where p.idCard =:idCard")
     Player findByIdCard(@Param("idCard") String idCard);
 

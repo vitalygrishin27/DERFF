@@ -46,6 +46,12 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public List<Player> findInactivePlayersByLastnameStartsWith(String letter) {
+        String search = letter + "%";
+        return repository.findInactivePlayersByLastnameStartsWith(search);
+    }
+
+    @Override
     public List<Player> findAllInactivePlayers() {
         return repository.findAllInactivePlayers();
     }

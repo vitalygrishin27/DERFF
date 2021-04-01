@@ -19,6 +19,8 @@ public interface PlayerService {
 
     List<Player> findAllInactivePlayers();
 
+    List<Player> findInactivePlayersByLastnameStartsWith(String letter);
+
     List<Player> findAllActivePlayersInTeam(Team team);
 
     List<Player> findAllActivePlayersInTeamByRole(Team team, PlayerRole playerRole);
