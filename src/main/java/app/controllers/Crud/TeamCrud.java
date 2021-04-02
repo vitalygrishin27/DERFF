@@ -454,9 +454,13 @@ public class TeamCrud {
 
     @GetMapping(value = "/ui/statistic/{command}")
     public ResponseEntity<List<PlayersForStatistic>> getStatistic(@PathVariable String command) {
-        command += "All";
         HashMap<Player, Integer> map = new HashMap<>();
         List<SkipGameEntry> list = new LinkedList<>();
+        if (command.equals("reload")) {
+            statistic.getContext().clear();
+            command = "bombardier";
+        }
+        command += "All";
         if (statistic.isStatisticReady()) {
             if (statistic.getContext() != null) {
                 if (command.equals("skipGamesAll")) {
@@ -468,7 +472,7 @@ public class TeamCrud {
         } else {
             Thread threadForStatistic = new Thread(statistic);
             threadForStatistic.start();
-            return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.OK);
+            return new ResponseEntity<>(convertToPlayerForStatistic(map), HttpStatus.LOCKED);
         }
         List<PlayersForStatistic> result = command.equals("skipGamesAll") ? convertToPlayerForStatistic(list) : convertToPlayerForStatistic(map);
         return new ResponseEntity<>(result, HttpStatus.OK);
