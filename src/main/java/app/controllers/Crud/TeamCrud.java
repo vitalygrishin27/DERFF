@@ -2,13 +2,17 @@ package app.controllers.Crud;
 
 import app.Models.*;
 import app.controllers.Crud.Service.TeamCrudService;
+import app.exceptions.DerffException;
 import app.services.*;
 import app.services.impl.DBLogServiceImpl;
 import com.ibm.icu.text.Transliterator;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -940,5 +945,24 @@ public class TeamCrud {
         out.write(byteArray);
         out.flush();
         out.close();
+    }
+
+    @RequestMapping(value = "/ui/players/download/photo/{playerId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> download(HttpServletResponse response,@PathVariable Long playerId) throws DerffException {
+
+            Player player = playerService.findPlayerById(playerId);
+            if (player == null || player.getPhoto() == null) {
+               return null;
+            }
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(player.getPhoto());
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition",
+                    "attachment; filename=" + player.getLastName() + ".jpg");
+            headers.setContentType(MediaType.IMAGE_JPEG);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+         //   headers.add("Content-type", "application/octet-stream");
+            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(byteArrayInputStream));
+
     }
 }
