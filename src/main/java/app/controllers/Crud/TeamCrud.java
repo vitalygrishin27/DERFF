@@ -408,7 +408,13 @@ public class TeamCrud {
             for (Game game : gameService.findGamesWithResultByTeamAndCompetition(team, competition, true)
             ) {
                 String key = team.getTeamName() + "-" + (game.getMasterTeam().equals(team) ? game.getSlaveTeam().getTeamName() : game.getMasterTeam().getTeamName());
-                resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + ":" + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + ":" + game.getMasterGoalsCount()));
+                if (game.isTechnicalMasterTeamWin()) {
+                    resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? "+:-" : "-:+"));
+                } else if (game.isTechnicalSlaveTeamWin()) {
+                    resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? "-:+" : "+:-"));
+                } else {
+                    resultGames.put(key, (resultGames.containsKey(key) ? resultGames.get(key) + ", " : "") + (game.getMasterTeam().equals(team) ? game.getMasterGoalsCount() + ":" + game.getSlaveGoalsCount() : game.getSlaveGoalsCount() + ":" + game.getMasterGoalsCount()));
+                }
                 standingsRow.setGames(standingsRow.getGames() + 1);
                 if (team.equals(game.getMasterTeam())) {
                     standingsRow.setScoredGoals(standingsRow.getScoredGoals() + game.getMasterGoalsCount());
@@ -949,20 +955,20 @@ public class TeamCrud {
 
     @RequestMapping(value = "/ui/players/download/photo/{playerId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> download(HttpServletResponse response,@PathVariable Long playerId) throws DerffException {
+    public ResponseEntity<InputStreamResource> download(HttpServletResponse response, @PathVariable Long playerId) throws DerffException {
 
-            Player player = playerService.findPlayerById(playerId);
-            if (player == null || player.getPhoto() == null) {
-               return null;
-            }
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(player.getPhoto());
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Disposition",
-                    "attachment; filename=" + player.getLastName() + ".jpg");
-            headers.setContentType(MediaType.IMAGE_JPEG);
+        Player player = playerService.findPlayerById(playerId);
+        if (player == null || player.getPhoto() == null) {
+            return null;
+        }
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(player.getPhoto());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition",
+                "attachment; filename=" + player.getLastName() + ".jpg");
+        headers.setContentType(MediaType.IMAGE_JPEG);
         response.setHeader("Access-Control-Allow-Origin", "*");
-         //   headers.add("Content-type", "application/octet-stream");
-            return ResponseEntity.ok().headers(headers).body(new InputStreamResource(byteArrayInputStream));
+        //   headers.add("Content-type", "application/octet-stream");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(byteArrayInputStream));
 
     }
 }
