@@ -568,8 +568,8 @@ public class TeamCrud {
             gameForCalendar.setId(game.getId());
             gameForCalendar.setDate(game.getDate());
             gameForCalendar.setStringDate(game.getStringDate());
-            gameForCalendar.setMasterGoalsCount(game.getMasterGoalsCount());
-            gameForCalendar.setSlaveGoalsCount(game.getSlaveGoalsCount());
+            gameForCalendar.setMasterGoalsCount(game.getMasterGoalsCount().toString());
+            gameForCalendar.setSlaveGoalsCount(game.getSlaveGoalsCount().toString());
             gameForCalendar.setMasterTeamName(game.getMasterTeam().getTeamName());
             gameForCalendar.setSlaveTeamName(game.getSlaveTeam().getTeamName());
             gameForCalendar.setMasterTeamSymbolString(game.getMasterTeam().getSymbolString());
@@ -577,6 +577,13 @@ public class TeamCrud {
             gameForCalendar.setResultSave(game.isResultSave());
             gameForCalendar.setTechnicalMasterTeamWin(game.isTechnicalMasterTeamWin());
             gameForCalendar.setTechnicalSlaveTeamWin(game.isTechnicalSlaveTeamWin());
+            if (game.isTechnicalMasterTeamWin()) {
+                gameForCalendar.setMasterGoalsCount("+");
+                gameForCalendar.setSlaveGoalsCount("-");
+            } else if (game.isTechnicalSlaveTeamWin()) {
+                gameForCalendar.setMasterGoalsCount("-");
+                gameForCalendar.setSlaveGoalsCount("+");
+            }
             result.add(gameForCalendar);
         });
         return result;

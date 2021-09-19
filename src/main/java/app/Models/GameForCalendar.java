@@ -19,8 +19,8 @@ public class GameForCalendar {
     private String slaveTeamName;
     private String masterTeamSymbolString;
     private String slaveTeamSymbolString;
-    private Integer masterGoalsCount;
-    private Integer slaveGoalsCount;
+    private String masterGoalsCount;
+    private String slaveGoalsCount;
     private boolean technicalMasterTeamWin;
     private boolean technicalSlaveTeamWin;
     private boolean isResultSave;
